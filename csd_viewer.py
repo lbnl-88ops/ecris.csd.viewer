@@ -67,6 +67,6 @@ window.title("CSD Viewer")
 # change_button.pack()
 
 file_list = FileList(window)
-file_list.pack()
+file_list.grid(row=0, column =1)
 
 window.mainloop()
