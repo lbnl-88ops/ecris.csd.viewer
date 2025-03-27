@@ -1,7 +1,25 @@
 import tkinter as tk
 import os
-from tkinter import DISABLED, LEFT, NORMAL, RIGHT, filedialog
+from tkinter import DISABLED, E, LEFT, N, NORMAL, RIGHT, SINGLE, W, S, filedialog
 from pathlib import Path
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from ecris.csd.plot_csd import get_plot
+
+class Plot(tk.Frame):
+    def __init__(self, *args, **kwargs):
+        tk.Frame.__init__(self, *args, **kwargs)
+        self.canvas = None
+
+    def plot(self, file: Path):
+        if self.canvas is not None:
+            for widget in self.winfo_children():
+                widget.destroy()
+        self.canvas = FigureCanvasTkAgg(get_plot(file), master=self)
+        self.canvas.draw()
+        self.canvas.get_tk_widget().pack()
+        self.toolbar = NavigationToolbar2Tk(self.canvas, self)
+        self.toolbar.update()
+        self.canvas.get_tk_widget().pack()
 
 class FileList(tk.Frame):
     def __init__(self, *args, **kwargs):
@@ -12,7 +30,7 @@ class FileList(tk.Frame):
         self.update_label()
         self.directory_label.pack()
 
-        self.file_listbox = tk.Listbox(self, width=50)
+        self.file_listbox = tk.Listbox(self, width=50, selectmode=SINGLE)
         self.file_listbox.pack()
 
         self.change_directory = tk.Button(self, text="Choose directory", 
@@ -27,10 +45,14 @@ class FileList(tk.Frame):
     def update_label(self):
         self.directory_label.config(text=f"Current directory: {self.current_directory}")
 
+    def get_selected_filename(self) -> Path:
+        for i in self.file_listbox.curselection():
+            return Path(self.current_directory) / self.file_listbox.get(i)
+
     def populate_listbox(self):
         """Populates the listbox with files from the specified directory."""
         try:
-            files = sorted(Path(self.current_directory).glob("csd_*"))
+            files = reversed(sorted(Path(self.current_directory).glob("csd_*")))
             self.file_listbox.delete(0, tk.END)  # Clear previous items
             if not files:
                 self.file_listbox.insert(tk.END, 'No files found')
@@ -56,17 +78,15 @@ class FileList(tk.Frame):
 window = tk.Tk()
 window.title("CSD Viewer")
 
-# Directory input
-# directory_label = tk.Label(window, text="Directory:")
-# directory_label.pack()
-# directory_entry = tk.Entry(window, width=50)
-# directory_entry.pack()
-
-# Change directory button
-# change_button = tk.Button(window, text="Change Directory", command=change_directory)
-# change_button.pack()
-
 file_list = FileList(window)
-file_list.grid(row=0, column =1)
+file_list.grid(row=0, column =1, padx=10, pady=10)
+plot = Plot(window)
+plot.grid(row=0, column=0, padx=10, pady=10, sticky=E+W+N+S)
+
+def view_csd():
+    plot.plot(file_list.get_selected_filename())
+
+view_button = tk.Button(window, text="View CSD", command=view_csd)
+view_button.grid(row=1, column=1, padx = 10, pady=10)
 
 window.mainloop()
