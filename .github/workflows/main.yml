@@ -19,9 +19,9 @@ jobs:
       - name: Install build tools
         run: pip install pyinstaller pipenv
       - name: Install dependencies
-        run: pipenv install
+        run: pipenv install && pipenv shell
       - name: Build
-        run: pyinstaller --noconsole --onefile gui_test.py
+        run: pyinstaller --noconsole --onefile csd_viewer.py
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v2
