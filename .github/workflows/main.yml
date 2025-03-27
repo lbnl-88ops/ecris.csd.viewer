@@ -6,7 +6,7 @@ on:
 jobs:
   build:
     name: Build and release executable
-    runs-on: windows-latest
+    runs-on: [ubuntu-latest, windows-latest]
     permissions:
       contents: write
     steps:
@@ -26,4 +26,4 @@ jobs:
         id: create_release
         uses: softprops/action-gh-release@v2
         with:
-          files: ./dist/csd_viewer.exe
+          files: [./dist/csd_viewer.exe, ./dist/csd_viewer]
