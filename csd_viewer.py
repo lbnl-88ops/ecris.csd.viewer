@@ -3,7 +3,7 @@ import os
 from tkinter import DISABLED, E, LEFT, N, NORMAL, RIGHT, SINGLE, W, S, filedialog
 from pathlib import Path
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
-from ecris.csd.plot_csd import get_plot
+from ecris.csd.viewer import get_plot
 
 class Plot(tk.Frame):
     def __init__(self, *args, **kwargs):
