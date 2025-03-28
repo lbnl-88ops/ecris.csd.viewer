@@ -17,7 +17,7 @@ jobs:
         with:
           python-version: 3.13
       - name: Install dependencies
-        run: pip install pipenv && pipenv install pyinstaller && pipenv install . --skip-lock
+        run: pip install pipenv && pipenv install pyinstaller && pipenv install
       - name: Build
         run: pipenv run pyinstaller --noconsole --onefile csd_viewer.py
       - name: Create Release
