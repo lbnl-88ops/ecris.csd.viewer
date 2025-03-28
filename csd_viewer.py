@@ -5,6 +5,31 @@ from pathlib import Path
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from ecris.csd.viewer import get_plot
 
+class App(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.title("CSD Viewer")
+        self.columnconfigure(0, weight=3)
+        self.columnconfigure(1, weight=1)
+        
+        self.create_widgets()
+        self.protocol("WM_DELETE_WINDOW", self.quit)
+
+    def quit(self):
+        self.destroy()
+
+    def view_csd(self):
+        self.plot.plot(self.file_list.get_selected_filename())
+
+    def create_widgets(self):
+        self.file_list = FileList(self)
+        self.file_list.grid(row=0, column =1, padx=1, pady=1) 
+        self.plot = Plot(self)
+        self.plot.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+
+        view_button = tk.Button(self, text="View CSD", command=self.view_csd)
+        view_button.grid(row=1, column=1, padx = 10, pady=10, sticky=W)
+
 class Plot(tk.Frame):
     def __init__(self, *args, **kwargs):
         tk.Frame.__init__(self, *args, **kwargs)
@@ -16,7 +41,7 @@ class Plot(tk.Frame):
                 widget.destroy()
         self.canvas = FigureCanvasTkAgg(get_plot(file), master=self)
         self.canvas.draw()
-        self.canvas.get_tk_widget().pack()
+        self.canvas.get_tk_widget().pack(fill="both", expand=True)
         self.toolbar = NavigationToolbar2Tk(self.canvas, self)
         self.toolbar.update()
         self.canvas.get_tk_widget().pack()
@@ -75,18 +100,6 @@ class FileList(tk.Frame):
             self.update_label()
 
 # Create the main window
-window = tk.Tk()
-window.title("CSD Viewer")
 
-file_list = FileList(window)
-file_list.grid(row=0, column =1, padx=10, pady=10)
-plot = Plot(window)
-plot.grid(row=0, column=0, padx=10, pady=10, sticky=E+W+N+S)
-
-def view_csd():
-    plot.plot(file_list.get_selected_filename())
-
-view_button = tk.Button(window, text="View CSD", command=view_csd)
-view_button.grid(row=1, column=1, padx = 10, pady=10)
-
-window.mainloop()
+app = App()
+app.mainloop()
