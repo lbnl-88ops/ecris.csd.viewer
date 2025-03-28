@@ -11,6 +11,8 @@ class App(tk.Tk):
         self.title("CSD Viewer")
         self.columnconfigure(0, weight=3)
         self.columnconfigure(1, weight=1)
+        self.rowconfigure(0, weight=10)
+        self.rowconfigure(1, weight=1)
         
         self.create_widgets()
         self.protocol("WM_DELETE_WINDOW", self.quit)
