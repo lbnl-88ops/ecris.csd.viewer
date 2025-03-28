@@ -13,6 +13,7 @@ class App(tk.Tk):
         self.columnconfigure(1, weight=1)
         self.rowconfigure(0, weight=10)
         self.rowconfigure(1, weight=1)
+        self.pad = 1.0
         
         self.create_widgets()
         self.protocol("WM_DELETE_WINDOW", self.quit)
@@ -20,17 +21,14 @@ class App(tk.Tk):
     def quit(self):
         self.destroy()
 
-    def view_csd(self):
-        self.plot.plot(self.file_list.get_selected_filename())
-
     def create_widgets(self):
-        self.file_list = FileList(self)
-        self.file_list.grid(row=0, column =1, padx=1, pady=1) 
+        self.file_list = FileList()
+        self.file_list.grid(row=0, column =1, padx=self.pad, pady=self.pad, sticky="nsew") 
         self.plot = Plot(self)
-        self.plot.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+        self.plot.grid(row=0, column=0, padx=self.pad, pady=self.pad, sticky="nsew")
+        self.controls = PlotControls(self.plot, self.file_list)
+        self.controls.grid(row=1, column=1, padx=self.pad, pady=self.pad, sticky="n")
 
-        view_button = tk.Button(self, text="View CSD", command=self.view_csd)
-        view_button.grid(row=1, column=1, padx = 10, pady=10, sticky=W)
 
 class Plot(tk.Frame):
     def __init__(self, *args, **kwargs):
@@ -60,13 +58,6 @@ class FileList(tk.Frame):
         self.file_listbox = tk.Listbox(self, width=50, selectmode=SINGLE)
         self.file_listbox.pack()
 
-        self.change_directory = tk.Button(self, text="Choose directory", 
-                                     command=self.choose_directory)
-        self.change_directory.pack(side=LEFT)
-        self.refresh = tk.Button(self, text="Refresh", command=self.populate_listbox)
-        self.refresh.pack(side=RIGHT)
-
-        # Initial population (optional, current directory by default)
         self.populate_listbox()
     
     def update_label(self):
@@ -94,12 +85,33 @@ class FileList(tk.Frame):
             self.file_listbox.delete(0, tk.END)
             self.file_listbox.insert(tk.END, "Not a directory.")
 
+
+
+class PlotControls(tk.Frame):
+    def __init__(self, plot: Plot, file_list: FileList, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.pad = 3.0
+        self.file_list = file_list
+        self.plot = plot
+        self.create_widgets()
+    
+    def create_widgets(self):
+        self.change_directory = tk.Button(self, text="Choose directory", 
+                                     command=self.choose_directory)
+        self.refresh = tk.Button(self, text="Refresh", 
+                                 command=self.refresh)
+        self.change_directory.grid(row=0, column=0, padx=self.pad, pady=self.pad)
+        self.refresh.grid(row=0, column=1, padx=self.pad, pady=self.pad)
+
     def choose_directory(self):
         new_directory = filedialog.askdirectory()
         if new_directory:
-            self.current_directory = new_directory
-            self.populate_listbox()
-            self.update_label()
+            self.file_list.current_directory = new_directory
+            self.file_list.populate_listbox()
+            self.file_list.update_label()
+
+    def refresh(self):
+        self.file_list.populate_listbox()
 
 # Create the main window
 
