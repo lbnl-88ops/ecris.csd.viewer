@@ -16,12 +16,10 @@ jobs:
         uses: actions/setup-python@v2 
         with:
           python-version: 3.13
-      - name: Install build tool
-        run: pip install pipenv && pipenv shell && pip install pyinstaller
       - name: Install dependencies
-        run: pipenv sync
+        run: pip install pipenv && pipenv shell && pip install pyinstaller && pipenv sync
       - name: Build
-        run: pyinstaller --noconsole --onefile csd_viewer.py
+        run: pipenv run pyinstaller --noconsole --onefile csd_viewer.py
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v2
