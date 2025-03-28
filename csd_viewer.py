@@ -69,7 +69,7 @@ class FileList(tk.Frame):
             return Path(self.current_directory) / self.file_listbox.get(i)
     
     def get_most_recent_filename(self) -> Path:
-        return self.file_listbox[0]
+        return Path(self.current_directory) / self.file_listbox.get(0)
 
     def populate_listbox(self):
         """Populates the listbox with files from the specified directory."""
