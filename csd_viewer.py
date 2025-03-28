@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 import os
 from tkinter import DISABLED, E, LEFT, N, NORMAL, RIGHT, SINGLE, W, S, filedialog
 from pathlib import Path
@@ -9,17 +10,14 @@ class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("CSD Viewer")
-        self.columnconfigure(0, weight=3)
+        self.columnconfigure(0, weight=5)
         self.columnconfigure(1, weight=1)
         self.rowconfigure(0, weight=10)
         self.rowconfigure(1, weight=1)
         self.pad = 1.0
         
         self.create_widgets()
-        self.protocol("WM_DELETE_WINDOW", self.quit)
-
-    def quit(self):
-        self.destroy()
+        self.protocol("WM_DELETE_WINDOW", quit)
 
     def create_widgets(self):
         self.file_list = FileList()
@@ -28,7 +26,7 @@ class App(tk.Tk):
         self.plot.grid(row=0, column=0, padx=self.pad, pady=self.pad, sticky="nsew",
                        rowspan=2)
         self.controls = PlotControls(self.plot, self.file_list)
-        self.controls.grid(row=1, column=1, padx=self.pad, pady=self.pad, sticky="n")
+        self.controls.grid(row=1, column=1, padx=self.pad, pady=self.pad)
 
 
 class Plot(tk.Frame):
@@ -135,6 +133,9 @@ class PlotControls(tk.Frame):
         self.file_list.populate_listbox()
 
 # Create the main window
+if __name__ == '__main__':
+    app = App()
+    app.mainloop()
 
-app = App()
-app.mainloop()
+def quit():
+    app.destroy()
