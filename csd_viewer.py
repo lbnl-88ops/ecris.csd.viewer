@@ -25,14 +25,15 @@ class App(tk.Tk):
         self.file_list = FileList()
         self.file_list.grid(row=0, column =1, padx=self.pad, pady=self.pad, sticky="nsew") 
         self.plot = Plot(self)
-        self.plot.grid(row=0, column=0, padx=self.pad, pady=self.pad, sticky="nsew")
+        self.plot.grid(row=0, column=0, padx=self.pad, pady=self.pad, sticky="nsew",
+                       rowspan=2)
         self.controls = PlotControls(self.plot, self.file_list)
         self.controls.grid(row=1, column=1, padx=self.pad, pady=self.pad, sticky="n")
 
 
 class Plot(tk.Frame):
     def __init__(self, *args, **kwargs):
-        tk.Frame.__init__(self, *args, **kwargs)
+        tk.Frame.__init__(self, relief=tk.RAISED, *args, **kwargs)
         self.canvas = None
 
     def plot(self, file: Path):
@@ -66,6 +67,9 @@ class FileList(tk.Frame):
     def get_selected_filename(self) -> Path:
         for i in self.file_listbox.curselection():
             return Path(self.current_directory) / self.file_listbox.get(i)
+    
+    def get_most_recent_filename(self) -> Path:
+        return self.file_listbox[0]
 
     def populate_listbox(self):
         """Populates the listbox with files from the specified directory."""
@@ -98,10 +102,27 @@ class PlotControls(tk.Frame):
     def create_widgets(self):
         self.change_directory = tk.Button(self, text="Choose directory", 
                                      command=self.choose_directory)
+        self.change_directory.grid(row=0, column=0, padx=self.pad, pady=self.pad,
+                                   sticky='nsew')
         self.refresh = tk.Button(self, text="Refresh", 
                                  command=self.refresh)
-        self.change_directory.grid(row=0, column=0, padx=self.pad, pady=self.pad)
-        self.refresh.grid(row=0, column=1, padx=self.pad, pady=self.pad)
+        self.refresh.grid(row=0, column=1, padx=self.pad, pady=self.pad,
+                          sticky='nsew')
+        self.view_csd = tk.Button(self, text="Plot CSD",
+                                  command=self.plot_file)
+        self.view_csd.grid(row=1, column=0, padx=self.pad, pady=self.pad,
+                           sticky='nsew')
+        self.update_and_view = tk.Button(self, text="Refresh and plot",
+                                         command=self.refresh_and_plot)
+        self.update_and_view.grid(row=1, column=1, padx=self.pad, 
+                                  pady=self.pad, sticky='nsew')
+    
+    def refresh_and_plot(self):
+        self.file_list.populate_listbox()
+        self.plot.plot(self.file_list.get_most_recent_filename())
+
+    def plot_file(self):
+        self.plot.plot(self.file_list.get_selected_filename())
 
     def choose_directory(self):
         new_directory = filedialog.askdirectory()
