@@ -17,7 +17,11 @@ class App(tk.Tk):
         self.pad = 1.0
         
         self.create_widgets()
-        self.protocol("WM_DELETE_WINDOW", quit)
+        self.protocol("WM_DELETE_WINDOW", self.quit)
+
+    def quit(self):
+        self.plot.destroy()
+        self.destroy()
 
     def create_widgets(self):
         self.file_list = FileList()
@@ -136,6 +140,3 @@ class PlotControls(tk.Frame):
 if __name__ == '__main__':
     app = App()
     app.mainloop()
-
-def quit():
-    app.destroy()

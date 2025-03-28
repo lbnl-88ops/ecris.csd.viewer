@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
 import datetime
 from pathlib import Path
 
@@ -51,13 +52,14 @@ def get_plot(file):
     dpeak = .1
     MQinterp,peakinds = interpolateMoverQ(MQest,ibeam,expectedpeaks,dpeak)
 
-    fig = plt.figure()
-    plt.title(formatted_time)
-    plt.plot(MQinterp,ibeam*1e6)
+    fig = Figure()
+    ax = fig.gca()
+    ax.set_title(formatted_time)
+    ax.plot(MQinterp,ibeam*1e6)
     #for i in range(len(peakinds)):
     #    plt.plot(expectedpeaks[i],ibeam[peakinds[i]]*1e6,'gx',label=r'$^{16}$O')
 
-    plt.xlabel('M/Q')
-    plt.ylabel(r'current [$\mu$A]')
+    ax.set_xlabel('M/Q')
+    ax.set_ylabel(r'current [$\mu$A]')
 
     return fig
