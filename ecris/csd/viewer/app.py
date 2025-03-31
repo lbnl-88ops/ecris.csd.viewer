@@ -2,7 +2,7 @@
 from pathlib import Path
 import tkinter as tk
 
-from .file_list import FileList
+from .files.file_list import FileList
 from .plotting.plot import Plot
 from .plot_controls import PlotControls
 

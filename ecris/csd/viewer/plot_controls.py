@@ -1,6 +1,6 @@
 import tkinter as tk
 
-from .file_list import FileList
+from .files.file_list import FileList
 from .plotting.plot import Plot
 
 class PlotControls(tk.Frame):
