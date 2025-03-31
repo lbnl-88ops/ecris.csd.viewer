@@ -10,8 +10,7 @@ def csd_viewer():
             configuration = yaml.load(f, Loader=yaml.Loader)
         print(configuration)
         default_path = Path(configuration['default_directory'])
-    except Exception as exc:
-        print(exc)
+    except Exception:
         default_path = Path('.')
 
     app = CSDViewer(default_path)

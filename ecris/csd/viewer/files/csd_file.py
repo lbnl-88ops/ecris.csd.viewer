@@ -20,6 +20,6 @@ class CSDFile():
         return f"{self.formatted_datetime} ({self.path.name})"
 
 def get_files(path: Path) -> List[CSDFile]:
-        return [CSDFile(p, 
-                        file_size=os.path.getsize(p)) 
-                        for p in reversed(sorted(Path(path).glob("csd_*")))]
+    glob = "csd_" + "[0-9]"*10
+    return [CSDFile(p, file_size=os.path.getsize(p)) 
+            for p in reversed(sorted(Path(path).glob(glob)))]
