@@ -3,10 +3,11 @@ import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 import datetime
 from pathlib import Path
+from typing import List
+
+from ecris.csd.viewer.files import CSDFile
 
 alpha = 0.00824    # calculated...need notes DST
-
-
 
 def getinfo(file: Path):
     data = np.loadtxt(file)
@@ -45,23 +46,27 @@ def interpolateMoverQ(MQest,ibeam,expectedpeaks,dpeak):
             MQinterp[peaks[-1]:] = np.linspace(expectedpeaks[-1],MQest[-1],len(MQest)-peaks[-1])
     return(MQinterp,peaks)
 
-def get_plot(file):
-    filenum = file.name[-10]
-    formatted_time = datetime.datetime.fromtimestamp(float(filenum)).strftime("%Y-%m-%d %H:%M:%S")
-    indices, settings, names, tcsd, ibatman, bbatman, ibeam  = getinfo(file)
+def plot_files(files: List[CSDFile]) -> Figure():
+    fig = Figure()
+    ax = fig.gca()
+    for file in files:
+        _plot_file(ax, file)
+    if len(files) > 1:
+        ax.set_title('Multiple CSDs shown')
+        ax.legend()
+    else:
+        ax.set_title(files[0].formatted_datetime)
+    ax.set_xlabel('M/Q')
+    ax.set_ylabel(r'current [$\mu$A]')
+    return fig
+
+def _plot_file(ax, file):
+    indices, settings, names, tcsd, ibatman, bbatman, ibeam  = getinfo(file.path)
     MQest = estimateMoverQ(settings,names,bbatman)
     expectedpeaks = [1.0,2.0,2.667, 3.2, 4.0, 5.333, 8.0]
     dpeak = .1
     MQinterp,peakinds = interpolateMoverQ(MQest,ibeam,expectedpeaks,dpeak)
 
-    fig = Figure()
-    ax = fig.gca()
-    ax.set_title(formatted_time)
-    ax.plot(MQinterp,ibeam*1e6)
+    ax.plot(MQinterp,ibeam*1e6, label=file.formatted_datetime)
     #for i in range(len(peakinds)):
     #    plt.plot(expectedpeaks[i],ibeam[peakinds[i]]*1e6,'gx',label=r'$^{16}$O')
-
-    ax.set_xlabel('M/Q')
-    ax.set_ylabel(r'current [$\mu$A]')
-
-    return fig

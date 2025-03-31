@@ -3,7 +3,7 @@ import tkinter as tk
 from typing import List
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
-from .plot_csd import get_plot
+from .plot_csd import plot_files
 from ecris.csd.viewer.files import CSDFile
 
 class Plot(tk.Frame):
@@ -20,10 +20,10 @@ class Plot(tk.Frame):
             for widget in self.winfo_children():
                 widget.destroy()
 
-    def plot(self, file: Path):
-        self.plotted_files.append(file)
+    def plot(self, file: CSDFile):
         self.clear_plot()
-        self.canvas = FigureCanvasTkAgg(get_plot(file), master=self)
+        self.plotted_files.append(file)
+        self.canvas = FigureCanvasTkAgg(plot_files(self.plotted_files), master=self)
         self.canvas.draw()
         self.canvas.get_tk_widget().pack(fill="both", expand=True)
         self.toolbar = NavigationToolbar2Tk(self.canvas, self)

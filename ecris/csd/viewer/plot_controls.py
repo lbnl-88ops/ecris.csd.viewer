@@ -31,13 +31,16 @@ class PlotControls(tk.Frame):
 
     def plot_file(self):
         file = self.file_list.get_selected_file()
-        self.plot.plot(file.path)
+        self.plot.plot(file)
         file.plotted = True
         self.file_list.update_colors()
 
     def clear_plot(self):
+        for i, file in enumerate(self.plot.plotted_files):
+            self.plot.plotted_files[i].plotted = False
+        self.plot.plotted_files = []
         self.plot.clear_plot()
-        self.file_list.update_colors()
+        self.file_list.populate_listbox()
 
     def choose_directory(self):
         new_directory = tk.filedialog.askdirectory()
