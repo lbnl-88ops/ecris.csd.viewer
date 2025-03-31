@@ -4,6 +4,9 @@ from typing import List
 
 from .csd_file import CSDFile, get_files
 
+BLUE = "#5200FF"
+WHITE = "#FFFFFF"
+
 class FileList(tk.Frame):
     def __init__(self, path: Path, *args, **kwargs):
         tk.Frame.__init__(self, *args, **kwargs)
@@ -31,7 +34,10 @@ class FileList(tk.Frame):
     def update_colors(self):
         for i, file in enumerate(self.files):
             if file.plotted:
-                self.file_listbox.itemconfigure(i, foreground="#3273a8") 
+                self.file_listbox.itemconfigure(i, 
+                                                foreground=BLUE,
+                                                selectbackground=BLUE,
+                                                selectforeground=WHITE)
 
     def populate_listbox(self):
         """Populates the listbox with files from the specified directory."""
