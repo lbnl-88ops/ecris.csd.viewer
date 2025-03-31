@@ -2,7 +2,7 @@
 import tkinter as tk
 
 from .file_list import FileList
-from .plot import Plot
+from .plotting.plot import Plot
 from .plot_controls import PlotControls
 
 class CSDViewer(tk.Tk):
