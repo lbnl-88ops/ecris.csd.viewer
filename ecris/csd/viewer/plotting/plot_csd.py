@@ -6,6 +6,8 @@ from pathlib import Path
 
 alpha = 0.00824    # calculated...need notes DST
 
+
+
 def getinfo(file: Path):
     data = np.loadtxt(file)
     with open(file.with_name(file.name.replace('csd', 'dsht')),'r') as f:
