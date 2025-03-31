@@ -8,6 +8,7 @@ pyqt6 = "*"
 tk = "*"
 matplotlib = "*"
 numpy = "*"
+pyyaml = "*"
 
 [dev-packages]
 

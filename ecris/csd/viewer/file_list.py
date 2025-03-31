@@ -4,9 +4,10 @@ import tkinter as tk
 
 
 class FileList(tk.Frame):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, path: Path, *args, **kwargs):
         tk.Frame.__init__(self, *args, **kwargs)
-        self.current_directory = os.getcwd()
+        self.current_directory = path
+
         # Listbox to display files
         self.directory_label = tk.Label(self)
         self.update_label()
