@@ -24,10 +24,19 @@ class PlotControls(tk.Frame):
                                   command=self.plot_file)
         self.view_csd.grid(row=1, column=0, padx=self.pad, pady=self.pad,
                            sticky='nsew')
+        self.clear_plot = tk.Button(self, text="Clear Plot",
+                                    command=self.clear_plot)
+        self.clear_plot.grid(row=1, column=1, padx=self.pad, pady=self.pad,
+                             sticky='nsew')
+
     def plot_file(self):
         file = self.file_list.get_selected_file()
         self.plot.plot(file.path)
         file.plotted = True
+        self.file_list.update_colors()
+
+    def clear_plot(self):
+        self.plot.clear_plot()
         self.file_list.update_colors()
 
     def choose_directory(self):
