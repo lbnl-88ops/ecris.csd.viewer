@@ -39,8 +39,11 @@ class FileList(tk.Frame):
                                                 selectbackground=BLUE,
                                                 selectforeground=WHITE)
 
-    def populate_listbox(self):
+    def populate_listbox(self, retain_plotted=False):
         """Populates the listbox with files from the specified directory."""
+        plotted = []
+        if retain_plotted:
+            plotted = [f.path for f in self.files if f.plotted]
         self.files = get_files(self.current_directory)
         self.file_listbox.delete(0, tk.END)
         if not self.files:
@@ -49,4 +52,7 @@ class FileList(tk.Frame):
         else:
             self.stringvar.set([f.list_value for f in self.files])
             self.file_listbox.configure(state=tk.NORMAL)
+        for file in self.files:
+            file.plotted = file.path in plotted
         self.update_colors()
+        

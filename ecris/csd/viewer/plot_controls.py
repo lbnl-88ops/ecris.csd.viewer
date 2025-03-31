@@ -31,9 +31,10 @@ class PlotControls(tk.Frame):
 
     def plot_file(self):
         file = self.file_list.get_selected_file()
-        self.plot.plot(file)
-        file.plotted = True
-        self.file_list.update_colors()
+        if file is not None:
+            self.plot.plot(file)
+            file.plotted = True
+            self.file_list.update_colors()
 
     def clear_plot(self):
         for i, file in enumerate(self.plot.plotted_files):
@@ -50,4 +51,4 @@ class PlotControls(tk.Frame):
             self.file_list.update_label()
 
     def refresh(self):
-        self.file_list.populate_listbox()
+        self.file_list.populate_listbox(retain_plotted=True)
