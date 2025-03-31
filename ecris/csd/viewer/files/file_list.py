@@ -9,12 +9,17 @@ class CSDFile():
         self.path = path
         self.datetime_format: str = "%Y-%m-%d %H:%M:%S"
         self.plotted: bool = False
+        self.file_size: float = 0
 
     @property
     def formatted_datetime(self) -> str:
         time_stamp = self.path.name[-10:]
         print(time_stamp)
         return dt.datetime.fromtimestamp(float(time_stamp)).strftime(self.datetime_format)
+
+    @property
+    def list_value(self) -> str:
+        return f"{self.formatted_datetime} ({self.path.name})"
 
 class FileList(tk.Frame):
     def __init__(self, path: Path, *args, **kwargs):
@@ -52,9 +57,8 @@ class FileList(tk.Frame):
         self.get_files()
         self.file_listbox.delete(0, tk.END)
         if not self.files:
-            self.stringvar.set('No CSD files found')
-            # self.file_listbox.insert(tk.END, 'No CSD files found')
+            self.stringvar.set(["No CSD files found"])
             self.file_listbox.configure(state=tk.DISABLED)
         else:
-            self.stringvar.set([f.formatted_datetime for f in self.files])
+            self.stringvar.set([f.list_value for f in self.files])
             self.file_listbox.configure(state=tk.NORMAL)
