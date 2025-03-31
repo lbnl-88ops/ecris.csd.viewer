@@ -13,7 +13,6 @@ class CSDFile():
     @property
     def formatted_datetime(self) -> str:
         time_stamp = self.path.name[-10:]
-        print(time_stamp)
         return dt.datetime.fromtimestamp(float(time_stamp)).strftime(self.datetime_format)
 
     @property

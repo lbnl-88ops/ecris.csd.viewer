@@ -31,7 +31,7 @@ class FileList(tk.Frame):
     def update_colors(self):
         for i, file in enumerate(self.files):
             if file.plotted:
-                self.file_listbox.itemconfigure(i, foreground="#555555") 
+                self.file_listbox.itemconfigure(i, foreground="#3273a8") 
 
     def populate_listbox(self):
         """Populates the listbox with files from the specified directory."""
