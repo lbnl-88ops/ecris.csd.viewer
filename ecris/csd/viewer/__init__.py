@@ -1,1 +1,1 @@
-from .plot_csd import get_plot
+from .app import CSDViewer
