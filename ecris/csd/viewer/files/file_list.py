@@ -24,9 +24,14 @@ class FileList(tk.Frame):
     def update_label(self):
         self.directory_label.config(text=f"Current directory: {self.current_directory}")
     
-    def get_selected_filename(self) -> Path:
+    def get_selected_file(self) -> CSDFile:
         for i in self.file_listbox.curselection():
-            return self.files[i].path
+            return self.files[i]
+
+    def update_colors(self):
+        for i, file in enumerate(self.files):
+            if file.plotted:
+                self.file_listbox.itemconfigure(i, foreground="#555555") 
 
     def populate_listbox(self):
         """Populates the listbox with files from the specified directory."""
@@ -38,3 +43,4 @@ class FileList(tk.Frame):
         else:
             self.stringvar.set([f.list_value for f in self.files])
             self.file_listbox.configure(state=tk.NORMAL)
+        self.update_colors()

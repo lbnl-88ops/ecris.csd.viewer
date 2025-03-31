@@ -24,17 +24,11 @@ class PlotControls(tk.Frame):
                                   command=self.plot_file)
         self.view_csd.grid(row=1, column=0, padx=self.pad, pady=self.pad,
                            sticky='nsew')
-        self.update_and_view = tk.Button(self, text="Refresh and plot",
-                                         command=self.refresh_and_plot)
-        self.update_and_view.grid(row=1, column=1, padx=self.pad, 
-                                  pady=self.pad, sticky='nsew')
-    
-    def refresh_and_plot(self):
-        self.file_list.populate_listbox()
-        self.plot.plot(self.file_list.get_most_recent_filename())
-
     def plot_file(self):
-        self.plot.plot(self.file_list.get_selected_filename())
+        file = self.file_list.get_selected_file()
+        self.plot.plot(file.path)
+        file.plotted = True
+        self.file_list.update_colors()
 
     def choose_directory(self):
         new_directory = tk.filedialog.askdirectory()
