@@ -7,6 +7,7 @@ class PlotControls(tk.Frame):
     def __init__(self, plot: Plot, file_list: FileList, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.pad = 3.0
+        self.big_button_size = 2
         self.file_list = file_list
         self.plot = plot
         self.create_widgets()
@@ -18,13 +19,17 @@ class PlotControls(tk.Frame):
         self.refresh = tk.Button(self, text="Refresh", 
                                  command=self.refresh)
         self.view_csd = tk.Button(self, text="Plot CSD",
-                                  command=self.plot_file)
+                                  command=self.plot_file,
+                                  height=self.big_button_size)
         self.clear_plot = tk.Button(self, text="Clear Plot",
-                                    command=self.clear_plot)
-        for loc, widget in {(1, 0): self.change_directory, 
-                            (1, 1): self.refresh, 
-                            (0, 0): self.view_csd, 
-                            (0, 1): self.clear_plot}.items():
+                                    command=self.clear_plot,
+                                    height=self.big_button_size)
+        for loc, widget in {
+            (0, 0): self.view_csd, 
+            (0, 1): self.clear_plot,
+            (1, 0): self.change_directory, 
+            (1, 1): self.refresh, 
+            }.items():
             widget.grid(row=loc[0], column=loc[1], padx=self.pad, pady=self.pad, sticky='nsew')
 
     def plot_file(self):
