@@ -12,22 +12,20 @@ class PlotControls(tk.Frame):
         self.create_widgets()
     
     def create_widgets(self):
+        self.widgets = []
         self.change_directory = tk.Button(self, text="Choose directory", 
                                      command=self.choose_directory)
-        self.change_directory.grid(row=1, column=0, padx=self.pad, pady=self.pad,
-                                   sticky='nsew')
         self.refresh = tk.Button(self, text="Refresh", 
                                  command=self.refresh)
-        self.refresh.grid(row=1, column=1, padx=self.pad, pady=self.pad,
-                          sticky='nsew')
         self.view_csd = tk.Button(self, text="Plot CSD",
                                   command=self.plot_file)
-        self.view_csd.grid(row=0, column=0, padx=self.pad, pady=self.pad,
-                           sticky='nsew')
         self.clear_plot = tk.Button(self, text="Clear Plot",
                                     command=self.clear_plot)
-        self.clear_plot.grid(row=0, column=1, padx=self.pad, pady=self.pad,
-                             sticky='nsew')
+        for loc, widget in {(1, 0): self.change_directory, 
+                            (1, 1): self.refresh, 
+                            (0, 0): self.view_csd, 
+                            (0, 1): self.clear_plot}.items():
+            widget.grid(row=loc[0], column=loc[1], padx=self.pad, pady=self.pad, sticky='nsew')
 
     def plot_file(self):
         file = self.file_list.get_selected_file()
