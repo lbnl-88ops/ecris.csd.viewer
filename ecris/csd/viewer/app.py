@@ -6,11 +6,13 @@ from .files.file_list import FileList
 from .plotting.plot import Plot
 from .plot_controls import PlotControls
 
+__version__ = "0.5.0"
+
 class CSDViewer(tk.Tk):
     def __init__(self, default_path: Path):
         super().__init__()
         self.default_path = default_path.absolute()
-        self.title("CSD Viewer")
+        self.title(f"CSD Viewer (v{__version__})")
         self.columnconfigure(0, weight=5)
         self.columnconfigure(1, weight=1)
         self.rowconfigure(0, weight=10)
