@@ -87,8 +87,9 @@ def interpolateMoverQ(MQest,ibeam,expectedpeaks,dpeak):
 def plot_files(files: List[CSDFile]) -> Figure():
     fig = Figure()
     ax = fig.gca()
+    artists = []
     for file in files:
-        _plot_file(ax, file)
+        artists.append(_plot_file(ax, file))
     if len(files) > 1:
         ax.set_title('Multiple CSDs shown')
         ax.legend()
@@ -96,7 +97,7 @@ def plot_files(files: List[CSDFile]) -> Figure():
         ax.set_title(files[0].formatted_datetime)
     ax.set_xlabel('M/Q')
     ax.set_ylabel(r'current [$\mu$A]')
-    return fig
+    return fig, artists
 
 def _plot_file(ax, file):
     indices, settings, names, tcsd, ibatman, bbatman, ibeam  = getinfo(file.path)
@@ -109,6 +110,7 @@ def _plot_file(ax, file):
     dpeak = .1
     MQinterp,peakinds = interpolateMoverQ(MQest,ibeam,expectedpeaks,dpeak)
 
-    ax.plot(MQinterp,ibeam*1e6, label=file.formatted_datetime)
+    ln, = ax.plot(MQinterp,ibeam*1e6, label=file.formatted_datetime, animated=True)
+    return ln
     #for i in range(len(peakinds)):
     #    plt.plot(expectedpeaks[i],ibeam[peakinds[i]]*1e6,'gx',label=r'$^{16}$O')
