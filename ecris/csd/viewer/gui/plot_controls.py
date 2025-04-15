@@ -1,7 +1,7 @@
 import tkinter as tk
 
-from .files.file_list import FileList
-from .plotting.plot import Plot
+from .file_list import FileList
+from .plot import Plot
 
 class PlotControls(tk.Frame):
     def __init__(self, plot: Plot, file_list: FileList, *args, **kwargs):

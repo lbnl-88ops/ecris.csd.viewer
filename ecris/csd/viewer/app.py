@@ -2,9 +2,7 @@
 from pathlib import Path
 import tkinter as tk
 
-from .files.file_list import FileList
-from .plotting.plot import Plot
-from .plot_controls import PlotControls
+from .gui import FileList, PlotControls, Plot
 
 __version__ = "0.5.0"
 

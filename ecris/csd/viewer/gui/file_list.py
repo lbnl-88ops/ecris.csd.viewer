@@ -2,7 +2,7 @@ from pathlib import Path
 import tkinter as tk
 from typing import List
 
-from .csd_file import CSDFile, get_files
+from ..files.csd_file import CSDFile, get_files
 
 BLUE = "#5200FF"
 WHITE = "#FFFFFF"

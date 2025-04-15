@@ -3,7 +3,7 @@ import tkinter as tk
 from typing import List
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
-from .plot_csd import plot_files
+from ..plotting.plot_csd import plot_files
 from ecris.csd.viewer.files import CSDFile
 
 class Plot(tk.Frame):
