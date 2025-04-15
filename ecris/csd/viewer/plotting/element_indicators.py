@@ -29,6 +29,21 @@ class ElementIndicator:
         self.marker_artist = marker_artist
         self.label_artists = label_artists
 
+    def set_x_limits(self, x_limits):
+        x_min, x_max = x_limits
+        visible_labels = sum(x_min < l.get_position()[0] < x_max for l in self.label_artists)
+        show_every = 1
+        if visible_labels > 10:
+            show_every = 5
+        elif visible_labels > 5:
+            show_every = 2
+        for i, label in enumerate(self.label_artists):
+            if i % show_every == 0:
+                label.set_alpha(1)
+            else:
+                label.set_alpha(0)
+
+
     def set_y_limits(self, y_limits, scale):
         y_min, y_max = y_limits
         height = (y_max + y_min)/2 * scale
@@ -44,10 +59,10 @@ class ElementIndicator:
 def add_element_indicators(elements: List[Element], figure: Figure):
     markers = ["v", "^", "p", "d", "*", "D"]
     element_indicators = []
+    ax = figure.gca()
     for i, element in enumerate(elements):
         labels = []
         m_over_q = [element.atomic_weight/n for n in range(1, element.atomic_number)]
-        ax = figure.gca()
         x_min, x_max = ax.get_xlim()
         y_min, y_max = ax.get_ylim()
         height = (i + 1)*(y_max + y_min)/len(elements)/2
@@ -66,6 +81,7 @@ def add_element_indicators(elements: List[Element], figure: Figure):
                           weight='bold', clip_on = True)
             labels.append(txt)
         element_indicators.append(ElementIndicator(ln, labels))
+    ax.legend()
     return element_indicators
 
 

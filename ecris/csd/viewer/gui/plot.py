@@ -6,7 +6,7 @@ from xml.dom.minidom import Element
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from ..plotting.plot_csd import plot_files
 from ecris.csd.viewer.files import CSDFile
-from ecris.csd.viewer.plotting.element_indicators import add_element_indicators, PERSISTANT_ELEMENTS, Element
+from ecris.csd.viewer.plotting.element_indicators import add_element_indicators, PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS, Element
 
 class Plot(tk.Frame):
     def __init__(self, *args, **kwargs):
@@ -30,7 +30,7 @@ class Plot(tk.Frame):
         self.clear_plot()
         self._plotted_files.append(file)
         self._figure, self._csd_artists = plot_files(self._plotted_files)
-        self._element_indicators = add_element_indicators(PERSISTANT_ELEMENTS, self._figure)
+        self._element_indicators = add_element_indicators(PERSISTANT_ELEMENTS + VARIABLE_ELEMENTS, self._figure)
         self.canvas = FigureCanvasTkAgg(self._figure, master=self)
         self.canvas.mpl_connect('draw_event', self.on_draw)
         self.canvas.mpl_connect('resize_event', self._update)
@@ -57,11 +57,11 @@ class Plot(tk.Frame):
                             if element.is_visible(ax.get_xlim())]
         for i, element in enumerate(visible_elements):
             element.set_y_limits(ax.get_ylim(), (i + 1)/len(visible_elements))
+            element.set_x_limits(ax.get_xlim())
             a = element.marker_artist
             fig.draw_artist(a)
             for a in element.label_artists:
                 fig.draw_artist(a)
-
 
     def _update(self, event):
         if self._bg is None:
