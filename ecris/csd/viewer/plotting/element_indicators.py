@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from matplotlib.figure import Figure
 from typing import List
 
+from matplotlib.markers import MarkerStyle
+
 @dataclass
 class Element:
     name: str
@@ -25,6 +27,7 @@ VARIABLE_ELEMENTS = [
 def add_element_indicators(elements: List[Element], figure: Figure):
     markers = ["v", "^", "p", "d", "*", "D"]
     artists = []
+    labels = []
     for i, element in enumerate(elements):
         m_over_q = [element.atomic_weight/n for n in range(1, element.atomic_number)]
         ax = figure.gca()
@@ -32,14 +35,21 @@ def add_element_indicators(elements: List[Element], figure: Figure):
         y_min, y_max = ax.get_ylim()
         height = (i + 1)*(y_max + y_min)/len(elements)/2
         to_plot = [m for m in m_over_q if x_min <= m <= x_max]
+        marker = MarkerStyle(markers[i % len(markers)])
         ln, = ax.plot(to_plot, [height]*len(to_plot), 
-                marker=markers[i % len(markers)],
+                marker=marker,
                 ms=10,
                 ls='',
                 label=element.name,
                 animated=True)
+        for x in to_plot:
+            offset = marker.get_path().transformed(marker.get_transform()).get_extents().height
+            txt = ax.text(x, height + offset, f"{x:.1f}", animated=True, c=ln.get_color(),
+                          ha='center', va='bottom',
+                          weight='bold')
+            labels.append(txt)
         artists.append(ln)
-    return artists
+    return artists, labels
 
 
 

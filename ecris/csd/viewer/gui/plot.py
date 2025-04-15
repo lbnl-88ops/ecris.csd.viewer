@@ -17,6 +17,7 @@ class Plot(tk.Frame):
         self._figure = None
         self._csd_artists = None
         self._element_artists = None
+        self._labels = None
 
     def plotted_files(self):
         return self._plotted_files
@@ -30,7 +31,7 @@ class Plot(tk.Frame):
         self.clear_plot()
         self._plotted_files.append(file)
         self._figure, self._csd_artists = plot_files(self._plotted_files)
-        self._element_artists = add_element_indicators(PERSISTANT_ELEMENTS, self._figure)
+        self._element_artists, self._labels = add_element_indicators(PERSISTANT_ELEMENTS, self._figure)
         self.canvas = FigureCanvasTkAgg(self._figure, master=self)
         self.canvas.mpl_connect('draw_event', self.on_draw)
         self.canvas.mpl_connect('resize_event', self._update)
@@ -61,6 +62,8 @@ class Plot(tk.Frame):
             y_min, y_max = ax.get_ylim()
             height = (i + 1)*(y_max + y_min)/len(visible_elements)/2
             a.set_ydata([height]*len(a.get_xdata()))
+            fig.draw_artist(a)
+        for a in self._labels:
             fig.draw_artist(a)
 
 
