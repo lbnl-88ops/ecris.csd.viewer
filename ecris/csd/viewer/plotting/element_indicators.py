@@ -29,6 +29,14 @@ class ElementIndicator:
         self.marker_artist = marker_artist
         self.label_artists = label_artists
 
+    def set_y_limits(self, y_limits, scale):
+        y_min, y_max = y_limits
+        height = (y_max + y_min)/2 * scale
+        self.marker_artist.set_ydata([height]*len(self.marker_artist.get_xdata()))
+        offset = 0.02*abs(y_max - y_min)
+        for label in self.label_artists:
+            label.set_y(height + offset)
+
     def is_visible(self, x_limits):
         x_min, x_max = x_limits
         return any(x_min < x < x_max for x in self.marker_artist.get_xdata())
@@ -51,11 +59,11 @@ def add_element_indicators(elements: List[Element], figure: Figure):
                 ls='',
                 label=element.name,
                 animated=True)
+        offset = 0.1*abs(y_max - y_min)
         for x in to_plot:
-            offset = marker.get_path().transformed(marker.get_transform()).get_extents().height
             txt = ax.text(x, height + offset, f"{x:.1f}", animated=True, c=ln.get_color(),
                           ha='center', va='bottom',
-                          weight='bold')
+                          weight='bold', clip_on = True)
             labels.append(txt)
         element_indicators.append(ElementIndicator(ln, labels))
     return element_indicators

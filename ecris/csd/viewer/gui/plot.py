@@ -56,10 +56,8 @@ class Plot(tk.Frame):
                             self._element_indicators 
                             if element.is_visible(ax.get_xlim())]
         for i, element in enumerate(visible_elements):
+            element.set_y_limits(ax.get_ylim(), (i + 1)/len(visible_elements))
             a = element.marker_artist
-            y_min, y_max = ax.get_ylim()
-            height = (i + 1)*(y_max + y_min)/len(visible_elements)/2
-            a.set_ydata([height]*len(a.get_xdata()))
             fig.draw_artist(a)
             for a in element.label_artists:
                 fig.draw_artist(a)
