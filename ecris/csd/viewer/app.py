@@ -6,7 +6,7 @@ from .files.file_list import FileList
 from .plotting.plot import Plot
 from .plot_controls import PlotControls
 
-__version__ = "0.4.1"
+__version__ = "0.5.0"
 
 class CSDViewer(tk.Tk):
     def __init__(self, default_path: Path):
