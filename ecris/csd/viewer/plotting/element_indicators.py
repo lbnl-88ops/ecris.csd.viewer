@@ -29,20 +29,36 @@ class ElementIndicator:
         self.marker_artist = marker_artist
         self.label_artists = label_artists
 
-    def set_x_limits(self, x_limits):
-        x_min, x_max = x_limits
-        visible_labels = sum(x_min < l.get_position()[0] < x_max for l in self.label_artists)
-        show_every = 1
-        if visible_labels > 10:
-            show_every = 5
-        elif visible_labels > 5:
-            show_every = 2
-        for i, label in enumerate(self.label_artists):
-            if i % show_every == 0:
-                label.set_alpha(1)
+    def set_x_scale(self, figure):
+        ax = figure.gca()
+        ax_min, ax_max = ax.get_xlim()
+        x_min = ax.transData.transform((ax_min, 0))[0]
+        x_max = ax.transData.transform((ax_max, 0))[0]
+        print(x_min, x_max)
+        space_required = 0.1*(x_max - x_min)
+        visible_labels = sorted([l for l in self.label_artists if x_min < ax.transData.transform(l.get_position())[0] < x_max],
+                                key=lambda l: l.get_position()[0])
+        print(visible_labels)
+        if not visible_labels:
+            return
+        label_x_positions = [ax.transData.transform(l.get_position())[0] for l in visible_labels]
+        visible = []
+        last_visible = None
+        for x_position in label_x_positions:
+            if last_visible is None:
+                print(f'No last visible, setting to {x_position}')
+                visible.append(True)
+                last_visible = x_position
+                continue
+            if abs(x_position - last_visible) > space_required:
+                print(f'Value {x_position} - {last_visible} > {space_required}, showing')
+                visible.append(True)
+                last_visible = x_position
             else:
-                label.set_alpha(0)
-
+                print(f'Value {x_position} - {last_visible} < {space_required}, hiding')
+                visible.append(False)
+        for v, l in zip(visible, visible_labels):
+            l.set_alpha(1 if v else 0)
 
     def set_y_limits(self, y_limits, scale):
         y_min, y_max = y_limits
