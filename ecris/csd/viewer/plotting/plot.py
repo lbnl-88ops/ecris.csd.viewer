@@ -10,10 +10,10 @@ class Plot(tk.Frame):
     def __init__(self, *args, **kwargs):
         tk.Frame.__init__(self, relief=tk.RAISED, *args, **kwargs)
         self.canvas = None
-        self.plotted_files: List[CSDFile] = []
+        self._plotted_files: List[CSDFile] = []
 
     def plotted_files(self):
-        return self.plotted_files
+        return self._plotted_files
 
     def clear_plot(self):
         if self.canvas is not None:
@@ -22,8 +22,8 @@ class Plot(tk.Frame):
 
     def plot(self, file: CSDFile):
         self.clear_plot()
-        self.plotted_files.append(file)
-        self.canvas = FigureCanvasTkAgg(plot_files(self.plotted_files), master=self)
+        self._plotted_files.append(file)
+        self.canvas = FigureCanvasTkAgg(plot_files(self._plotted_files), master=self)
         self.canvas.draw()
         self.canvas.get_tk_widget().pack(fill="both", expand=True)
         self.toolbar = NavigationToolbar2Tk(self.canvas, self)
