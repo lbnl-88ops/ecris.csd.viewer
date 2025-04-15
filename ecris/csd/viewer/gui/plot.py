@@ -49,10 +49,17 @@ class Plot(tk.Frame):
         fig = self.canvas.figure
         for a in self._csd_artists:
             fig.draw_artist(a)
-        for i, a in enumerate(self._element_artists):
-            ax = fig.gca()
+
+        # Determine how many elements are visible
+        ax = fig.gca()
+        x_min, x_max = ax.get_xlim()
+        visible_elements = [
+            artist for artist in self._element_artists if 
+            any(x_min < x < x_max for x in artist.get_xdata())
+        ]
+        for i, a in enumerate(visible_elements):
             y_min, y_max = ax.get_ylim()
-            height = (i + 1)*(y_max - y_min)/len(self._element_artists)/2
+            height = (i + 1)*(y_max + y_min)/len(visible_elements)/2
             a.set_ydata([height]*len(a.get_xdata()))
             fig.draw_artist(a)
 

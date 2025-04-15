@@ -30,7 +30,7 @@ def add_element_indicators(elements: List[Element], figure: Figure):
         ax = figure.gca()
         x_min, x_max = ax.get_xlim()
         y_min, y_max = ax.get_ylim()
-        height = (i + 1)*(y_max - y_min)/len(elements)/2
+        height = (i + 1)*(y_max + y_min)/len(elements)/2
         to_plot = [m for m in m_over_q if x_min <= m <= x_max]
         ln, = ax.plot(to_plot, [height]*len(to_plot), 
                 marker=markers[i % len(markers)],
