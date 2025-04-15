@@ -16,8 +16,7 @@ class Plot(tk.Frame):
         self._bg = None
         self._figure = None
         self._csd_artists = None
-        self._element_artists = None
-        self._labels = None
+        self._element_indicators = None
 
     def plotted_files(self):
         return self._plotted_files
@@ -31,7 +30,7 @@ class Plot(tk.Frame):
         self.clear_plot()
         self._plotted_files.append(file)
         self._figure, self._csd_artists = plot_files(self._plotted_files)
-        self._element_artists, self._labels = add_element_indicators(PERSISTANT_ELEMENTS, self._figure)
+        self._element_indicators = add_element_indicators(PERSISTANT_ELEMENTS, self._figure)
         self.canvas = FigureCanvasTkAgg(self._figure, master=self)
         self.canvas.mpl_connect('draw_event', self.on_draw)
         self.canvas.mpl_connect('resize_event', self._update)
@@ -53,18 +52,17 @@ class Plot(tk.Frame):
 
         # Determine how many elements are visible
         ax = fig.gca()
-        x_min, x_max = ax.get_xlim()
-        visible_elements = [
-            artist for artist in self._element_artists if 
-            any(x_min < x < x_max for x in artist.get_xdata())
-        ]
-        for i, a in enumerate(visible_elements):
+        visible_elements = [element for element in 
+                            self._element_indicators 
+                            if element.is_visible(ax.get_xlim())]
+        for i, element in enumerate(visible_elements):
+            a = element.marker_artist
             y_min, y_max = ax.get_ylim()
             height = (i + 1)*(y_max + y_min)/len(visible_elements)/2
             a.set_ydata([height]*len(a.get_xdata()))
             fig.draw_artist(a)
-        for a in self._labels:
-            fig.draw_artist(a)
+            for a in element.label_artists:
+                fig.draw_artist(a)
 
 
     def _update(self, event):

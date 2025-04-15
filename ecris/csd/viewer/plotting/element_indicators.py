@@ -24,11 +24,20 @@ VARIABLE_ELEMENTS = [
                                     [23])
 ]
 
+class ElementIndicator:
+    def __init__(self, marker_artist, label_artists):
+        self.marker_artist = marker_artist
+        self.label_artists = label_artists
+
+    def is_visible(self, x_limits):
+        x_min, x_max = x_limits
+        return any(x_min < x < x_max for x in self.marker_artist.get_xdata())
+
 def add_element_indicators(elements: List[Element], figure: Figure):
     markers = ["v", "^", "p", "d", "*", "D"]
-    artists = []
-    labels = []
+    element_indicators = []
     for i, element in enumerate(elements):
+        labels = []
         m_over_q = [element.atomic_weight/n for n in range(1, element.atomic_number)]
         ax = figure.gca()
         x_min, x_max = ax.get_xlim()
@@ -48,8 +57,8 @@ def add_element_indicators(elements: List[Element], figure: Figure):
                           ha='center', va='bottom',
                           weight='bold')
             labels.append(txt)
-        artists.append(ln)
-    return artists, labels
+        element_indicators.append(ElementIndicator(ln, labels))
+    return element_indicators
 
 
 
