@@ -24,7 +24,7 @@ class ElementIndicator:
         if lines:
             ax = figure.gca()
             for x in self.marker_artist.get_xdata():
-                line = ax.axvline(x, ls='--', alpha=0.15, c=self.marker_artist.get_color(), animated=True)
+                line = ax.axvline(x, ls='--', alpha=0.25, c=self.marker_artist.get_color(), animated=True)
                 figure.draw_artist(line)
 
     @property

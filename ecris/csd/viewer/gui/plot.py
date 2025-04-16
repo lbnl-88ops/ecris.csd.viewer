@@ -13,6 +13,7 @@ from ecris.csd.viewer.analysis import Element
 class Plot(tk.Frame):
     def __init__(self, owner, *args, **kwargs):
         tk.Frame.__init__(self, owner, relief=tk.RAISED, *args, **kwargs)
+        self._is_empty = True
         self._plotted_files: List[CSDFile] = []
         self._bg = None
         self.element_indicators: List[ElementIndicator] = []
@@ -47,6 +48,12 @@ class Plot(tk.Frame):
 
     def plot(self, file: CSDFile):
         self._csd_artists.append(file_artist(self._figure.gca(), file))
+        self.update()
+
+    def autoscale(self):
+        ax = self._figure.gca()
+        ax.relim(visible_only=True)
+        ax.autoscale()
         self.update()
 
     def on_draw(self, event):

@@ -53,12 +53,16 @@ class PlotControls(tk.Frame):
         self.btViewCSD = tk.Button(self, text="Plot CSD",
                                   command=self.plot_file,
                                   height=self.big_button_size)
+        self.btAutoScale = tk.Button(self, text="Reset Scale",
+                                     command=self.plot.autoscale,
+                                     height=self.big_button_size)
         self.btClearPlot = tk.Button(self, text="Clear Plot", 
                                      command=self.clear_plot, 
                                      height=self.big_button_size)
         for loc, widget in {
             (0, 0): self.btViewCSD, 
-            (0, 1): self.btClearPlot,
+            (0, 1): self.btAutoScale,
+            (0, 2): self.btClearPlot,
             }.items():
             widget.grid(row=loc[0], column=loc[1], padx=self.pad, pady=self.pad, sticky='nsew')
 
