@@ -57,13 +57,12 @@ class ElementIndicator:
         for v, l in zip(visible, visible_labels):
             l.set_alpha(1 if v else 0)
 
-    def set_y_limits(self, y_limits, scale):
+    def set_y_value(self, y_value, y_limits):
         y_min, y_max = y_limits
-        height = (y_max + y_min)/2 * scale
-        self.marker_artist.set_ydata([height]*len(self.marker_artist.get_xdata()))
+        self.marker_artist.set_ydata([y_value]*len(self.marker_artist.get_xdata()))
         offset = 0.02*abs(y_max - y_min)
         for label in self.label_artists:
-            label.set_y(height + offset)
+            label.set_y(y_value + offset)
 
     def is_visible(self, x_limits):
         x_min, x_max = x_limits

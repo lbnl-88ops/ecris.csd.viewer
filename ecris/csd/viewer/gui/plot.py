@@ -1,3 +1,4 @@
+import enum
 from pathlib import Path
 import tkinter as tk
 from typing import Dict, List, Optional
@@ -60,8 +61,11 @@ class Plot(tk.Frame):
         visible_elements = [element for element in 
                             self.element_indicators 
                             if element.is_visible(ax.get_xlim()) and element.is_plotted]
-        for i, element in enumerate(visible_elements):
-            element.set_y_limits(ax.get_ylim(), (i + 1)/len(visible_elements))
+        y_min, y_max = ax.get_ylim()
+        delta_y_height = 0.1*abs(y_max - y_min)
+        for i, element in enumerate(reversed(sorted(visible_elements, 
+                                                    key=lambda e: len(e.marker_artist.get_xdata())))):
+            element.set_y_value(delta_y_height*(i+1), ax.get_ylim())
             element.set_x_scale(fig)
             a = element.marker_artist
             fig.draw_artist(a)
