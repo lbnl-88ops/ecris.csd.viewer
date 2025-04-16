@@ -8,8 +8,8 @@ class Element:
     atomic_number: int
 
 PERSISTANT_ELEMENTS = [
-    Element(name, symbol, weight, number)
-    for name, symbol, weight, number in [
+    Element(name=n, symbol=s, atomic_weight=a, atomic_number=z)
+    for n,s,a,z in [
         ("Carbon", "C", 12, 6),
         ("Nitrogen", "N", 14, 7),
         ("Oxygen", "O", 16, 8)
@@ -17,8 +17,8 @@ PERSISTANT_ELEMENTS = [
 ]
 
 VARIABLE_ELEMENTS = [
-    Element(name, symbol, weight, number) 
-    for name, symbol, weight, number in [
+    Element(name=n, symbol=s, atomic_weight=a, atomic_number=z)
+    for n,s,a,z in [
         ("Vanadium", "V", 51, 23),
         ("Titanium", "Ti", 51, 22)
     ]
