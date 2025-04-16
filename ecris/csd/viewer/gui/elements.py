@@ -1,4 +1,7 @@
 import tkinter as tk
+from typing import List
+
+from ecris.csd.viewer.analysis import Element
 
 class ElementButtons(tk.Frame):
     def __init__(self, owner, *args, **kwargs):

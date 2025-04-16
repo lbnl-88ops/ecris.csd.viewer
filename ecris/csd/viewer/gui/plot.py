@@ -9,14 +9,14 @@ from ecris.csd.viewer.files import CSDFile
 from ecris.csd.viewer.plotting.element_indicators import add_element_indicators
 
 class Plot(tk.Frame):
-    def __init__(self, *args, **kwargs):
-        tk.Frame.__init__(self, relief=tk.RAISED, *args, **kwargs)
+    def __init__(self, owner, *args, **kwargs):
+        tk.Frame.__init__(self, owner, relief=tk.RAISED, *args, **kwargs)
         self.canvas: FigureCanvasTkAgg | None = None
         self._plotted_files: List[CSDFile] = []
         self._bg = None
         self._figure = None
         self._csd_artists = None
-        self._element_indicators = None
+        self.element_indicators = None
 
     def plotted_files(self):
         return self._plotted_files
@@ -30,7 +30,7 @@ class Plot(tk.Frame):
         self.clear_plot()
         self._plotted_files.append(file)
         self._figure, self._csd_artists = plot_files(self._plotted_files)
-        self._element_indicators = add_element_indicators(elements, self._figure)
+        self.element_indicators = add_element_indicators(elements, self._figure)
         self.canvas = FigureCanvasTkAgg(self._figure, master=self)
         self.canvas.mpl_connect('draw_event', self.on_draw)
         self.canvas.mpl_connect('resize_event', self._update)
@@ -52,8 +52,8 @@ class Plot(tk.Frame):
         # Determine how many elements are visible
         ax = fig.gca()
         visible_elements = [element for element in 
-                            self._element_indicators 
-                            if element.is_visible(ax.get_xlim())]
+                            self.element_indicators 
+                            if element.is_visible(ax.get_xlim()) and element.is_plotted]
         for i, element in enumerate(visible_elements):
             element.set_y_limits(ax.get_ylim(), (i + 1)/len(visible_elements))
             element.set_x_scale(fig)
@@ -73,5 +73,5 @@ class Plot(tk.Frame):
         
         
         
-    def on_resize(self, event):
-        add_element_indicators(PERSISTANT_ELEMENTS, self.canvas.figure)
+    # def on_resize(self, event):
+        # add_element_indicators(PERSISTANT_ELEMENTS, self.canvas.figure)

@@ -7,9 +7,11 @@ from matplotlib.markers import MarkerStyle
 from ecris.csd.viewer.analysis import Element
 
 class ElementIndicator:
-    def __init__(self, marker_artist, label_artists):
+    def __init__(self, marker_artist, label_artists, element: Element):
         self.marker_artist = marker_artist
         self.label_artists = label_artists
+        self.element = Element
+        self.is_plotted = False
 
     def set_x_scale(self, figure):
         ax = figure.gca()
@@ -75,7 +77,7 @@ def add_element_indicators(elements: List[Element], figure: Figure):
                           ha='center', va='bottom',
                           weight='bold', clip_on = True)
             labels.append(txt)
-        element_indicators.append(ElementIndicator(ln, labels))
+        element_indicators.append(ElementIndicator(ln, labels, element))
     ax.legend()
     return element_indicators
 
