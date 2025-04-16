@@ -50,6 +50,7 @@ class PlotControls(tk.Frame):
         self.plot._plotted_files = []
         self.plot.clear_plot()
         self.file_list.populate_listbox()
+        self.element_buttons.clear()
 
     def choose_directory(self):
         new_directory = tk.filedialog.askdirectory()

@@ -2,6 +2,7 @@ from pathlib import Path
 import tkinter as tk
 from typing import List, Optional
 
+import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from ..plotting.plot_csd import plot_files
 from ecris.csd.viewer.files import CSDFile
@@ -62,6 +63,7 @@ class Plot(tk.Frame):
             fig.draw_artist(a)
             for a in element.label_artists:
                 fig.draw_artist(a)
+        ax.legend()
 
     def update(self):
         self._update(None)

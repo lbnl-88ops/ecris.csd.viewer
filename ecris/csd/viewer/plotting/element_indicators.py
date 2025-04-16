@@ -13,19 +13,22 @@ class ElementIndicator:
         self.label_artists = label_artists
         self.element = element
         self._is_plotted = tk.BooleanVar()
+        self._is_plotted.trace_add('write', self._set_label)
         self.is_plotted = False
 
     @property
     def is_plotted(self) -> bool:
         return self._is_plotted.get()
+
+    def _set_label(self, *args, **kwargs):
+        if self._is_plotted.get():
+            self.marker_artist.set_label(self.element.name)
+        else:
+            self.marker_artist.set_label(f'_{self.element.name}')
     
     @is_plotted.setter
     def is_plotted(self, to_set) -> None:
         self._is_plotted.set(to_set)
-        if to_set:
-            self.marker_artist.set_label(self.element.name)
-        else:
-            self.marker_artist.set_label(f'_{self.element.name}')
 
     def set_x_scale(self, figure):
         ax = figure.gca()
@@ -92,7 +95,6 @@ def add_element_indicators(elements: List[Element], figure: Figure):
                           weight='bold', clip_on = True)
             labels.append(txt)
         element_indicators.append(ElementIndicator(ln, labels, element))
-    ax.legend()
     return element_indicators
 
 

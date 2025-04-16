@@ -19,3 +19,7 @@ class ElementButtons(tk.Frame):
                                     variable=indicator._is_plotted,
                                     command=self.plot.update)
             button.grid(sticky='n')
+
+    def clear(self):
+        for widget in self.winfo_children():
+            widget.destroy()
