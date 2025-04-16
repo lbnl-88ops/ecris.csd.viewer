@@ -1,4 +1,6 @@
 import tkinter as tk
+from tkinter import filedialog
+from pathlib import Path
 
 from ecris.csd.viewer.gui.elements import ElementButtons
 
@@ -51,9 +53,9 @@ class PlotControls(tk.Frame):
         self.file_list.populate_listbox()
 
     def choose_directory(self):
-        new_directory = tk.filedialog.askdirectory()
+        new_directory = filedialog.askdirectory()
         if new_directory:
-            self.file_list.current_directory = new_directory
+            self.file_list.current_directory = Path(new_directory)
             self.file_list.populate_listbox()
             self.file_list.update_label()
 
