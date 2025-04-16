@@ -51,7 +51,7 @@ class Plot(tk.Frame):
         self._bg = self.canvas.copy_from_bbox(self.canvas.figure.bbox)
         self._draw_animated()
 
-    def _draw_animated(self):
+    def _draw_animated(self, rescale: bool = False):
         fig = self.canvas.figure
         ax = fig.gca()
         for a in self._csd_artists:
@@ -65,7 +65,7 @@ class Plot(tk.Frame):
         delta_y_height = 0.1*abs(y_max - y_min)
         for i, element in enumerate(reversed(sorted(visible_elements, 
                                                     key=lambda e: len(e.marker_artist.get_xdata())))):
-            element.set_y_value(delta_y_height*(i+1), ax.get_ylim())
+            element.set_y_value(delta_y_height*(i+1) + y_min, ax.get_ylim())
             element.set_x_scale(fig)
             a = element.marker_artist
             fig.draw_artist(a)
@@ -75,8 +75,10 @@ class Plot(tk.Frame):
         if handles:
             ax.legend(handles, labels)
         # ax.relim(visible_only=True)
-        ax.relim()
-        ax.set_xlim((0, 10))
+        # ax.set_xlim((0, 10))
+        if rescale or len(self._csd_artists) == 1:
+            ax.relim(visible_only=True)
+            ax.autoscale()
         # ax.set_ylim(bottom=0.0)
 
     def update(self):

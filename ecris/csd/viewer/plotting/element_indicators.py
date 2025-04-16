@@ -66,7 +66,7 @@ class ElementIndicator:
 
     def is_visible(self, x_limits):
         x_min, x_max = x_limits
-        return any(x_min < x < x_max for x in self.marker_artist.get_xdata())
+        return any(x_min <= x <= x_max for x in self.marker_artist.get_xdata())
 
 def add_element_indicators(elements: Dict[Element, tk.BooleanVar], figure: Figure):
     markers = ["v", "^", "p", "d", "*", "D"]
@@ -75,7 +75,8 @@ def add_element_indicators(elements: Dict[Element, tk.BooleanVar], figure: Figur
     for element, visibility in elements.items():
         labels = []
         q_values = range(1, element.atomic_number + 1)
-        m_over_q = [element.atomic_weight/q for q in q_values]
+        m_over_q = [element.atomic_weight/q for q in q_values
+                    if element.atomic_weight/q < 10]
         height = 0
         marker = MarkerStyle(markers.pop(0))
         ln, = ax.plot(m_over_q, [height]*len(m_over_q), 
