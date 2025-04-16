@@ -7,7 +7,7 @@ from ecris.csd.viewer.gui.elements import ElementButtons
 from .gui import FileList, PlotControls, Plot, FileListControls
 from .analysis.element import PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS
 
-__version__ = "0.5.0"
+__version__ = "1.0.0"
 
 class CSDViewer(tk.Tk):
     def __init__(self, default_path: Path):
