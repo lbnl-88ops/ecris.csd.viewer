@@ -38,9 +38,9 @@ class CSDViewer(tk.Tk):
         self.plot.set_element_indicators(self.element_buttons.element_visibility)
 
         self.plot.pack(side='left', fill='both', expand=True)
-        self.file_list.pack()
+        self.file_list.pack(padx=10, pady=10)
         self.file_list_controls.pack()
-        self.element_buttons.pack(fill="both")
+        self.element_buttons.pack(fill="both", padx=10, pady=10)
         self.controls.pack()
         # self.file_list_controls.grid(row=1, column=1, padx=self.pad, pady=self.pad, sticky="N")
         # self.file_list.grid(row=0, column =1, padx=self.pad, pady=self.pad, sticky="N") 
