@@ -8,7 +8,6 @@ def csd_viewer():
     try:
         with open('config.yaml') as f:
             configuration = yaml.load(f, Loader=yaml.Loader)
-        print(configuration)
         default_path = Path(configuration['default_directory'])
     except Exception:
         default_path = Path('.')

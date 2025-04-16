@@ -1,23 +1,30 @@
 """Main CSD Viewer App"""
 from pathlib import Path
 import tkinter as tk
+import matplotlib
 
-from .files.file_list import FileList
-from .plotting.plot import Plot
-from .plot_controls import PlotControls
+from ecris.csd.viewer.gui.elements import ElementButtons
 
-__version__ = "0.4.1"
+from .gui import FileList, PlotControls, Plot, FileListControls
+from .analysis.element import PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS
+
+__version__ = "1.0.0"
+
+matplotlib.rc('font', size=14)
+
 
 class CSDViewer(tk.Tk):
     def __init__(self, default_path: Path):
         super().__init__()
         self.default_path = default_path.absolute()
         self.title(f"CSD Viewer (v{__version__})")
-        self.columnconfigure(0, weight=5)
-        self.columnconfigure(1, weight=1)
-        self.rowconfigure(0, weight=10)
-        self.rowconfigure(1, weight=1)
-        self.pad = 1.0
+        # self.columnconfigure(0, weight=5)
+        # self.columnconfigure(1, weight=1)
+        # self.rowconfigure(0, weight=1)
+        # self.rowconfigure(1, weight=20)
+        # self.rowconfigure(2, weight=10)
+        # self.rowconfigure(3, weight=1)
+        self.pad = 5.0
         
         self.create_widgets()
         self.protocol("WM_DELETE_WINDOW", self.quit)
@@ -28,9 +35,14 @@ class CSDViewer(tk.Tk):
 
     def create_widgets(self):
         self.file_list = FileList(self.default_path)
-        self.file_list.grid(row=0, column =1, padx=self.pad, pady=self.pad, sticky="nsew") 
-        self.plot = Plot(self)
-        self.plot.grid(row=0, column=0, padx=self.pad, pady=self.pad, sticky="nsew",
-                       rowspan=2)
-        self.controls = PlotControls(self.plot, self.file_list)
-        self.controls.grid(row=1, column=1, padx=self.pad, pady=self.pad)
+        self.file_list_controls = FileListControls(self, self.file_list)
+        self.plot = Plot(self) 
+        self.element_buttons = ElementButtons(self, self.plot, PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS)
+        self.controls = PlotControls(self, self.plot, self.file_list, self.element_buttons)
+        self.plot.set_element_indicators(self.element_buttons.element_visibility)
+
+        self.plot.pack(side='left', fill='both', expand=True)
+        self.file_list_controls.pack()
+        self.file_list.pack(padx=10, pady=10)
+        self.controls.pack()
+        self.element_buttons.pack(fill="both", padx=10, pady=10)

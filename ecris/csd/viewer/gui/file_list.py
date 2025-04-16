@@ -2,7 +2,7 @@ from pathlib import Path
 import tkinter as tk
 from typing import List
 
-from .csd_file import CSDFile, get_files
+from ..files.csd_file import CSDFile, get_files
 
 BLUE = "#5200FF"
 WHITE = "#FFFFFF"
@@ -15,17 +15,21 @@ class FileList(tk.Frame):
         # Listbox to display files
         self.directory_label = tk.Label(self)
         self.update_label()
-        self.directory_label.pack()
+        self.directory_label.pack(side='top')
 
         self.files: List[CSDFile] = []
         self.stringvar = tk.StringVar(value=["No CSD files found"])
         self.file_listbox = tk.Listbox(self, width=50, selectmode=tk.SINGLE,
                                        listvariable=self.stringvar)
-        self.file_listbox.pack()
+        self.file_listbox.pack(side='left', fill='y')
+        self.scrollbar = tk.Scrollbar(self, orient='vertical', width=20)
+        self.scrollbar.config(command=self.file_listbox.yview)
+        self.scrollbar.pack(side='left', fill='y')
+        self.file_listbox.config(yscrollcommand=self.scrollbar.set)
         self.populate_listbox()
     
     def update_label(self):
-        self.directory_label.config(text=f"Current directory: {self.current_directory}")
+        self.directory_label.config(text=f"Viewing: {self.current_directory}")
     
     def get_selected_file(self) -> CSDFile:
         for i in self.file_listbox.curselection():
