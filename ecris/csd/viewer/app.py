@@ -3,6 +3,7 @@ from pathlib import Path
 import tkinter as tk
 
 from .gui import FileList, PlotControls, Plot
+from .analysis.element import PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS
 
 __version__ = "0.5.0"
 
@@ -27,7 +28,7 @@ class CSDViewer(tk.Tk):
     def create_widgets(self):
         self.file_list = FileList(self.default_path)
         self.file_list.grid(row=0, column =1, padx=self.pad, pady=self.pad, sticky="nsew") 
-        self.plot = Plot(self)
+        self.plot = Plot(self, PERSISTANT_ELEMENTS + VARIABLE_ELEMENTS)
         self.plot.grid(row=0, column=0, padx=self.pad, pady=self.pad, sticky="nsew",
                        rowspan=2)
         self.controls = PlotControls(self.plot, self.file_list)

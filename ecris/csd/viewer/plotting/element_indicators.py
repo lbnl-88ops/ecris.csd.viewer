@@ -10,8 +10,20 @@ class ElementIndicator:
     def __init__(self, marker_artist, label_artists, element: Element):
         self.marker_artist = marker_artist
         self.label_artists = label_artists
-        self.element = Element
+        self.element = element
         self.is_plotted = False
+
+    @property
+    def is_plotted(self) -> bool:
+        return self._is_plotted
+    
+    @is_plotted.setter
+    def is_plotted(self, to_set) -> None:
+        self._is_plotted = to_set
+        if to_set:
+            self.marker_artist.set_label(self.element.name)
+        else:
+            self.marker_artist.set_label(f'_{self.element.name}')
 
     def set_x_scale(self, figure):
         ax = figure.gca()

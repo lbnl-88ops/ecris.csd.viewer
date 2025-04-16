@@ -1,15 +1,15 @@
 from pathlib import Path
 import tkinter as tk
 from typing import List, Optional
-from xml.dom.minidom import Element
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from ..plotting.plot_csd import plot_files
 from ecris.csd.viewer.files import CSDFile
 from ecris.csd.viewer.plotting.element_indicators import add_element_indicators
+from ecris.csd.viewer.analysis import Element
 
 class Plot(tk.Frame):
-    def __init__(self, owner, *args, **kwargs):
+    def __init__(self, owner, elements: List[Element], *args, **kwargs):
         tk.Frame.__init__(self, owner, relief=tk.RAISED, *args, **kwargs)
         self.canvas: FigureCanvasTkAgg | None = None
         self._plotted_files: List[CSDFile] = []
@@ -17,6 +17,7 @@ class Plot(tk.Frame):
         self._figure = None
         self._csd_artists = None
         self.element_indicators = None
+        self._elements_to_indicate = elements
 
     def plotted_files(self):
         return self._plotted_files
@@ -26,11 +27,11 @@ class Plot(tk.Frame):
             for widget in self.winfo_children():
                 widget.destroy()
 
-    def plot(self, file: CSDFile, elements: List[Element] = []):
+    def plot(self, file: CSDFile):
         self.clear_plot()
         self._plotted_files.append(file)
         self._figure, self._csd_artists = plot_files(self._plotted_files)
-        self.element_indicators = add_element_indicators(elements, self._figure)
+        self.element_indicators = add_element_indicators(self._elements_to_indicate, self._figure)
         self.canvas = FigureCanvasTkAgg(self._figure, master=self)
         self.canvas.mpl_connect('draw_event', self.on_draw)
         self.canvas.mpl_connect('resize_event', self._update)
