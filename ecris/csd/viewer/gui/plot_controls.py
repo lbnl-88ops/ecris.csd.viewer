@@ -41,7 +41,6 @@ class PlotControls(tk.Frame):
         if file is not None:
             self.plot.plot(file)
             file.plotted = True
-            self.element_buttons.create_widgets()
             self.file_list.update_colors()
 
     def clear_plot(self):
@@ -50,7 +49,6 @@ class PlotControls(tk.Frame):
         self.plot._plotted_files = []
         self.plot.clear_plot()
         self.file_list.populate_listbox()
-        self.element_buttons.clear()
 
     def choose_directory(self):
         new_directory = tk.filedialog.askdirectory()

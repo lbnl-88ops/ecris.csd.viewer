@@ -1,9 +1,11 @@
+from matplotlib.lines import Line2D
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
+from matplotlib.artist import Artist
 import datetime
 from pathlib import Path
-from typing import List
+from typing import List, Tuple
 
 from ecris.csd.viewer.files import CSDFile
 
@@ -84,8 +86,8 @@ def interpolateMoverQ(MQest,ibeam,expectedpeaks,dpeak):
         MQinterp[peaks[-1]:] = np.linspace(expectedpeaks[-1],MQest[-1],len(MQest)-peaks[-1])
     return(MQinterp,peaks)
 
-def plot_files(files: List[CSDFile]) -> Figure():
-    fig = Figure()
+def plot_files(files: List[CSDFile]) -> Tuple[Figure, List[Artist]]:
+    fig = Figure((9,6))
     ax = fig.gca()
     artists = []
     for file in files:
@@ -93,13 +95,16 @@ def plot_files(files: List[CSDFile]) -> Figure():
     if len(files) > 1:
         ax.set_title('Multiple CSDs shown')
         ax.legend()
-    else:
+    elif len(files) > 0:
         ax.set_title(files[0].formatted_datetime)
     ax.set_xlabel('M/Q')
     ax.set_ylabel(r'current [$\mu$A]')
     return fig, artists
 
-def _plot_file(ax, file):
+def file_artist(axis, file: CSDFile) -> Artist:
+    return _plot_file(axis, file)
+
+def _plot_file(ax, file) -> Artist:
     indices, settings, names, tcsd, ibatman, bbatman, ibeam  = getinfo(file.path)
     MQest = estimateMoverQ(settings,names,bbatman)
 
