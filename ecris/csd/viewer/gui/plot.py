@@ -6,7 +6,7 @@ from xml.dom.minidom import Element
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from ..plotting.plot_csd import plot_files
 from ecris.csd.viewer.files import CSDFile
-from ecris.csd.viewer.plotting.element_indicators import add_element_indicators, PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS, Element
+from ecris.csd.viewer.plotting.element_indicators import add_element_indicators
 
 class Plot(tk.Frame):
     def __init__(self, *args, **kwargs):
@@ -30,7 +30,7 @@ class Plot(tk.Frame):
         self.clear_plot()
         self._plotted_files.append(file)
         self._figure, self._csd_artists = plot_files(self._plotted_files)
-        self._element_indicators = add_element_indicators(PERSISTANT_ELEMENTS + VARIABLE_ELEMENTS, self._figure)
+        self._element_indicators = add_element_indicators(elements, self._figure)
         self.canvas = FigureCanvasTkAgg(self._figure, master=self)
         self.canvas.mpl_connect('draw_event', self.on_draw)
         self.canvas.mpl_connect('resize_event', self._update)
@@ -39,7 +39,6 @@ class Plot(tk.Frame):
         self.toolbar = NavigationToolbar2Tk(self.canvas, self)
         self.toolbar.update()
         self.canvas.get_tk_widget().pack()
-        print(self._csd_artists)
 
     def on_draw(self, event):
         self._bg = self.canvas.copy_from_bbox(self.canvas.figure.bbox)
