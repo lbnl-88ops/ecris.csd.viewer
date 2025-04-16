@@ -40,7 +40,8 @@ class Plot(tk.Frame):
         ax = self.canvas.figure.gca()
         for artist in self._csd_artists:
             artist.remove()
-        ax.legend().remove()
+        if ax.get_legend() is not None:
+            ax.get_legend().remove()
         self._csd_artists = []
         self.update()
 
@@ -70,14 +71,8 @@ class Plot(tk.Frame):
             element.set_x_scale(fig)
             element.draw(fig, lines=self.draw_element_lines.get())
         handles, labels = ax.get_legend_handles_labels()
-        if handles:
+        if handles and any(not l.startswith('_') for l in labels):
             ax.legend(handles, labels)
-        # ax.relim(visible_only=True)
-        # ax.set_xlim((0, 10))
-        if rescale or len(self._csd_artists) == 1:
-            ax.relim(visible_only=True)
-            ax.autoscale()
-        # ax.set_ylim(bottom=0.0)
 
     def update(self):
         self._update(None)
