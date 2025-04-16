@@ -15,6 +15,9 @@ class Plot(tk.Frame):
         self._plotted_files: List[CSDFile] = []
         self._bg = None
         self.element_indicators = None
+        self.create_widgets()
+
+    def create_widgets(self):
         self._figure, self._csd_artists = plot_files([])
         self.canvas = FigureCanvasTkAgg(self._figure, master=self)
         self.canvas.mpl_connect('draw_event', self.on_draw)
@@ -24,12 +27,19 @@ class Plot(tk.Frame):
         self.toolbar = NavigationToolbar2Tk(self.canvas, self)
         self.toolbar.update()
         self.canvas.get_tk_widget().pack()
-
+        self._orig_ylim = self._figure.gca().get_ylim()
+        self._orig_xlim = self._figure.gca().get_xlim()
 
     def plotted_files(self):
         return self._plotted_files
 
     def clear_plot(self):
+        ax = self.canvas.figure.gca()
+        for artist in ax.get_lines():
+            artist.remove()
+        ax.legend().remove()
+        ax.set_xlim(self._orig_xlim)
+        ax.set_ylim(self._orig_ylim)
         self._csd_artists = []
         self.update()
 
@@ -58,7 +68,9 @@ class Plot(tk.Frame):
         #     fig.draw_artist(a)
         #     for a in element.label_artists:
         #         fig.draw_artist(a)
-        ax.legend()
+        handles, labels = ax.get_legend_handles_labels()
+        if handles:
+            ax.legend(handles, labels)
 
     def update(self):
         self._update(None)
@@ -69,7 +81,8 @@ class Plot(tk.Frame):
         else:
             self.canvas.restore_region(self._bg)
             self._draw_animated()
-            self.canvas.blit(self.canvas.figure.bbox)
+            self.canvas.draw()
+            # self.canvas.blit(self.canvas.figure.bbox)
         self.canvas.flush_events()
         
         

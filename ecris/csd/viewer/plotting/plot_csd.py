@@ -94,7 +94,6 @@ def plot_files(files: List[CSDFile]) -> Tuple[Figure, List[Artist]]:
         artists.append(_plot_file(ax, file))
     if len(files) > 1:
         ax.set_title('Multiple CSDs shown')
-        ax.legend()
     elif len(files) > 0:
         ax.set_title(files[0].formatted_datetime)
     ax.set_xlabel('M/Q')
