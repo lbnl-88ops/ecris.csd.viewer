@@ -17,6 +17,16 @@ class ElementIndicator:
         self._is_plotted.trace_add('write', self._set_label)
         self.is_plotted = False
 
+    def draw(self, figure: Figure, lines = False) -> None:
+        figure.draw_artist(self.marker_artist)
+        for label in self.label_artists:
+            figure.draw_artist(label)
+        if lines:
+            ax = figure.gca()
+            for x in self.marker_artist.get_xdata():
+                line = ax.axvline(x, ls='--', alpha=0.15, c=self.marker_artist.get_color(), animated=True)
+                figure.draw_artist(line)
+
     @property
     def is_plotted(self) -> bool:
         return self._is_plotted.get()

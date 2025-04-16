@@ -18,22 +18,29 @@ class ElementButtons(tk.Frame):
         self.create_widgets()
 
     def create_widgets(self):
-        lbPersistent = tk.Label(self, text='Persistent elements')
-        lbPersistent.grid(sticky='N')
-        for element in sorted(self._persistent_elements, key=lambda e: e.atomic_number):
+        lbTitle = tk.Label(self, text='Element M/Q indicators')
+        lbTitle.grid(sticky='N', column=0, row=0, columnspan=2)
+        button = tk.Checkbutton(self, text='Show lines',
+                                onvalue=True, offvalue=False,
+                                variable=self._plot.draw_element_lines,
+                                command=self._plot.update)
+        button.grid(sticky='S', column=0, row=1)
+        lbPersistent = tk.Label(self, text='Persistent')
+        lbPersistent.grid(sticky='N', column=0, row=2)
+        for i, element in enumerate(sorted(self._persistent_elements, key=lambda e: e.atomic_number)):
             text = f"{element.symbol}-{element.atomic_weight}"
             button = tk.Checkbutton(self, text=text,
                                     onvalue=True, offvalue=False,
                                     variable=self.element_visibility[element],
                                     command=self._plot.update)
-            button.grid(sticky='NW')
+            button.grid(sticky='NW', row=3+i, column=0)
             
-        lbVariable = tk.Label(self, text='Variable elements')
-        lbVariable.grid(sticky='N')
-        for element in sorted(self._variable_elements, key=lambda e: e.atomic_number):
+        lbVariable = tk.Label(self, text='Variable')
+        lbVariable.grid(sticky='N', column=1, row = 2)
+        for i, element in enumerate(sorted(self._variable_elements, key=lambda e: e.atomic_number)):
             text = f"{element.symbol}-{element.atomic_weight}"
             button = tk.Checkbutton(self, text=text,
                                     onvalue=True, offvalue=False,
                                     variable=self.element_visibility[element],
                                     command=self._plot.update)
-            button.grid(sticky='NW')
+            button.grid(sticky='NW', column=1, row=3+i)

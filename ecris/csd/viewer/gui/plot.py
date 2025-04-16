@@ -17,6 +17,7 @@ class Plot(tk.Frame):
         self._bg = None
         self.element_indicators: List[ElementIndicator] = []
         self.create_widgets()
+        self.draw_element_lines = tk.BooleanVar(value=False)
 
     def create_widgets(self):
         self._figure, self._csd_artists = plot_files([])
@@ -67,10 +68,7 @@ class Plot(tk.Frame):
                                                     key=lambda e: len(e.marker_artist.get_xdata())))):
             element.set_y_value(delta_y_height*(i+1) + y_min, ax.get_ylim())
             element.set_x_scale(fig)
-            a = element.marker_artist
-            fig.draw_artist(a)
-            for a in element.label_artists:
-                fig.draw_artist(a)
+            element.draw(fig, lines=self.draw_element_lines.get())
         handles, labels = ax.get_legend_handles_labels()
         if handles:
             ax.legend(handles, labels)
