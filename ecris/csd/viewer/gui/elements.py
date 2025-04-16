@@ -19,21 +19,21 @@ class ElementButtons(tk.Frame):
 
     def create_widgets(self):
         lbPersistent = tk.Label(self, text='Persistent elements')
-        lbPersistent.grid(sticky='n')
+        lbPersistent.grid(sticky='N')
         for element in sorted(self._persistent_elements, key=lambda e: e.atomic_number):
             text = f"{element.symbol}-{element.atomic_weight}"
             button = tk.Checkbutton(self, text=text,
                                     onvalue=True, offvalue=False,
                                     variable=self.element_visibility[element],
                                     command=self._plot.update)
-            button.grid(sticky='nw')
+            button.grid(sticky='NW')
             
         lbVariable = tk.Label(self, text='Variable elements')
-        lbVariable.grid(sticky='n')
+        lbVariable.grid(sticky='N')
         for element in sorted(self._variable_elements, key=lambda e: e.atomic_number):
             text = f"{element.symbol}-{element.atomic_weight}"
             button = tk.Checkbutton(self, text=text,
                                     onvalue=True, offvalue=False,
                                     variable=self.element_visibility[element],
                                     command=self._plot.update)
-            button.grid(sticky='nw')
+            button.grid(sticky='NW')

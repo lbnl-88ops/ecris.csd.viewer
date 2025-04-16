@@ -16,9 +16,10 @@ class CSDViewer(tk.Tk):
         self.title(f"CSD Viewer (v{__version__})")
         self.columnconfigure(0, weight=5)
         self.columnconfigure(1, weight=1)
-        self.rowconfigure(0, weight=10)
-        self.rowconfigure(1, weight=1)
-        self.pad = 1.0
+        self.rowconfigure(0, weight=20)
+        self.rowconfigure(1, weight=10)
+        self.rowconfigure(2, weight=1)
+        self.pad = 5.0
         
         self.create_widgets()
         self.protocol("WM_DELETE_WINDOW", self.quit)
@@ -29,12 +30,13 @@ class CSDViewer(tk.Tk):
 
     def create_widgets(self):
         self.file_list = FileList(self.default_path)
-        self.file_list.grid(row=0, column =1, padx=self.pad, pady=self.pad, sticky="nsew") 
+        self.file_list.grid(row=0, column =1, padx=self.pad, pady=self.pad, sticky="N") 
         self.plot = Plot(self) 
-        self.plot.grid(row=0, column=0, padx=self.pad, pady=self.pad, sticky="nsew",
+        self.plot.grid(row=0, column=0, padx=self.pad, pady=self.pad, sticky="NSEW",
                        rowspan=3)
         self.element_buttons = ElementButtons(self, self.plot, PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS)
-        self.element_buttons.grid(row=1, column=1, padx=self.pad, pady=self.pad)
+        self.element_buttons.grid(row=1, column=1, padx=self.pad, pady=self.pad,
+                                  sticky='N')
         self.plot.set_element_indicators(self.element_buttons.element_visibility)
         self.controls = PlotControls(self.plot, self.file_list, self.element_buttons)
-        self.controls.grid(row=2, column=1, padx=self.pad, pady=self.pad)
+        self.controls.grid(row=2, column=1, padx=self.pad, pady=self.pad, sticky='s')
