@@ -8,7 +8,7 @@ class ElementButtons(tk.Frame):
                  persistent_elements: List[Element], 
                  variable_elements: List[Element], 
                  *args, **kwargs):
-        super().__init__(owner, *args, **kwargs)
+        super().__init__(owner, relief=tk.SUNKEN, highlightbackground="gray", highlightthickness=2, *args, **kwargs)
         self._persistent_elements = persistent_elements
         self._variable_elements = variable_elements
         self.element_visibility = {

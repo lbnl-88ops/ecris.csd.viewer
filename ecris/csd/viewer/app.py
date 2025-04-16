@@ -14,12 +14,12 @@ class CSDViewer(tk.Tk):
         super().__init__()
         self.default_path = default_path.absolute()
         self.title(f"CSD Viewer (v{__version__})")
-        self.columnconfigure(0, weight=5)
-        self.columnconfigure(1, weight=1)
-        self.rowconfigure(0, weight=1)
-        self.rowconfigure(1, weight=20)
-        self.rowconfigure(2, weight=10)
-        self.rowconfigure(3, weight=1)
+        # self.columnconfigure(0, weight=5)
+        # self.columnconfigure(1, weight=1)
+        # self.rowconfigure(0, weight=1)
+        # self.rowconfigure(1, weight=20)
+        # self.rowconfigure(2, weight=10)
+        # self.rowconfigure(3, weight=1)
         self.pad = 5.0
         
         self.create_widgets()
@@ -37,11 +37,16 @@ class CSDViewer(tk.Tk):
         self.controls = PlotControls(self, self.plot, self.file_list, self.element_buttons)
         self.plot.set_element_indicators(self.element_buttons.element_visibility)
 
-        self.file_list_controls.grid(row=1, column=1, padx=self.pad, pady=self.pad, sticky="N")
-        self.file_list.grid(row=0, column =1, padx=self.pad, pady=self.pad, sticky="N") 
+        self.plot.pack(side='left', fill='both', expand=True)
+        self.file_list.pack()
+        self.file_list_controls.pack()
+        self.element_buttons.pack(fill="both")
+        self.controls.pack()
+        # self.file_list_controls.grid(row=1, column=1, padx=self.pad, pady=self.pad, sticky="N")
+        # self.file_list.grid(row=0, column =1, padx=self.pad, pady=self.pad, sticky="N") 
 
-        self.plot.grid(row=0, column=0, padx=self.pad, pady=self.pad, sticky="NSEW",
-                       rowspan=4)
-        self.element_buttons.grid(row=2, column=1, padx=self.pad, pady=self.pad,
-                                  sticky='N')
-        self.controls.grid(row=4, column=1, padx=self.pad, pady=self.pad, sticky='N')
+        # self.plot.grid(row=0, column=0, padx=self.pad, pady=self.pad, sticky="NSEW",
+        #                rowspan=4)
+        # self.element_buttons.grid(row=2, column=1, padx=self.pad, pady=self.pad,
+        #                           sticky='N')
+        # self.controls.grid(row=4, column=1, padx=self.pad, pady=self.pad, sticky='N')
