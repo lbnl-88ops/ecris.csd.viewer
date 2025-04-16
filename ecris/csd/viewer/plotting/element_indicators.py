@@ -23,7 +23,7 @@ class ElementIndicator:
 
     def _set_label(self, *args, **kwargs):
         if self._is_plotted.get():
-            self.marker_artist.set_label(self.element.name)
+            self.marker_artist.set_label(f"{self.element.symbol}-{self.element.atomic_weight}")
         else:
             self.marker_artist.set_label(f'_{self.element.name}')
     
