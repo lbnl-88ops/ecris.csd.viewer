@@ -44,6 +44,7 @@ class Plot(tk.Frame):
         if ax.get_legend() is not None:
             ax.get_legend().remove()
         self._csd_artists = []
+        ax.set_prop_cycle(None)
         self.update()
 
     def plot(self, file: CSDFile):
@@ -74,7 +75,7 @@ class Plot(tk.Frame):
         delta_y_height = 0.1*abs(y_max - y_min)
         for i, element in enumerate(reversed(sorted(visible_elements, 
                                                     key=lambda e: len(e.marker_artist.get_xdata())))):
-            element.set_y_value(delta_y_height*(i+1) + y_min, ax.get_ylim())
+            element.set_y_value(fig, delta_y_height*(i+1) + y_min, ax.get_ylim())
             element.set_x_scale(fig)
             element.draw(fig, lines=self.draw_element_lines.get())
         handles, labels = ax.get_legend_handles_labels()

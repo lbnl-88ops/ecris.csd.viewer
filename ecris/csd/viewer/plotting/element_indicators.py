@@ -1,4 +1,5 @@
 import tkinter as tk
+from matplotlib import transforms
 from matplotlib.figure import Figure
 from typing import List, Dict
 from itertools import compress
@@ -9,16 +10,19 @@ from ecris.csd.viewer.analysis import Element
 
 class ElementIndicator:
     def __init__(self, marker_artist, label_artists, element: Element,
-                 is_plotted: tk.BooleanVar):
+                 is_plotted: tk.BooleanVar,
+                 element_artist):
         self.marker_artist = marker_artist
         self.label_artists = label_artists
         self.element = element
         self._is_plotted = is_plotted
         self._is_plotted.trace_add('write', self._set_label)
         self.is_plotted = False
+        self.element_artist = element_artist
 
     def draw(self, figure: Figure, lines = False) -> None:
         figure.draw_artist(self.marker_artist)
+        figure.draw_artist(self.element_artist)
         for label in self.label_artists:
             figure.draw_artist(label)
         if lines:
@@ -32,10 +36,11 @@ class ElementIndicator:
         return self._is_plotted.get()
 
     def _set_label(self, *args, **kwargs):
-        if self._is_plotted.get():
-            self.marker_artist.set_label(f"{self.element.symbol}-{self.element.atomic_weight}")
-        else:
-            self.marker_artist.set_label(f'_{self.element.name}')
+        self.marker_artist.set_label(f'_{self.element.name}')
+        # if self._is_plotted.get():
+            # self.marker_artist.set_label(f"{self.element.symbol}-{self.element.atomic_weight}")
+        # else:
+            # self.marker_artist.set_label(f'_{self.element.name}')
     
     @is_plotted.setter
     def is_plotted(self, to_set) -> None:
@@ -67,9 +72,12 @@ class ElementIndicator:
         for v, l in zip(visible, visible_labels):
             l.set_alpha(1 if v else 0)
 
-    def set_y_value(self, y_value, y_limits):
+    def set_y_value(self, figure, y_value, y_limits):
         y_min, y_max = y_limits
         self.marker_artist.set_ydata([y_value]*len(self.marker_artist.get_xdata()))
+        new_system_loc = figure.gca().transData.transform((0, y_value))
+        new_axes_loc = figure.gca().transAxes.inverted().transform(new_system_loc)
+        self.element_artist.set_y(new_axes_loc[1])
         offset = 0.02*abs(y_max - y_min)
         for label in self.label_artists:
             label.set_y(y_value + offset)
@@ -95,15 +103,20 @@ def add_element_indicators(elements: Dict[Element, tk.BooleanVar], figure: Figur
                 marker=marker,
                 ms=10,
                 ls='',
-                label=element.name,
+                markeredgecolor='black',
+                # label=element.name,
                 animated=True)
         for x, q in zip(m_over_q, q_values):
-            txt = ax.text(x, height, f"{q}", animated=True, c=ln.get_color(),
+            txt = ax.text(x, height, f"{q}", animated=True, c='black',
                           ha='center', va='bottom',
                           weight='bold', clip_on = True)
             labels.append(txt)
-        element_indicators.append(ElementIndicator(ln, labels, element, visibility))
+        element_artist = ax.text(1.01, 0, f"{element.symbol}-{element.atomic_weight}", 
+                                 transform=ax.transAxes, weight='bold', animated=True,
+                                 color=ln.get_color())
+        element_indicators.append(ElementIndicator(ln, labels, element, visibility, element_artist))
     return element_indicators
+
 
 
 

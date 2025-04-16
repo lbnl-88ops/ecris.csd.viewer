@@ -87,7 +87,7 @@ def interpolateMoverQ(MQest,ibeam,expectedpeaks,dpeak):
     return(MQinterp,peaks)
 
 def plot_files(files: List[CSDFile]) -> Tuple[Figure, List[Artist]]:
-    fig = Figure((9,6))
+    fig = Figure((9,6), tight_layout=True)
     ax = fig.gca()
     artists = []
     for file in files:

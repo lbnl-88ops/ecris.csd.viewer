@@ -1,6 +1,7 @@
 """Main CSD Viewer App"""
 from pathlib import Path
 import tkinter as tk
+import matplotlib
 
 from ecris.csd.viewer.gui.elements import ElementButtons
 
@@ -8,6 +9,9 @@ from .gui import FileList, PlotControls, Plot, FileListControls
 from .analysis.element import PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS
 
 __version__ = "1.0.0"
+
+matplotlib.rc('font', size=14)
+
 
 class CSDViewer(tk.Tk):
     def __init__(self, default_path: Path):
