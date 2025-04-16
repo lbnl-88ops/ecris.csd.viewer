@@ -4,7 +4,7 @@ from typing import List
 from ecris.csd.viewer.analysis import Element
 
 class ElementButtons(tk.Frame):
-    def __init__(self, owner, 
+    def __init__(self, owner, plot,
                  persistent_elements: List[Element], 
                  variable_elements: List[Element], 
                  *args, **kwargs):
@@ -14,6 +14,7 @@ class ElementButtons(tk.Frame):
         self.element_visibility = {
             e: tk.BooleanVar(value=False) for e in persistent_elements + variable_elements
         }
+        self._plot = plot
         self.create_widgets()
 
     def create_widgets(self):
@@ -23,7 +24,8 @@ class ElementButtons(tk.Frame):
             text = f"{element.symbol}-{element.atomic_weight}"
             button = tk.Checkbutton(self, text=text,
                                     onvalue=True, offvalue=False,
-                                    variable=self.element_visibility[element])
+                                    variable=self.element_visibility[element],
+                                    command=self._plot.update)
             button.grid(sticky='nw')
             
         lbVariable = tk.Label(self, text='Variable elements')
@@ -32,5 +34,6 @@ class ElementButtons(tk.Frame):
             text = f"{element.symbol}-{element.atomic_weight}"
             button = tk.Checkbutton(self, text=text,
                                     onvalue=True, offvalue=False,
-                                    variable=self.element_visibility[element])
+                                    variable=self.element_visibility[element],
+                                    command=self._plot.update)
             button.grid(sticky='nw')

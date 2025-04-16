@@ -33,7 +33,8 @@ class CSDViewer(tk.Tk):
         self.plot = Plot(self) 
         self.plot.grid(row=0, column=0, padx=self.pad, pady=self.pad, sticky="nsew",
                        rowspan=3)
-        self.element_buttons = ElementButtons(self, PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS)
+        self.element_buttons = ElementButtons(self, self.plot, PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS)
         self.element_buttons.grid(row=1, column=1, padx=self.pad, pady=self.pad)
+        self.plot.set_element_indicators(self.element_buttons.element_visibility)
         self.controls = PlotControls(self.plot, self.file_list, self.element_buttons)
         self.controls.grid(row=2, column=1, padx=self.pad, pady=self.pad)

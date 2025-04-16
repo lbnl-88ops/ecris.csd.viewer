@@ -1,12 +1,12 @@
 from pathlib import Path
 import tkinter as tk
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from ..plotting.plot_csd import plot_files, file_artist
 from ecris.csd.viewer.files import CSDFile
-from ecris.csd.viewer.plotting.element_indicators import add_element_indicators
+from ecris.csd.viewer.plotting.element_indicators import ElementIndicator, add_element_indicators
 from ecris.csd.viewer.analysis import Element
 
 class Plot(tk.Frame):
@@ -14,7 +14,7 @@ class Plot(tk.Frame):
         tk.Frame.__init__(self, owner, relief=tk.RAISED, *args, **kwargs)
         self._plotted_files: List[CSDFile] = []
         self._bg = None
-        self.element_indicators = None
+        self.element_indicators: List[ElementIndicator] = []
         self.create_widgets()
 
     def create_widgets(self):
@@ -27,19 +27,18 @@ class Plot(tk.Frame):
         self.toolbar = NavigationToolbar2Tk(self.canvas, self)
         self.toolbar.update()
         self.canvas.get_tk_widget().pack()
-        self._orig_ylim = self._figure.gca().get_ylim()
-        self._orig_xlim = self._figure.gca().get_xlim()
+
+    def set_element_indicators(self, elements: Dict[Element, tk.BooleanVar]):
+        self.element_indicators = add_element_indicators(elements, self._figure) 
 
     def plotted_files(self):
         return self._plotted_files
 
     def clear_plot(self):
         ax = self.canvas.figure.gca()
-        for artist in ax.get_lines():
+        for artist in self._csd_artists:
             artist.remove()
         ax.legend().remove()
-        ax.set_xlim(self._orig_xlim)
-        ax.set_ylim(self._orig_ylim)
         self._csd_artists = []
         self.update()
 
@@ -57,20 +56,24 @@ class Plot(tk.Frame):
         for a in self._csd_artists:
             fig.draw_artist(a)
 
-        # # Determine how many elements are visible
-        # visible_elements = [element for element in 
-        #                     self.element_indicators 
-        #                     if element.is_visible(ax.get_xlim()) and element.is_plotted]
-        # for i, element in enumerate(visible_elements):
-        #     element.set_y_limits(ax.get_ylim(), (i + 1)/len(visible_elements))
-        #     element.set_x_scale(fig)
-        #     a = element.marker_artist
-        #     fig.draw_artist(a)
-        #     for a in element.label_artists:
-        #         fig.draw_artist(a)
+        # Determine how many elements are visible
+        visible_elements = [element for element in 
+                            self.element_indicators 
+                            if element.is_visible(ax.get_xlim()) and element.is_plotted]
+        for i, element in enumerate(visible_elements):
+            element.set_y_limits(ax.get_ylim(), (i + 1)/len(visible_elements))
+            element.set_x_scale(fig)
+            a = element.marker_artist
+            fig.draw_artist(a)
+            for a in element.label_artists:
+                fig.draw_artist(a)
         handles, labels = ax.get_legend_handles_labels()
         if handles:
             ax.legend(handles, labels)
+        # ax.relim(visible_only=True)
+        ax.relim()
+        ax.set_xlim((0, 10))
+        # ax.set_ylim(bottom=0.0)
 
     def update(self):
         self._update(None)
