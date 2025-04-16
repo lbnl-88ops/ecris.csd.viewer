@@ -9,15 +9,17 @@ class Element:
 
 PERSISTANT_ELEMENTS = [
     Element(name, symbol, weight, number)
-    for name, symbol, weight, number in zip(["Carbon", "Nitrogen", "Oxygen"],
-                                    ["C", "N", "O"],
-                                    [12,  14,  16],
-                                    [ 6,   7,   8])    
+    for name, symbol, weight, number in [
+        ("Carbon", "C", 12, 6),
+        ("Nitrogen", "N", 14, 7),
+        ("Oxygen", "O", 16, 8)
+        ]
 ]
 
 VARIABLE_ELEMENTS = [
     Element(name, symbol, weight, number) 
-    for name, symbol, weight, number in zip(["Vanadium"], ["V"],
-                                    [51],
-                                    [23])
+    for name, symbol, weight, number in [
+        ("Vanadium", "V", 51, 23),
+        ("Titanium", "Ti", 51, 22)
+    ]
 ]
