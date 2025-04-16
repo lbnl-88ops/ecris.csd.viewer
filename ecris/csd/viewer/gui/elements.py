@@ -14,10 +14,8 @@ class ElementButtons(tk.Frame):
         if self.plot.element_indicators is None:
             return
         for indicator in self.plot.element_indicators:
-            is_plotted = tk.BooleanVar()
             button = tk.Checkbutton(self, text=indicator.element.name,
                                     onvalue=True, offvalue=False,
-                                    variable=is_plotted,
+                                    variable=indicator._is_plotted,
                                     command=self.plot.update)
             button.grid(sticky='n')
-            indicator.is_plotted = is_plotted

@@ -1,3 +1,4 @@
+import tkinter as tk
 from matplotlib.figure import Figure
 from typing import List
 from itertools import compress
@@ -11,15 +12,16 @@ class ElementIndicator:
         self.marker_artist = marker_artist
         self.label_artists = label_artists
         self.element = element
+        self._is_plotted = tk.BooleanVar()
         self.is_plotted = False
 
     @property
     def is_plotted(self) -> bool:
-        return self._is_plotted
+        return self._is_plotted.get()
     
     @is_plotted.setter
     def is_plotted(self, to_set) -> None:
-        self._is_plotted = to_set
+        self._is_plotted.set(to_set)
         if to_set:
             self.marker_artist.set_label(self.element.name)
         else:

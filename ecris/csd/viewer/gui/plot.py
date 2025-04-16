@@ -63,6 +63,9 @@ class Plot(tk.Frame):
             for a in element.label_artists:
                 fig.draw_artist(a)
 
+    def update(self):
+        self._update(None)
+
     def _update(self, event):
         if self._bg is None:
             self.on_draw(None)
