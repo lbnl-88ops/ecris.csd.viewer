@@ -2,24 +2,35 @@ import tkinter as tk
 from typing import List
 
 from ecris.csd.viewer.analysis import Element
-from ecris.csd.viewer.gui.plot import Plot
-from ecris.csd.viewer.plotting.element_indicators import ElementIndicator
 
 class ElementButtons(tk.Frame):
-    def __init__(self, owner, plot: Plot, *args, **kwargs):
+    def __init__(self, owner, 
+                 persistent_elements: List[Element], 
+                 variable_elements: List[Element], 
+                 *args, **kwargs):
         super().__init__(owner, *args, **kwargs)
-        self.plot = plot
+        self._persistent_elements = persistent_elements
+        self._variable_elements = variable_elements
+        self.element_visibility = {
+            e: tk.BooleanVar(value=False) for e in persistent_elements + variable_elements
+        }
+        self.create_widgets()
 
     def create_widgets(self):
-        if self.plot.element_indicators is None:
-            return
-        for indicator in self.plot.element_indicators:
-            button = tk.Checkbutton(self, text=indicator.element.name,
+        lbPersistent = tk.Label(self, text='Persistent elements')
+        lbPersistent.grid(sticky='n')
+        for element in sorted(self._persistent_elements, key=lambda e: e.atomic_number):
+            text = f"{element.symbol}-{element.atomic_weight}"
+            button = tk.Checkbutton(self, text=text,
                                     onvalue=True, offvalue=False,
-                                    variable=indicator._is_plotted,
-                                    command=self.plot.update)
-            button.grid(sticky='n')
-
-    def clear(self):
-        for widget in self.winfo_children():
-            widget.destroy()
+                                    variable=self.element_visibility[element])
+            button.grid(sticky='nw')
+            
+        lbVariable = tk.Label(self, text='Variable elements')
+        lbVariable.grid(sticky='n')
+        for element in sorted(self._variable_elements, key=lambda e: e.atomic_number):
+            text = f"{element.symbol}-{element.atomic_weight}"
+            button = tk.Checkbutton(self, text=text,
+                                    onvalue=True, offvalue=False,
+                                    variable=self.element_visibility[element])
+            button.grid(sticky='nw')
