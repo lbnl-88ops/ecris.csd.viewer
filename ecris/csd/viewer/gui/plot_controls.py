@@ -1,15 +1,19 @@
 import tkinter as tk
 
+from ecris.csd.viewer.gui.elements import ElementButtons
+
 from .file_list import FileList
 from .plot import Plot
 
 class PlotControls(tk.Frame):
-    def __init__(self, plot: Plot, file_list: FileList, *args, **kwargs):
+    def __init__(self, plot: Plot, file_list: FileList, 
+                 element_buttons: ElementButtons, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.pad = 3.0
         self.big_button_size = 2
         self.file_list = file_list
         self.plot = plot
+        self.element_buttons = element_buttons
         self.create_widgets()
     
     def create_widgets(self):
@@ -37,6 +41,7 @@ class PlotControls(tk.Frame):
         if file is not None:
             self.plot.plot(file)
             file.plotted = True
+            self.element_buttons.create_widgets()
             self.file_list.update_colors()
 
     def clear_plot(self):

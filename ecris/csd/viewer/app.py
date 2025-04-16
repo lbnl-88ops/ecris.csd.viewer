@@ -2,6 +2,8 @@
 from pathlib import Path
 import tkinter as tk
 
+from ecris.csd.viewer.gui.elements import ElementButtons
+
 from .gui import FileList, PlotControls, Plot
 from .analysis.element import PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS
 
@@ -30,6 +32,8 @@ class CSDViewer(tk.Tk):
         self.file_list.grid(row=0, column =1, padx=self.pad, pady=self.pad, sticky="nsew") 
         self.plot = Plot(self, PERSISTANT_ELEMENTS + VARIABLE_ELEMENTS)
         self.plot.grid(row=0, column=0, padx=self.pad, pady=self.pad, sticky="nsew",
-                       rowspan=2)
-        self.controls = PlotControls(self.plot, self.file_list)
-        self.controls.grid(row=1, column=1, padx=self.pad, pady=self.pad)
+                       rowspan=3)
+        self.element_buttons = ElementButtons(self, self.plot)
+        self.element_buttons.grid(row=1, column=1, padx=self.pad, pady=self.pad)
+        self.controls = PlotControls(self.plot, self.file_list, self.element_buttons)
+        self.controls.grid(row=2, column=1, padx=self.pad, pady=self.pad)
