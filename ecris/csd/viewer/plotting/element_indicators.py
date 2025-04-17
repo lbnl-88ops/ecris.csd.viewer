@@ -17,7 +17,6 @@ class ElementIndicator:
         self.element = element
         self._is_plotted = is_plotted
         self._is_plotted.trace_add('write', self._set_label)
-        self.is_plotted = False
         self.element_artist = element_artist
 
     def draw(self, figure: Figure, lines = False) -> None:
