@@ -34,6 +34,22 @@ class Plot(tk.Frame):
     def set_element_indicators(self, elements: Dict[Element, tk.BooleanVar]):
         self.element_indicators = add_element_indicators(elements, self._figure) 
 
+    def add_element_indicator(self, 
+                              element: Element, 
+                              visibility_boolean: tk.BooleanVar):
+        self.element_indicators.extend(add_element_indicators({element: visibility_boolean},
+                                                              self._figure))
+
+    def remove_element_indicator(self, element):
+        for indicator in self.element_indicators:
+            if indicator.element == element:
+                indicator.element_artist.remove()
+                indicator.marker_artist.remove()
+                for artist in indicator.label_artists:
+                    artist.remove()
+                self.element_indicators.remove(indicator)
+                break
+
     def plotted_files(self):
         return self._plotted_files
 
