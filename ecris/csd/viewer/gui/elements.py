@@ -1,8 +1,53 @@
-from cProfile import label
+from dataclasses import dataclass
 import tkinter as tk
-from typing import List
+from typing import List, Tuple
 
 from ecris.csd.viewer.analysis import Element
+
+@dataclass
+class _CustomElement:
+    location: Tuple[int, int]
+    element: Element
+    button_frame: tk.Frame
+
+class _CustomElementManager(tk.Frame):
+    def __init__(self, owner, plot, *args, **kwargs):
+        super().__init__(owner, *args, **kwargs)
+        self._max_columns = 3
+        self._max_rows = 5
+        self._plot = plot
+        self._custom_elements = []
+    
+    def add_element(self, element: Element):
+        element_visibility = tk.BooleanVar(value=True)
+        self._plot.add_element_indicator(element, element_visibility)
+        self._plot.update()
+        text = f"{element.symbol}-{element.atomic_weight}"
+        element_frame = tk.Frame(self, relief=tk.RAISED, borderwidth=2)
+        button = tk.Checkbutton(element_frame, text=text,
+                                onvalue=True, offvalue=False,
+                                variable=element_visibility,
+                                command=self._plot.update).pack(side='left')
+        if self._custom_elements:
+            last_row, last_column = self._custom_elements[-1].location 
+            if last_row > self._max_rows:
+                column = last_column + 1
+                row = 0
+            else:
+                column = last_column
+                row = last_row + 1
+        else:
+            row, column = (0, 0)
+        element_frame.grid(column=column, row=row)
+        self._custom_elements.append(_CustomElement((row, column), element, element_frame))
+
+    def remove_all_elements(self):
+        for custom_element in self._custom_elements:
+            self._plot.remove_element_indicator(custom_element.element)
+            custom_element.button_frame.grid_forget()
+            custom_element.button_frame.destroy()
+        self._custom_elements = []
+        self._plot.update()
 
 class ElementButtons(tk.Frame):
     def __init__(self, owner, plot,
@@ -20,6 +65,7 @@ class ElementButtons(tk.Frame):
         self._font = "TkDefaultFont"
         self._title_font = (self._font, 14)
         self._subtitle_font = (self._font, 12)
+        self._custom_elements = _CustomElementManager(self, self._plot)
         
         self.create_widgets()
 
@@ -80,9 +126,30 @@ class ElementButtons(tk.Frame):
                                 command=self.add_custom_element).grid(column=6, row=0)
 
         frCustom.pack(side='top')
+        self._custom_elements.pack(side='top')
+        btnRemoveCustomElements = tk.Button(self, text='Clear', 
+                                            command=self._custom_elements.remove_all_elements).pack(side='top')
 
     def add_custom_element(self):
         e = Element(self.varSymbol.get(), self.varSymbol.get(), int(self.varMass.get()), int(self.varNumber.get()))
-        self.element_visibility[e] = tk.BooleanVar(value=True)
-        self._plot.add_element_indicator(e, self.element_visibility[e])
-        self._plot.update()
+        if self.validate_element(e):
+            self._custom_elements.add_element(e)
+
+    def validate_element(self, to_check: Element):
+        error = ''
+        for element in self._persistent_elements + self._variable_elements:
+            if to_check.atomic_number == element.atomic_number and to_check.atomic_weight == element.atomic_weight:
+                error = 'Element already included in Persistent/Variable element list'
+        for element in self._custom_elements._custom_elements:
+            if (to_check.atomic_number == element.element.atomic_number 
+                and to_check.atomic_weight == element.element.atomic_weight):
+                error = 'Element already included as a custom element'
+        if to_check.atomic_number > to_check.atomic_weight:
+            error = 'Element atomic number must be greater than weight'
+        if error:
+            winError = tk.Toplevel()
+            winError.title('Error')
+            lblError = tk.Label(winError, text=f"Error with custom element input: {error}").pack()
+            b = tk.Button(winError, text="Ok", command=winError.destroy).pack()
+            return False
+        return True
