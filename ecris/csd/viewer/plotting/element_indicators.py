@@ -1,3 +1,4 @@
+from logging import info
 import tkinter as tk
 from matplotlib import transforms
 from matplotlib.figure import Figure
@@ -29,6 +30,7 @@ class ElementIndicator:
             for x in self.marker_artist.get_xdata():
                 line = ax.axvline(x, ls='--', alpha=0.25, c=self.marker_artist.get_color(), animated=True)
                 figure.draw_artist(line)
+        info(f'Element indicator for: {self.element.symbol}-{self.element.atomic_number}: label_artists: {len(self.label_artists)}')
 
     @property
     def is_plotted(self) -> bool:

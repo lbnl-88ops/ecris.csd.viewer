@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from logging import info
 import tkinter as tk
 from typing import List, Tuple
 
@@ -40,6 +41,8 @@ class _CustomElementManager(tk.Frame):
             row, column = (0, 0)
         element_frame.grid(column=column, row=row)
         self._custom_elements.append(_CustomElement((row, column), element, element_frame))
+        info(f'Custom elements: {len(self._custom_elements)}')
+        info(f'{self} children: {len(self.winfo_children())}')
 
     def remove_all_elements(self):
         for custom_element in self._custom_elements:
@@ -68,6 +71,7 @@ class ElementButtons(tk.Frame):
         self._custom_elements = _CustomElementManager(self, self._plot)
         
         self.create_widgets()
+        info(f'{self} children: {len(self.winfo_children())}')
 
     def create_widgets(self):
         lbTitle = tk.Label(self, text='Element M/Q indicators', font=self._title_font)
@@ -134,6 +138,7 @@ class ElementButtons(tk.Frame):
         e = Element(self.varSymbol.get(), self.varSymbol.get(), int(self.varMass.get()), int(self.varNumber.get()))
         if self.validate_element(e):
             self._custom_elements.add_element(e)
+        info(f'{self} children: {len(self.winfo_children())}')
 
     def validate_element(self, to_check: Element):
         error = ''
