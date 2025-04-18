@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from logging import info
 import tkinter as tk
+from tkinter import messagebox
 from typing import List, Tuple
 
 from ecris.csd.viewer.analysis import Element
@@ -147,24 +148,30 @@ class ElementButtons(tk.Frame):
         mass = self.varMass.get()
         number = self.varNumber.get()
         error = ''
+        warning = ''
         if not mass.isdigit():
-            error = 'Mass must be a valid integer'
+            error = 'Mass must be a valid positive integer'
         elif not number.isdigit():
-            error = 'number must be a valid integer'
+            error = 'Atomic number must be a valid positive integer'
         elif int(number) > int(mass):
-            error = 'Element atomic number must be less than or equal to weight'
+            error = 'Element atomic number must be less than or equal to mass'
         else:
             for element in self._persistent_elements + self._variable_elements:
-                if number == element.atomic_number and mass == element.atomic_weight:
-                    error = 'Element already included in Persistent/Variable element list'
+                if (int(number) == element.atomic_number and int(mass) == element.atomic_weight
+                    and symbol == element.symbol):
+                    warning = 'Element appears to be already included in Persistent/Variable element list'
             for element in self._custom_elements._custom_elements:
-                if (number == element.element.atomic_number 
-                    and mass == element.element.atomic_weight):
-                    error = 'Element already included as a custom element'
+                if (int(number) == element.element.atomic_number 
+                    and int(mass) == element.element.atomic_weight):
+                    warning = 'Element appears already included as a custom element'
         if error:
-            winError = tk.Toplevel()
-            winError.title('Error')
-            lblError = tk.Label(winError, text=f"Error with custom element input: {error}").pack()
-            b = tk.Button(winError, text="Ok", command=winError.destroy).pack()
+            messagebox.showerror('Error', error)
+            # winError = tk.Toplevel()
+            # winError.title('Error')
+            # lblError = tk.Label(winError, text=f"Error with custom element input: {error}").pack()
+            # b = tk.Button(winError, text="Ok", command=winError.destroy).pack()
             return None
+        if warning:
+            if not messagebox.askyesno('Warning', warning + '. Are you sure you want to add it?'):
+                return None
         return Element(symbol, symbol, int(mass), int(number))
