@@ -79,9 +79,9 @@ def interpolateMoverQ(MQest,ibeam,expectedpeaks,dpeak):
     MQinterp = MQest*1.0                # start with estimate of M/Q as a base
     for i in range(len(peaks)):
         if i == 0:                      # rescale everything to the left of first peak
-            MQinterp[:peaks[0]+1] = np.linspace(MQest[0],expectedpeaks[0],peaks[0])
+            MQinterp[:peaks[0]+1] = np.linspace(MQest[0],expectedpeaks[0],peaks[0]+1)
         else:                           # sort peaks up to last peak
-            MQinterp[peaks[i-1]:peaks[i]+1] = np.linspace(expectedpeaks[i-1],expectedpeaks[i],peaks[i]-peaks[i-1])
+            MQinterp[peaks[i-1]:peaks[i]+1] = np.linspace(expectedpeaks[i-1],expectedpeaks[i],peaks[i]-peaks[i-1]+1)
         # finally rescale everything to the right of last peak
         MQinterp[peaks[-1]:] = np.linspace(expectedpeaks[-1],MQest[-1],len(MQest)-peaks[-1])
     return(MQinterp,peaks)
