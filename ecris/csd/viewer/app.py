@@ -2,6 +2,7 @@
 import logging
 from pathlib import Path
 import tkinter as tk
+from tkinter import messagebox
 import matplotlib
 
 from ecris.csd.viewer.gui.elements import ElementButtons
@@ -31,7 +32,7 @@ class CSDViewer(tk.Tk):
         self.destroy()
 
     def create_menu(self):
-        self.menu = AppMenu(self)
+        self.menu = AppMenu(self, self.plot.use_blitting)
         self.config(menu=self.menu)
 
     def create_widgets(self):
@@ -50,3 +51,9 @@ class CSDViewer(tk.Tk):
 
     def diagnostic_mode(self):
         self._diagnostic_window = DiagnosticWindow(self)
+
+    def toggle_blitting(self):
+        logging.info(self.plot.use_blitting.get())
+        if self.plot.use_blitting.get():
+            if not messagebox.askokcancel('Warning', """Activating blitting may cause some plot elements to not update automatically unless resized, are you sure you want to do this?"""):
+                self.plot.use_blitting.set(False)

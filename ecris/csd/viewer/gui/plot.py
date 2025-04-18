@@ -19,6 +19,7 @@ class Plot(tk.Frame):
         self.element_indicators: List[ElementIndicator] = []
         self.create_widgets()
         self.draw_element_lines = tk.BooleanVar(value=False)
+        self.use_blitting = tk.BooleanVar(value=False)
 
     def create_widgets(self):
         self._figure, self._csd_artists = plot_files([])
@@ -108,8 +109,10 @@ class Plot(tk.Frame):
         else:
             self.canvas.restore_region(self._bg)
             self._draw_animated()
-            self.canvas.draw()
-            # self.canvas.blit(self.canvas.figure.gca().clipbox)
+            if self.use_blitting.get():
+                self.canvas.blit(self.canvas.figure.gca().clipbox)
+            else:
+                self.canvas.draw()
         self.canvas.flush_events()
         
         
