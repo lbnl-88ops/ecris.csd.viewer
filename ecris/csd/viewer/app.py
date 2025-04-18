@@ -5,7 +5,7 @@ import matplotlib
 
 from ecris.csd.viewer.gui.elements import ElementButtons
 
-from .gui import FileList, PlotControls, Plot, FileListControls, AppMenu
+from .gui import FileList, PlotControls, Plot, FileListControls, AppMenu, DiagnosticWindow
 from .analysis.element import PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS
 
 __version__ = "1.1.0-beta.1"
@@ -47,4 +47,4 @@ class CSDViewer(tk.Tk):
         self.element_buttons.pack(fill="both", padx=10, pady=10)
 
     def diagnostic_mode(self):
-        pass
+        self._diagnostic_window = DiagnosticWindow(self)
