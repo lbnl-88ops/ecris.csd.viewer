@@ -1,7 +1,5 @@
-from logging import Handler, getLogger
+from logging import Handler, getLogger, info
 import tkinter as tk
-
-_log = getLogger(__name__)
 
 class DiagnosticWindow(tk.Toplevel):
     def __init__(self, owner, *args, **kwargs):
@@ -22,4 +20,4 @@ class DiagnosticWindow(tk.Toplevel):
         
         self.handler = LogHandler(self.log_text)
         getLogger().addHandler(self.handler)
-        _log.debug('Opened diagnostic log window')        
+        info('Opened diagnostic log window')        

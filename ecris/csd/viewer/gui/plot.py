@@ -1,4 +1,4 @@
-import enum
+from logging import info
 from pathlib import Path
 import tkinter as tk
 from typing import Dict, List, Optional
@@ -99,6 +99,7 @@ class Plot(tk.Frame):
             ax.legend(handles, labels)
 
     def update(self):
+        info(f'Updating plot: CSD artists: {len(self._csd_artists)}, element indicators: {len(self.element_indicators)}')
         self._update(None)
 
     def _update(self, event):

@@ -1,3 +1,4 @@
+from logging import info
 from matplotlib.lines import Line2D
 import numpy as np
 import matplotlib.pyplot as plt
@@ -8,6 +9,7 @@ from pathlib import Path
 from typing import List, Tuple
 
 from ecris.csd.viewer.files import CSDFile
+
 
 alpha = 0.00824    # measured approximate relation between the dipole hall probe measure [tesla]
                    #    and M/Q: alpha = B_batman[tesla]/sqrt(M/Q * Vext[kV])
@@ -87,6 +89,7 @@ def interpolateMoverQ(MQest,ibeam,expectedpeaks,dpeak):
     return(MQinterp,peaks)
 
 def plot_files(files: List[CSDFile]) -> Tuple[Figure, List[Artist]]:
+    info(f'Plotting {len(files)}: {[str(f) for f in files]}')
     fig = Figure((9,6), tight_layout=True)
     ax = fig.gca()
     artists = []

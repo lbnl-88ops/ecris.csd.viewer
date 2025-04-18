@@ -1,4 +1,5 @@
 """Main CSD Viewer App"""
+import logging
 from pathlib import Path
 import tkinter as tk
 import matplotlib
@@ -12,6 +13,7 @@ __version__ = "1.1.0-beta.1"
 
 matplotlib.rc('font', size=14)
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class CSDViewer(tk.Tk):
     def __init__(self, default_path: Path):
