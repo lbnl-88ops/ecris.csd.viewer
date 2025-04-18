@@ -34,7 +34,8 @@ class ElementIndicator:
             figure.draw_artist(label.artist)
         if lines:
             ax = figure.gca()
-            for x in self.marker_artist.get_xdata():
+            for l in [l for l in self.label_artists if l.draw]:
+                x = l.artist.get_position()[0]
                 line = ax.axvline(x, ls='--', alpha=0.25, c=self.marker_artist.get_color(), animated=True)
                 figure.draw_artist(line)
         info(f'Element indicator for: {self.element.symbol}-{self.element.atomic_number}: label_artists: {len(self.label_artists)}')
