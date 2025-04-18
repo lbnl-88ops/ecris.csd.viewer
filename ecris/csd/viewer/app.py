@@ -8,7 +8,7 @@ from ecris.csd.viewer.gui.elements import ElementButtons
 from .gui import FileList, PlotControls, Plot, FileListControls
 from .analysis.element import PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS
 
-__version__ = "1.1.0-beta"
+__version__ = "1.1.0-beta.1"
 
 matplotlib.rc('font', size=14)
 
