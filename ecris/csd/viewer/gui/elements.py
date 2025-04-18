@@ -122,9 +122,9 @@ class ElementButtons(tk.Frame):
         frCustom = tk.Frame(self)
         lbSymbol = tk.Label(frCustom, text='Symbol:').grid(column=0, row=0)
         entSymbol = tk.Entry(frCustom, textvariable=self.varSymbol, width=5).grid(column=1, row=0)
-        lbAtomicWeight = tk.Label(frCustom, text='Mass:').grid(column=2, row=0)
-        entAtomicWeight = tk.Entry(frCustom, textvariable=self.varMass, width=5).grid(column=3, row=0)
-        lbAtomicNumber = tk.Label(frCustom, text='Number:').grid(column=4, row=0)
+        lbAtomicMass = tk.Label(frCustom, text='Mass:').grid(column=2, row=0)
+        entAtomicMass = tk.Entry(frCustom, textvariable=self.varMass, width=5).grid(column=3, row=0)
+        lbAtomicNumber = tk.Label(frCustom, text='At. no.:').grid(column=4, row=0)
         entAtomicNumber = tk.Entry(frCustom, textvariable=self.varNumber, width=5).grid(column=5, row=0)
         btAddCustom = tk.Button(frCustom, text='Add',
                                 command=self.add_custom_element).grid(column=6, row=0)
