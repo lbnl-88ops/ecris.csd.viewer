@@ -1,4 +1,4 @@
-import enum
+from logging import info
 from pathlib import Path
 import tkinter as tk
 from typing import Dict, List, Optional
@@ -45,8 +45,8 @@ class Plot(tk.Frame):
             if indicator.element == element:
                 indicator.element_artist.remove()
                 indicator.marker_artist.remove()
-                for artist in indicator.label_artists:
-                    artist.remove()
+                for label in indicator.label_artists:
+                    label.artist.remove()
                 self.element_indicators.remove(indicator)
                 break
 
@@ -99,6 +99,7 @@ class Plot(tk.Frame):
             ax.legend(handles, labels)
 
     def update(self):
+        info(f'Updating plot: CSD artists: {len(self._csd_artists)}, element indicators: {len(self.element_indicators)}')
         self._update(None)
 
     def _update(self, event):
@@ -107,8 +108,8 @@ class Plot(tk.Frame):
         else:
             self.canvas.restore_region(self._bg)
             self._draw_animated()
-            self.canvas.draw()
-            # self.canvas.blit(self.canvas.figure.bbox)
+            # self.canvas.draw()
+            self.canvas.blit(self.canvas.figure.bbox)
         self.canvas.flush_events()
         
         
