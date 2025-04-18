@@ -137,6 +137,9 @@ class ElementButtons(tk.Frame):
         e = self.get_element()
         if e is not None:
             self._custom_elements.add_element(e)
+            for l in [self.varSymbol, self.varMass, self.varNumber]:
+                l.set('')
+
         info(f'{self} children: {len(self.winfo_children())}')
 
     def get_element(self) -> Element:
