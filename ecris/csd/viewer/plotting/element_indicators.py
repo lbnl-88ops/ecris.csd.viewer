@@ -59,7 +59,7 @@ class ElementIndicator:
         ax_min, ax_max = ax.get_xlim()
         x_min = ax.transData.transform((ax_min, 0))[0]
         x_max = ax.transData.transform((ax_max, 0))[0]
-        space_required = 0.03*(x_max - x_min)
+        space_required = 35
         visible_labels = sorted([l for l in self.label_artists if x_min < ax.transData.transform(l.artist.get_position())[0] < x_max],
                                 key=lambda l: l.artist.get_position()[0])
         if not visible_labels:
