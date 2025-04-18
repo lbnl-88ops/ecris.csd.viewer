@@ -134,26 +134,34 @@ class ElementButtons(tk.Frame):
                                             command=self._custom_elements.remove_all_elements).pack(side='top')
 
     def add_custom_element(self):
-        e = Element(self.varSymbol.get(), self.varSymbol.get(), int(self.varMass.get()), int(self.varNumber.get()))
-        if self.validate_element(e):
+        e = self.get_element()
+        if e is not None:
             self._custom_elements.add_element(e)
         info(f'{self} children: {len(self.winfo_children())}')
 
-    def validate_element(self, to_check: Element):
+    def get_element(self) -> Element:
+        symbol = self.varSymbol.get()
+        mass = self.varMass.get()
+        number = self.varNumber.get()
         error = ''
-        for element in self._persistent_elements + self._variable_elements:
-            if to_check.atomic_number == element.atomic_number and to_check.atomic_weight == element.atomic_weight:
-                error = 'Element already included in Persistent/Variable element list'
-        for element in self._custom_elements._custom_elements:
-            if (to_check.atomic_number == element.element.atomic_number 
-                and to_check.atomic_weight == element.element.atomic_weight):
-                error = 'Element already included as a custom element'
-        if to_check.atomic_number > to_check.atomic_weight:
-            error = 'Element atomic number must be greater than weight'
+        if not mass.isdigit():
+            error = 'Mass must be a valid integer'
+        elif not number.isdigit():
+            error = 'number must be a valid integer'
+        elif int(number) > int(mass):
+            error = 'Element atomic number must be less than or equal to weight'
+        else:
+            for element in self._persistent_elements + self._variable_elements:
+                if number == element.atomic_number and mass == element.atomic_weight:
+                    error = 'Element already included in Persistent/Variable element list'
+            for element in self._custom_elements._custom_elements:
+                if (number == element.element.atomic_number 
+                    and mass == element.element.atomic_weight):
+                    error = 'Element already included as a custom element'
         if error:
             winError = tk.Toplevel()
             winError.title('Error')
             lblError = tk.Label(winError, text=f"Error with custom element input: {error}").pack()
             b = tk.Button(winError, text="Ok", command=winError.destroy).pack()
-            return False
-        return True
+            return None
+        return Element(symbol, symbol, int(mass), int(number))
