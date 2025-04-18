@@ -21,3 +21,10 @@ class DiagnosticWindow(tk.Toplevel):
         self.handler = LogHandler(self.log_text)
         getLogger().addHandler(self.handler)
         info('Opened diagnostic log window')        
+
+        self.protocol("WM_DELETE_WINDOW", self.on_close)
+
+
+    def on_close(self):
+        getLogger().removeHandler(self.handler)
+        self.destroy()
