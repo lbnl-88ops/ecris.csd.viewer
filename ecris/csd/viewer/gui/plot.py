@@ -108,8 +108,8 @@ class Plot(tk.Frame):
         else:
             self.canvas.restore_region(self._bg)
             self._draw_animated()
-            self.canvas.draw()
-            # self.canvas.blit(self.canvas.figure.bbox)
+            # self.canvas.draw()
+            self.canvas.blit(self.canvas.figure.bbox)
         self.canvas.flush_events()
         
         
