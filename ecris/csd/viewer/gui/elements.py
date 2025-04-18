@@ -14,8 +14,7 @@ class _CustomElement:
 class _CustomElementManager(tk.Frame):
     def __init__(self, owner, plot, *args, **kwargs):
         super().__init__(owner, *args, **kwargs)
-        self._max_columns = 3
-        self._max_rows = 5
+        self._max_columns = 4
         self._plot = plot
         self._custom_elements = []
     
@@ -31,12 +30,12 @@ class _CustomElementManager(tk.Frame):
                                 command=self._plot.update).pack(side='left')
         if self._custom_elements:
             last_row, last_column = self._custom_elements[-1].location 
-            if last_row > self._max_rows:
-                column = last_column + 1
-                row = 0
-            else:
-                column = last_column
+            if last_column == self._max_columns - 1:
+                column = 0
                 row = last_row + 1
+            else:
+                column = last_column + 1
+                row = last_row
         else:
             row, column = (0, 0)
         element_frame.grid(column=column, row=row)
@@ -131,7 +130,7 @@ class ElementButtons(tk.Frame):
 
         frCustom.pack(side='top')
         self._custom_elements.pack(side='top')
-        btnRemoveCustomElements = tk.Button(self, text='Clear', 
+        btnRemoveCustomElements = tk.Button(self, text='Clear all', 
                                             command=self._custom_elements.remove_all_elements).pack(side='top')
 
     def add_custom_element(self):
