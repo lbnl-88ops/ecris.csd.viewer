@@ -9,6 +9,7 @@ tk = "*"
 matplotlib = "*"
 numpy = "*"
 pyyaml = "*"
+appdirs = "*"
 
 [dev-packages]
 
