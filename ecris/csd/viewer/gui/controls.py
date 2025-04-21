@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import filedialog
 from pathlib import Path
 
+import ttkbootstrap as ttk
+
 from ecris.csd.viewer.gui.elements import ElementButtons
 
 from .file_list import FileList
@@ -17,10 +19,12 @@ class FileListControls(tk.Frame):
 
     def create_widgets(self):
         self.widgets = []
-        self.btChangeDirectory = tk.Button(self, text="Choose directory", 
-                                     command=self.choose_directory)
-        self.btRefresh = tk.Button(self, text="Refresh file list", 
-                                 command=self.refresh)
+        self.btChangeDirectory = ttk.Button(self, text="Choose directory", 
+                                            command=self.choose_directory,
+                                            bootstyle=ttk.PRIMARY)
+        self.btRefresh = ttk.Button(self, text="Refresh file list", 
+                                 command=self.refresh,
+                                 bootstyle=(ttk.PRIMARY, ttk.OUTLINE))
         for loc, widget in {
             (0, 0): self.btChangeDirectory, 
             (0, 1): self.btRefresh, 
@@ -50,15 +54,18 @@ class PlotControls(tk.Frame):
     
     def create_widgets(self):
         self.widgets = []
-        self.btViewCSD = tk.Button(self, text="Plot CSD",
+        self.btViewCSD = ttk.Button(self, text="Plot CSD",
                                   command=self.plot_file,
-                                  height=self.big_button_size)
-        self.btAutoScale = tk.Button(self, text="Reset Scale",
+                                #   height=self.big_button_size,
+                                  bootstyle=(ttk.SUCCESS))
+        self.btAutoScale = ttk.Button(self, text="Reset Scale",
                                      command=self.plot.autoscale,
-                                     height=self.big_button_size)
-        self.btClearPlot = tk.Button(self, text="Clear Plot", 
+                                     bootstyle=(ttk.SUCCESS, ttk.OUTLINE))
+                                    #  height=self.big_button_size)
+        self.btClearPlot = ttk.Button(self, text="Clear Plot", 
                                      command=self.clear_plot, 
-                                     height=self.big_button_size)
+                                     bootstyle=(ttk.OUTLINE))
+                                    #  height=self.big_button_size)
         for loc, widget in {
             (0, 0): self.btViewCSD, 
             (0, 1): self.btAutoScale,

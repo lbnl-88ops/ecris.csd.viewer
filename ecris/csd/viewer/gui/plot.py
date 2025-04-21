@@ -1,4 +1,4 @@
-import enum
+from logging import info
 from pathlib import Path
 import tkinter as tk
 from typing import Dict, List, Optional
@@ -19,6 +19,7 @@ class Plot(tk.Frame):
         self.element_indicators: List[ElementIndicator] = []
         self.create_widgets()
         self.draw_element_lines = tk.BooleanVar(value=False)
+        self.use_blitting = tk.BooleanVar(value=False)
 
     def create_widgets(self):
         self._figure, self._csd_artists = plot_files([])
@@ -33,6 +34,22 @@ class Plot(tk.Frame):
 
     def set_element_indicators(self, elements: Dict[Element, tk.BooleanVar]):
         self.element_indicators = add_element_indicators(elements, self._figure) 
+
+    def add_element_indicator(self, 
+                              element: Element, 
+                              visibility_boolean: tk.BooleanVar):
+        self.element_indicators.extend(add_element_indicators({element: visibility_boolean},
+                                                              self._figure))
+
+    def remove_element_indicator(self, element):
+        for indicator in self.element_indicators:
+            if indicator.element == element:
+                indicator.element_artist.remove()
+                indicator.marker_artist.remove()
+                for label in indicator.label_artists:
+                    label.artist.remove()
+                self.element_indicators.remove(indicator)
+                break
 
     def plotted_files(self):
         return self._plotted_files
@@ -83,6 +100,7 @@ class Plot(tk.Frame):
             ax.legend(handles, labels)
 
     def update(self):
+        info(f'Updating plot: CSD artists: {len(self._csd_artists)}, element indicators: {len(self.element_indicators)}')
         self._update(None)
 
     def _update(self, event):
@@ -91,8 +109,10 @@ class Plot(tk.Frame):
         else:
             self.canvas.restore_region(self._bg)
             self._draw_animated()
-            self.canvas.draw()
-            # self.canvas.blit(self.canvas.figure.bbox)
+            if self.use_blitting.get():
+                self.canvas.blit(self.canvas.figure.gca().clipbox)
+            else:
+                self.canvas.draw()
         self.canvas.flush_events()
         
         
