@@ -23,11 +23,13 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 class CSDViewer(tk.Tk):
     def __init__(self, configuration: AppConfiguration | None):
         super().__init__()
-        if configuration is None:
-            configuration = create_configuration()
-        self.default_path = configuration.default_directory
+        self.configuration = configuration
+        if self.configuration is None:
+            self.configuration = create_configuration()
+        self.default_path = self.configuration.default_directory
         self.title(f"CSD Viewer (v{__version__})")
         self.pad = 5.0
+        self.variable_elements = VARIABLE_ELEMENTS + self.configuration.custom_elements
         
         self.create_widgets()
         self.create_menu()
@@ -45,7 +47,7 @@ class CSDViewer(tk.Tk):
         self.file_list = FileList(self.default_path)
         self.file_list_controls = FileListControls(self, self.file_list)
         self.plot = Plot(self) 
-        self.element_buttons = ElementButtons(self, self.plot, PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS)
+        self.element_buttons = ElementButtons(self, self.plot, PERSISTANT_ELEMENTS, self.variable_elements)
         self.controls = PlotControls(self, self.plot, self.file_list, self.element_buttons)
         self.plot.set_element_indicators(self.element_buttons.element_visibility)
 

@@ -5,6 +5,7 @@ from matplotlib import transforms
 from matplotlib.figure import Figure
 from typing import List, Dict
 from itertools import compress
+from collections import deque
 
 from matplotlib.markers import MarkerStyle
 from matplotlib.text import Text
@@ -96,7 +97,7 @@ class ElementIndicator:
         return any(x_min <= x <= x_max for x in self.marker_artist.get_xdata())
 
 def add_element_indicators(elements: Dict[Element, tk.BooleanVar], figure: Figure):
-    markers = ["v", "^", "p", "d", "*", "D"]
+    markers = deque(["v", "^", "p", "d", "*", "D"])
     element_indicators = []
     ax = figure.gca()
     for element, visibility in elements.items():
@@ -107,7 +108,8 @@ def add_element_indicators(elements: Dict[Element, tk.BooleanVar], figure: Figur
         q_values = list(compress(q_values, mask))
         m_over_q = list(compress(m_over_q, mask))
         height = 0
-        marker = MarkerStyle(markers.pop(0))
+        marker = MarkerStyle(markers[0])
+        markers.rotate()
         ln, = ax.plot(m_over_q, [height]*len(m_over_q), 
                 marker=marker,
                 ms=10,
