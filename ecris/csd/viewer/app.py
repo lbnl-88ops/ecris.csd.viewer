@@ -12,13 +12,15 @@ import ttkbootstrap as ttk
 
 from ecris.csd.viewer.gui.elements import ElementButtons
 from ecris.csd.viewer.files.configuration import AppConfiguration, create_configuration, CONFIG_FILEPATH
+from ecris.csd.viewer.gui.style.patchMatplotlib import applyPatch
 
 from .gui import FileList, PlotControls, Plot, FileListControls, AppMenu, DiagnosticWindow
 from .analysis.element import PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS
 
-__version__ = "1.1.0-beta.3"
+__version__ = "1.1.0-beta.4"
 
 matplotlib.rc('font', size=14)
+applyPatch()
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
