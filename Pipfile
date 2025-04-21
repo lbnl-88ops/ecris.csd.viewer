@@ -10,6 +10,7 @@ matplotlib = "*"
 numpy = "*"
 pyyaml = "*"
 appdirs = "*"
+ttkbootstrap = "*"
 
 [dev-packages]
 
