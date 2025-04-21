@@ -17,7 +17,7 @@ from ecris.csd.viewer.gui.style.patchMatplotlib import applyPatch
 from .gui import FileList, PlotControls, Plot, FileListControls, AppMenu, DiagnosticWindow
 from .analysis.element import PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS
 
-__version__ = "1.1.0-beta.4"
+__version__ = "1.1.0"
 
 matplotlib.rc('font', size=14)
 applyPatch()
