@@ -4,6 +4,8 @@ import tkinter as tk
 from tkinter import messagebox
 from typing import List, Tuple
 
+import ttkbootstrap as ttk
+
 from ecris.csd.viewer.analysis import Element
 
 @dataclass
@@ -25,10 +27,11 @@ class _CustomElementManager(tk.Frame):
         self._plot.update()
         text = f"{element.symbol}-{element.atomic_weight}"
         element_frame = tk.Frame(self, relief=tk.RAISED, borderwidth=2)
-        button = tk.Checkbutton(element_frame, text=text,
+        button = ttk.Checkbutton(element_frame, text=text,
                                 onvalue=True, offvalue=False,
                                 variable=element_visibility,
-                                command=self._plot.update).pack(side='left')
+                                bootstyle='round-toggle',
+                                command=self._plot.update).pack(side='left', padx=5, pady=5)
         if self._custom_elements:
             last_row, last_column = self._custom_elements[-1].location 
             if last_column == self._max_columns - 1:
@@ -52,13 +55,12 @@ class _CustomElementManager(tk.Frame):
         self._custom_elements = []
         self._plot.update()
 
-class ElementButtons(tk.Frame):
+class ElementButtons(ttk.Frame):
     def __init__(self, owner, plot,
                  persistent_elements: List[Element], 
                  variable_elements: List[Element], 
                  *args, **kwargs):
-        super().__init__(owner, relief=tk.GROOVE, 
-                         padx=20, pady=20, borderwidth=5, *args, **kwargs)
+        super().__init__(owner, padding=20, *args, **kwargs)
         self._persistent_elements = persistent_elements
         self._variable_elements = variable_elements
         self.element_visibility = {
@@ -79,7 +81,8 @@ class ElementButtons(tk.Frame):
         lbOptions = tk.Label(self, text='Display options', font=self._subtitle_font,
                              justify='left')
         lbOptions.pack(side='top', fill='x')
-        button = tk.Checkbutton(self, text='Show lines',
+        button = ttk.Checkbutton(self, text='Show lines',
+                                bootstyle='round-toggle',
                                 onvalue=True, offvalue=False,
                                 variable=self._plot.draw_element_lines,
                                 command=self._plot.update)
@@ -94,22 +97,24 @@ class ElementButtons(tk.Frame):
         lbPersistent.grid(column=0, row=0, sticky='NW', columnspan=2)
         for i, element in enumerate(sorted(self._persistent_elements, key=lambda e: e.atomic_number)):
             text = f"{element.symbol}-{element.atomic_weight}"
-            button = tk.Checkbutton(frElement, text=text,
+            button = ttk.Checkbutton(frElement, text=text,
+                                    bootstyle='round-toggle',
                                     onvalue=True, offvalue=False,
                                     variable=self.element_visibility[element],
                                     command=self._plot.update)
-            button.grid(sticky='NW', row=1 + i, column=0)
+            button.grid(sticky='NW', row=1 + i, column=0, padx=5, pady=5)
             
         lbVariable = tk.Label(frElement, text='Variable', font=self._subtitle_font,
                               justify='center')
         lbVariable.grid(column=2, row = 0, sticky='NW', columnspan=2)
         for i, element in enumerate(sorted(self._variable_elements, key=lambda e: e.atomic_number)):
             text = f"{element.symbol}-{element.atomic_weight}"
-            button = tk.Checkbutton(frElement, text=text,
+            button = ttk.Checkbutton(frElement, text=text,
+                                    bootstyle='round-toggle',
                                     onvalue=True, offvalue=False,
                                     variable=self.element_visibility[element],
                                     command=self._plot.update)
-            button.grid(sticky='NW', column=2, row=1+i)
+            button.grid(sticky='NW', column=2, row=1+i, padx=5, pady=5)
         frElement.pack(side='top', fill='x')
 
         self.varSymbol = tk.StringVar()
@@ -120,18 +125,22 @@ class ElementButtons(tk.Frame):
         lbCustom.pack(side='top')
 
         frCustom = tk.Frame(self)
-        lbSymbol = tk.Label(frCustom, text='Symbol:').grid(column=0, row=0)
-        entSymbol = tk.Entry(frCustom, textvariable=self.varSymbol, width=5).grid(column=1, row=0)
-        lbAtomicMass = tk.Label(frCustom, text='Mass:').grid(column=2, row=0)
-        entAtomicMass = tk.Entry(frCustom, textvariable=self.varMass, width=5).grid(column=3, row=0)
-        lbAtomicNumber = tk.Label(frCustom, text='At. no.:').grid(column=4, row=0)
-        entAtomicNumber = tk.Entry(frCustom, textvariable=self.varNumber, width=5).grid(column=5, row=0)
-        btAddCustom = tk.Button(frCustom, text='Add',
-                                command=self.add_custom_element).grid(column=6, row=0)
+        pad = 5
+        pady = 5
+        lbSymbol = tk.Label(frCustom, text='Symbol:').grid(column=0, row=0,padx=pad, pady=pady)
+        entSymbol = ttk.Entry(frCustom, textvariable=self.varSymbol, width=5).grid(column=1, row=0, padx=pad, pady=pady)
+        lbAtomicMass = tk.Label(frCustom, text='Mass:').grid(column=2, row=0,padx=pad, pady=pady)
+        entAtomicMass = ttk.Entry(frCustom, textvariable=self.varMass, width=5).grid(column=3, row=0, padx=pad, pady=pady)
+        lbAtomicNumber = tk.Label(frCustom, text='At. no.:').grid(column=4, row=0, padx=pad, pady=pady)
+        entAtomicNumber = ttk.Entry(frCustom, textvariable=self.varNumber, width=5).grid(column=5, row=0, padx=pad, pady=pady)
+        btAddCustom = ttk.Button(frCustom, text='Add', 
+                                bootstyle=ttk.OUTLINE,
+                                 command=self.add_custom_element).grid(column=6, row=0, padx=pad, pady=pady)
 
         frCustom.pack(side='top')
         self._custom_elements.pack(side='top')
-        btnRemoveCustomElements = tk.Button(self, text='Clear all', 
+        btnRemoveCustomElements = ttk.Button(self, text='Clear all', 
+                                             bootstyle=ttk.OUTLINE,
                                             command=self._custom_elements.remove_all_elements).pack(side='top')
 
     def add_custom_element(self):
