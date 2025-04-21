@@ -55,13 +55,12 @@ class _CustomElementManager(tk.Frame):
         self._custom_elements = []
         self._plot.update()
 
-class ElementButtons(tk.Frame):
+class ElementButtons(ttk.Frame):
     def __init__(self, owner, plot,
                  persistent_elements: List[Element], 
                  variable_elements: List[Element], 
                  *args, **kwargs):
-        super().__init__(owner, relief=tk.GROOVE, 
-                         padx=20, pady=20, borderwidth=5, *args, **kwargs)
+        super().__init__(owner, padding=20, *args, **kwargs)
         self._persistent_elements = persistent_elements
         self._variable_elements = variable_elements
         self.element_visibility = {
