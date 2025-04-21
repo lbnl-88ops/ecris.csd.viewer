@@ -8,6 +8,8 @@ import platform
 import os
 import subprocess
 
+import ttkbootstrap as ttk
+
 from ecris.csd.viewer.gui.elements import ElementButtons
 from ecris.csd.viewer.files.configuration import AppConfiguration, create_configuration, CONFIG_FILEPATH
 
@@ -20,7 +22,7 @@ matplotlib.rc('font', size=14)
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-class CSDViewer(tk.Tk):
+class CSDViewer(ttk.Window):
     def __init__(self, configuration: AppConfiguration | None):
         super().__init__()
         self.configuration = configuration
