@@ -3,16 +3,11 @@ from pathlib import Path
 import yaml
 
 from ecris.csd.viewer import CSDViewer
+from ecris.csd.viewer.files.configuration import load_configuration, AppConfiguration
 
 def csd_viewer():
-    try:
-        with open('config.yaml') as f:
-            configuration = yaml.load(f, Loader=yaml.Loader)
-        default_path = Path(configuration['default_directory'])
-    except Exception:
-        default_path = Path('.')
 
-    app = CSDViewer(default_path)
+    app = CSDViewer(load_configuration())
     app.mainloop()
 
 # Create the main window

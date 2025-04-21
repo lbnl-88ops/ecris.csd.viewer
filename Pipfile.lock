@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "fdab7d1529792051ab92161081550362d04a1e4e5714c247f9647ffa1aa927de"
+            "sha256": "f2d05bd0ef3402d8aeb481e419b6b363faa7ce8fcabb60da1b8b799b0abc94cc"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,6 +16,14 @@
         ]
     },
     "default": {
+        "appdirs": {
+            "hashes": [
+                "sha256:7d5d0167b2b1ba821647616af46a749d1c653740dd0d2415100fe26e27afdf41",
+                "sha256:a841dacd6b99318a741b166adb07e19ee71a274450e68237b4650ca1055ab128"
+            ],
+            "index": "pypi",
+            "version": "==1.4.4"
+        },
         "contourpy": {
             "hashes": [
                 "sha256:041b640d4ec01922083645a94bb3b2e777e6b626788f4095cf21abbe266413c1",
