@@ -4,8 +4,12 @@ from pathlib import Path
 import tkinter as tk
 from tkinter import messagebox
 import matplotlib
+import platform
+import os
+import subprocess
 
 from ecris.csd.viewer.gui.elements import ElementButtons
+from ecris.csd.viewer.files.configuration import AppConfiguration, create_configuration, CONFIG_FILEPATH
 
 from .gui import FileList, PlotControls, Plot, FileListControls, AppMenu, DiagnosticWindow
 from .analysis.element import PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS
@@ -17,9 +21,11 @@ matplotlib.rc('font', size=14)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class CSDViewer(tk.Tk):
-    def __init__(self, default_path: Path):
+    def __init__(self, configuration: AppConfiguration | None):
         super().__init__()
-        self.default_path = default_path.absolute()
+        if configuration is None:
+            configuration = create_configuration()
+        self.default_path = configuration.default_directory
         self.title(f"CSD Viewer (v{__version__})")
         self.pad = 5.0
         
@@ -57,3 +63,19 @@ class CSDViewer(tk.Tk):
         if self.plot.use_blitting.get():
             if not messagebox.askokcancel('Warning', """Activating blitting may cause some plot elements to not update automatically unless resized, are you sure you want to do this?"""):
                 self.plot.use_blitting.set(False)
+
+    def _open_directory(self, path):
+        if platform.system() == 'Windows':
+            os.startfile(path)
+        elif platform.system() == "Darwin":
+            subprocess.Popen(["open", path])
+        elif platform.system() == "Linux":
+            subprocess.Popen(["xdg-open", path])
+        else:
+            messagebox.showerror('Error', 'Cannot open directory: unsupported operating system')
+
+    def open_config_directory(self):
+        self._open_directory(CONFIG_FILEPATH)
+
+    def open_data_directory(self):
+        self._open_directory(self.default_path)
