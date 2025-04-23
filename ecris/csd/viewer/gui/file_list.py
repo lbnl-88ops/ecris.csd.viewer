@@ -42,6 +42,10 @@ class FileList(tk.Frame):
                                                 foreground=BLUE,
                                                 selectbackground=BLUE,
                                                 selectforeground=WHITE)
+            if not file.valid:
+                self.file_listbox.itemconfigure(i, foreground="gray",
+                                                selectbackground='white',
+                                                selectforeground='gray')
 
     def populate_listbox(self, retain_plotted=False):
         """Populates the listbox with files from the specified directory."""
