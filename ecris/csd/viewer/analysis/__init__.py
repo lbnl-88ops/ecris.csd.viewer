@@ -1,1 +1,3 @@
-from .element import PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS, Element
+
+from .m_over_q import estimate_m_over_q
+from .model.element import Element, PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS

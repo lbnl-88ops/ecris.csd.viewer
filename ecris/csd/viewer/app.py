@@ -15,7 +15,7 @@ from ecris.csd.viewer.files.configuration import AppConfiguration, create_config
 from ecris.csd.viewer.gui.style.patchMatplotlib import applyPatch
 
 from .gui import FileList, PlotControls, Plot, FileListControls, AppMenu, DiagnosticWindow
-from .analysis.element import PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS
+from .analysis import PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS
 
 
 __version__ = "1.1.0"

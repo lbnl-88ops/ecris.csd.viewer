@@ -25,7 +25,7 @@ class _CustomElementManager(tk.Frame):
         element_visibility = tk.BooleanVar(value=True)
         self._plot.add_element_indicator(element, element_visibility)
         self._plot.update()
-        text = f"{element.symbol}-{element.atomic_weight}"
+        text = f"{element.symbol}-{element.atomic_mass}"
         element_frame = tk.Frame(self, relief=tk.RAISED, borderwidth=2)
         button = ttk.Checkbutton(element_frame, text=text,
                                 onvalue=True, offvalue=False,
@@ -96,7 +96,7 @@ class ElementButtons(ttk.Frame):
                                 justify='center')
         lbPersistent.grid(column=0, row=0, sticky='NW', columnspan=2)
         for i, element in enumerate(sorted(self._persistent_elements, key=lambda e: e.atomic_number)):
-            text = f"{element.symbol}-{element.atomic_weight}"
+            text = f"{element.symbol}-{element.atomic_mass}"
             button = ttk.Checkbutton(frElement, text=text,
                                     bootstyle='round-toggle',
                                     onvalue=True, offvalue=False,
@@ -108,7 +108,7 @@ class ElementButtons(ttk.Frame):
                               justify='center')
         lbVariable.grid(column=2, row = 0, sticky='NW', columnspan=2)
         for i, element in enumerate(sorted(self._variable_elements, key=lambda e: e.atomic_number)):
-            text = f"{element.symbol}-{element.atomic_weight}"
+            text = f"{element.symbol}-{element.atomic_mass}"
             button = ttk.Checkbutton(frElement, text=text,
                                     bootstyle='round-toggle',
                                     onvalue=True, offvalue=False,
@@ -166,12 +166,12 @@ class ElementButtons(ttk.Frame):
             error = 'Element atomic number must be less than or equal to mass'
         else:
             for element in self._persistent_elements + self._variable_elements:
-                if (int(number) == element.atomic_number and int(mass) == element.atomic_weight
+                if (int(number) == element.atomic_number and int(mass) == element.atomic_mass
                     and symbol == element.symbol):
                     warning = 'Element appears to be already included in Persistent/Variable element list'
             for element in self._custom_elements._custom_elements:
                 if (int(number) == element.element.atomic_number 
-                    and int(mass) == element.element.atomic_weight):
+                    and int(mass) == element.element.atomic_mass):
                     warning = 'Element appears already included as a custom element'
         if error:
             messagebox.showerror('Error', error)
