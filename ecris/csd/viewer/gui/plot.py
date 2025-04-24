@@ -1,11 +1,9 @@
 from logging import info
-from pathlib import Path
 import tkinter as tk
-from typing import Dict, List, Optional
+from typing import Dict, List
 
-import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
-from ..plotting.plot_csd import plot_files, file_artist
+from ..plotting.plot_csd import create_figure, file_artist
 from ecris.csd.viewer.files import CSDFile
 from ecris.csd.viewer.plotting.element_indicators import ElementIndicator, add_element_indicators
 from ecris.csd.viewer.analysis import Element
@@ -22,7 +20,8 @@ class Plot(tk.Frame):
         self.use_blitting = tk.BooleanVar(value=False)
 
     def create_widgets(self):
-        self._figure, self._csd_artists = plot_files([])
+        self._csd_artists = []
+        self._figure = create_figure()
         self.canvas = FigureCanvasTkAgg(self._figure, master=self)
         self.canvas.mpl_connect('draw_event', self.on_draw)
         self.canvas.mpl_connect('resize_event', self._update)
