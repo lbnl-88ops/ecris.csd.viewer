@@ -13,12 +13,7 @@ class CSDFile:
         self.plotted: bool = False
         self.file_size: float = file_size
         self.valid: bool = True
-        self.csd = None
-        try:
-            self.csd = read_csd_from_file_pair(path)
-        except BaseException as e:
-            logging.info(f'Failed to open {path}: {e}')
-            self.valid = False
+        self._csd = None
 
 
     @property
@@ -27,6 +22,16 @@ class CSDFile:
             return self.csd.timestamp
         else:
             return 'File invalid'
+
+    @property
+    def csd(self) -> CSD | None:
+        try:
+            self.valid = True
+            return read_csd_from_file_pair(self.path)
+        except BaseException as e:
+            logging.info(f'Failed to open {self.path}: {e}')
+            self.valid = False
+            return None
 
     @property
     def list_value(self) -> str:
