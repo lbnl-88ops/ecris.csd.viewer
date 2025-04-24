@@ -6,7 +6,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 from ..plotting.plot_csd import create_figure, file_artist
 from ecris.csd.viewer.files import CSDFile
 from ecris.csd.viewer.plotting.element_indicators import ElementIndicator, add_element_indicators
-from ecris.csd.viewer.analysis import Element
+from ecris.csd.analysis import Element
 
 class Plot(tk.Frame):
     def __init__(self, owner, *args, **kwargs):

@@ -10,7 +10,7 @@ from collections import deque
 from matplotlib.markers import MarkerStyle
 from matplotlib.text import Text
 
-from ecris.csd.viewer.analysis import Element
+from ecris.csd.analysis import Element
 
 @dataclass
 class _Label:

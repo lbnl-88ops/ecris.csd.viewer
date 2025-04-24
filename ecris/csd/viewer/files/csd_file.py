@@ -4,8 +4,8 @@ import os
 from pathlib import Path
 from typing import List
 
-from ecris.csd.viewer.analysis import CSD
-from ecris.csd.viewer.analysis.io.read_csd_file import read_csd_from_file_pair, file_timestamp
+from ecris.csd.analysis import CSD
+from ecris.csd.analysis.io.read_csd_file import read_csd_from_file_pair, file_timestamp
 
 class CSDFile:
     def __init__(self, path, file_size: float = 0):
