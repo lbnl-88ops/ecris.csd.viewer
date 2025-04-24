@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import List
 
 from ecris.csd.viewer.analysis import CSD
-from ecris.csd.viewer.analysis.io.read_csd_file import read_csd_from_file_pair
+from ecris.csd.viewer.analysis.io.read_csd_file import read_csd_from_file_pair, file_timestamp
 
 class CSDFile:
     def __init__(self, path, file_size: float = 0):
@@ -13,15 +13,12 @@ class CSDFile:
         self.plotted: bool = False
         self.file_size: float = file_size
         self.valid: bool = True
+        self.timestamp = file_timestamp(path)
         self._csd = None
-
 
     @property
     def formatted_datetime(self) -> str:
-        if self.csd:
-            return self.csd.timestamp
-        else:
-            return 'File invalid'
+        return self.timestamp
 
     @property
     def csd(self) -> CSD | None:
@@ -29,7 +26,7 @@ class CSDFile:
             self.valid = True
             return read_csd_from_file_pair(self.path)
         except BaseException as e:
-            logging.info(f'Failed to open {self.path}: {e}')
+            logging.info(f'File is invalid: {self.path}: {e}')
             self.valid = False
             return None
 
