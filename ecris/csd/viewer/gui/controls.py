@@ -87,6 +87,7 @@ class PlotControls(tk.Frame):
         if file is not None:
             self.plot.plot(file)
             self.file_list.update_colors()
+            self.info_pane.update_info(file)
 
     def clear_plot(self):
         self.plot.clear_plot()

@@ -28,16 +28,21 @@ class FileInfoPane(ttk.Frame):
             ttk.Label(self._info_frame, textvariable=self._info[attribute], 
                       justify='right').grid(column=1, row=i, sticky='e')
         self._info_frame.pack()
-
-    def clear_frames(self):
-        for frame in [self._info_frame]:
-            for widget in frame.winfo_children():
-                widget.destroy()
+        self.btRemovePlot = ttk.Button(self,
+                                       text="Remove from plot",
+                                       bootstyle=(ttk.DANGER, ttk.OUTLINE),
+                                       state=tk.DISABLED)
+        self.btRemovePlot.pack(side='bottom')
 
     def update_info(self, file: CSDFile | None = None):
         if file is None:
             for attribute, variable in self._info.items():
                 variable.set('No file selected')
+            self.btRemovePlot.configure(state=tk.DISABLED)
         else:
             for attribute, variable in self._info.items():
                 variable.set(str(getattr(file, attribute)))
+            if file.plotted:
+                self.btRemovePlot.configure(state=tk.NORMAL)
+            else:
+                self.btRemovePlot.configure(state=tk.DISABLED)
