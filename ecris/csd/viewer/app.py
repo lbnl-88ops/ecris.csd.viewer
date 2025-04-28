@@ -14,10 +14,9 @@ from ecris.csd.analysis import PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS
 
 from ecris.csd.viewer.gui.elements import ElementButtons
 from ecris.csd.viewer.files.configuration import AppConfiguration, create_configuration, CONFIG_FILEPATH
-from ecris.csd.viewer.gui.file_info_pane import FileInfoPane
 from ecris.csd.viewer.gui.style.patchMatplotlib import applyPatch
 
-from .gui import FileList, PlotControls, Plot, FileListControls, AppMenu, DiagnosticWindow
+from .gui import FileList, PlotControls, Plot, FileListControls, AppMenu, DiagnosticWindow, FileInfoPane
 
 
 __version__ = "1.1.0"
@@ -56,13 +55,13 @@ class CSDViewer(ttk.Window):
 
         self.center_pane = ttk.Frame(self)
 
-        self.file_list = FileList(self.center_pane, self.default_path)
+        self.info_pane = FileInfoPane(self)
+        self.file_list = FileList(self.center_pane, self.info_pane, self.default_path)
         self.file_list_controls = FileListControls(self.center_pane, self.file_list)
         self.element_buttons = ElementButtons(self.center_pane, self.plot, PERSISTANT_ELEMENTS, self.variable_elements)
         self.controls = PlotControls(self.center_pane, self.plot, self.file_list, self.element_buttons)
 
         self.plot.set_element_indicators(self.element_buttons.element_visibility)
-        self.info_pane = FileInfoPane(self)
 
         self.plot.pack(side='left', fill='both', expand=True)
 
@@ -73,7 +72,7 @@ class CSDViewer(ttk.Window):
         self.controls.pack()
         self.element_buttons.pack(fill="both", padx=10, pady=10)
 
-        self.info_pane.pack(side='left', fill='both', expand=True)
+        self.info_pane.pack(side='left', fill='both', expand=True, padx=10, pady=10)
 
     def toggle_info_pane(self):
         pass

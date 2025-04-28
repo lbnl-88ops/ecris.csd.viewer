@@ -90,4 +90,5 @@ class PlotControls(tk.Frame):
         self.file_list.update_colors()
 
     def toggle_info_pane(self):
-        self._owner.toggle_info_pane()
+        pass
+        # self._owner.toggle_info_pane()

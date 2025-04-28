@@ -10,6 +10,7 @@ from ecris.csd.analysis.io.read_csd_file import read_csd_from_file_pair, file_ti
 class CSDFile:
     def __init__(self, path, file_size: float = 0):
         self.path = path
+        self.filename = self.path.name
         self.plotted: bool = False
         self.file_size: float = file_size
         self.valid: bool = True
@@ -40,7 +41,7 @@ class CSDFile:
 
     @property
     def list_value(self) -> str:
-        return f"{self.formatted_datetime} ({self.path.name})"
+        return f"{self.formatted_datetime}"
 
 def get_files(path: Path) -> List[CSDFile]:
     glob = "csd_" + "[0-9]"*10
