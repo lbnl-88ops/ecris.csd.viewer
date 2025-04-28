@@ -51,20 +51,29 @@ class CSDViewer(ttk.Window):
         self.config(menu=self.menu)
 
     def create_widgets(self):
-        self.file_list = FileList(self.default_path)
-        self.file_list_controls = FileListControls(self, self.file_list)
+
         self.plot = Plot(self) 
-        self.element_buttons = ElementButtons(self, self.plot, PERSISTANT_ELEMENTS, self.variable_elements)
-        self.controls = PlotControls(self, self.plot, self.file_list, self.element_buttons)
+
+        self.center_pane = ttk.Frame(self)
+
+        self.file_list = FileList(self.center_pane, self.default_path)
+        self.file_list_controls = FileListControls(self.center_pane, self.file_list)
+        self.element_buttons = ElementButtons(self.center_pane, self.plot, PERSISTANT_ELEMENTS, self.variable_elements)
+        self.controls = PlotControls(self.center_pane, self.plot, self.file_list, self.element_buttons)
+
         self.plot.set_element_indicators(self.element_buttons.element_visibility)
         self.info_pane = FileInfoPane(self)
 
         self.plot.pack(side='left', fill='both', expand=True)
+
+        self.center_pane.pack(side='left', fill='y', expand=True)
+
         self.file_list_controls.pack()
         self.file_list.pack(padx=10, pady=10)
         self.controls.pack()
         self.element_buttons.pack(fill="both", padx=10, pady=10)
-        self.info_pane.pack(side='right', fill='both')
+
+        self.info_pane.pack(side='left', fill='both', expand=True)
 
     def toggle_info_pane(self):
         pass

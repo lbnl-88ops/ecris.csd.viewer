@@ -9,8 +9,8 @@ BLUE = "#5200FF"
 WHITE = "#FFFFFF"
 
 class FileList(tk.Frame):
-    def __init__(self, path: Path, *args, **kwargs):
-        tk.Frame.__init__(self, *args, **kwargs)
+    def __init__(self, owner, path: Path, *args, **kwargs):
+        super().__init__(owner, *args, **kwargs)
         self.current_directory = path
 
         # Listbox to display files
