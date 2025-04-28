@@ -25,6 +25,8 @@ class CSDFile:
 
     @property
     def csd(self) -> CSD | None:
+        if not self.valid:
+            return None
         try:
             if self._csd is None:
                 self.valid = True

@@ -67,6 +67,7 @@ class Plot(tk.Frame):
         artist = file_artist(self._figure.gca(), file)
         if artist is not None:
             self._csd_artists.append(artist)
+            self._plotted_files.append(file)
             self.update()
 
     def autoscale(self):
