@@ -20,11 +20,17 @@ class CSDFile:
     def formatted_datetime(self) -> str:
         return self.timestamp
 
+    def unload_csd(self) -> None:
+        self._csd = None
+
     @property
     def csd(self) -> CSD | None:
         try:
-            self.valid = True
-            return read_csd_from_file_pair(self.path)
+            if self._csd is None:
+                self.valid = True
+                return read_csd_from_file_pair(self.path)
+            else:
+                return self._csd
         except BaseException as e:
             logging.info(f'File is invalid: {self.path}: {e}')
             self.valid = False
