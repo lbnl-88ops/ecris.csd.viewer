@@ -20,7 +20,6 @@ class Plot(tk.Frame):
         self.use_blitting = tk.BooleanVar(value=False)
 
     def create_widgets(self):
-        self._csd_artists = []
         self._figure = create_figure()
         self.canvas = FigureCanvasTkAgg(self._figure, master=self)
         self.canvas.mpl_connect('draw_event', self.on_draw)
@@ -53,26 +52,31 @@ class Plot(tk.Frame):
     def plotted_files(self):
         return self._plotted_files
 
+    def remove_file(self, to_remove: CSDFile):
+        for file in self._plotted_files:
+            if file is to_remove:
+                file.plotted = False
+                file.unload_csd()
+                self._plotted_files.remove(file)
+
     def clear_plot(self):
         ax = self.canvas.figure.gca()
         for file in self._plotted_files:
             file.plotted = False
             file.unload_csd()
+            file.clear_artist()
         self._plotted_files = []
-        for artist in self._csd_artists:
-            artist.remove()
         if ax.get_legend() is not None:
             ax.get_legend().remove()
-        self._csd_artists = []
         ax.set_prop_cycle(None)
         self.update()
 
     def plot(self, file: CSDFile):
         artist = file_artist(self._figure.gca(), file)
         if artist is not None:
-            self._csd_artists.append(artist)
-            self._plotted_files.append(file)
+            file.artist = artist
             file.plotted = True
+            self._plotted_files.append(file)
             self.update()
 
     def autoscale(self):
@@ -88,8 +92,9 @@ class Plot(tk.Frame):
     def _draw_animated(self, rescale: bool = False):
         fig = self.canvas.figure
         ax = fig.gca()
-        for a in self._csd_artists:
-            fig.draw_artist(a)
+        for artist in [file.artist for file in self._plotted_files
+                       if file.artist is not None]:
+            fig.draw_artist(artist)
 
         # Determine how many elements are visible
         visible_elements = [element for element in 
@@ -107,7 +112,7 @@ class Plot(tk.Frame):
             ax.legend(handles, labels)
 
     def update(self):
-        info(f'Updating plot: CSD artists: {len(self._csd_artists)}, element indicators: {len(self.element_indicators)}')
+        info(f'Updating plot: plotted files: {len(self._plotted_files)}, element indicators: {len(self.element_indicators)}')
         self._update(None)
 
     def _update(self, event):

@@ -4,6 +4,8 @@ import os
 from pathlib import Path
 from typing import List
 
+from matplotlib.artist import Artist
+
 from ecris.csd.analysis import CSD
 from ecris.csd.analysis.io.read_csd_file import read_csd_from_file_pair, file_timestamp
 
@@ -16,6 +18,20 @@ class CSDFile:
         self.valid: bool = True
         self.timestamp = file_timestamp(path)
         self._csd = None
+        self._artist = None
+
+    @property
+    def artist(self) -> Artist | None:
+        return self._artist
+
+    @artist.setter
+    def artist(self, to_set):
+        self._artist = to_set 
+    
+    def clear_artist(self):
+        if self._artist is not None:
+            self._artist.remove()
+            self._artist = None
 
     @property
     def formatted_datetime(self) -> str:
