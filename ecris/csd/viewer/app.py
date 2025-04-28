@@ -14,6 +14,7 @@ from ecris.csd.analysis import PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS
 
 from ecris.csd.viewer.gui.elements import ElementButtons
 from ecris.csd.viewer.files.configuration import AppConfiguration, create_configuration, CONFIG_FILEPATH
+from ecris.csd.viewer.gui.file_info_pane import FileInfoPane
 from ecris.csd.viewer.gui.style.patchMatplotlib import applyPatch
 
 from .gui import FileList, PlotControls, Plot, FileListControls, AppMenu, DiagnosticWindow
@@ -56,12 +57,18 @@ class CSDViewer(ttk.Window):
         self.element_buttons = ElementButtons(self, self.plot, PERSISTANT_ELEMENTS, self.variable_elements)
         self.controls = PlotControls(self, self.plot, self.file_list, self.element_buttons)
         self.plot.set_element_indicators(self.element_buttons.element_visibility)
+        self.info_pane = FileInfoPane(self)
 
         self.plot.pack(side='left', fill='both', expand=True)
         self.file_list_controls.pack()
         self.file_list.pack(padx=10, pady=10)
         self.controls.pack()
         self.element_buttons.pack(fill="both", padx=10, pady=10)
+        self.info_pane.pack(side='right', fill='both')
+
+    def toggle_info_pane(self):
+        pass
+        
 
     def diagnostic_mode(self):
         self._diagnostic_window = DiagnosticWindow(self)

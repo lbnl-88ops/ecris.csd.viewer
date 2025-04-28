@@ -12,6 +12,7 @@ from .plot import Plot
 class FileListControls(tk.Frame):
     def __init__(self, owner, file_list: FileList, *args, **kwargs):
         super().__init__(owner, *args, **kwargs)
+        self._owner = owner
         self.pad = 3.0
         self.big_button_size = 2
         self.file_list = file_list
@@ -45,6 +46,7 @@ class PlotControls(tk.Frame):
     def __init__(self, owner, plot: Plot, file_list: FileList, 
                  element_buttons: ElementButtons, *args, **kwargs):
         super().__init__(owner, *args, **kwargs)
+        self._owner = owner
         self.plot = plot
         self.element_buttons = element_buttons
         self.pad = 3.0
@@ -66,10 +68,14 @@ class PlotControls(tk.Frame):
                                      command=self.clear_plot, 
                                      bootstyle=(ttk.OUTLINE))
                                     #  height=self.big_button_size)
+        self.btShowFileInfo = ttk.Button(self, text="File Info",
+                                         command=self.toggle_info_pane,
+                                         bootstyle=(ttk.SUCCESS, ttk.OUTLINE))
         for loc, widget in {
             (0, 0): self.btViewCSD, 
-            (0, 1): self.btAutoScale,
-            (0, 2): self.btClearPlot,
+            (0, 1): self.btShowFileInfo,
+            (0, 2): self.btAutoScale,
+            (0, 3): self.btClearPlot,
             }.items():
             widget.grid(row=loc[0], column=loc[1], padx=self.pad, pady=self.pad, sticky='nsew')
 
@@ -82,3 +88,6 @@ class PlotControls(tk.Frame):
     def clear_plot(self):
         self.plot.clear_plot()
         self.file_list.update_colors()
+
+    def toggle_info_pane(self):
+        self._owner.toggle_info_pane()
