@@ -1,14 +1,12 @@
 from logging import info
-from pathlib import Path
 import tkinter as tk
-from typing import Dict, List, Optional
+from typing import Dict, List
 
-import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
-from ..plotting.plot_csd import plot_files, file_artist
+from ..plotting.plot_csd import create_figure, file_artist
 from ecris.csd.viewer.files import CSDFile
 from ecris.csd.viewer.plotting.element_indicators import ElementIndicator, add_element_indicators
-from ecris.csd.viewer.analysis import Element
+from ecris.csd.analysis import Element
 
 class Plot(tk.Frame):
     def __init__(self, owner, *args, **kwargs):
@@ -22,7 +20,7 @@ class Plot(tk.Frame):
         self.use_blitting = tk.BooleanVar(value=False)
 
     def create_widgets(self):
-        self._figure, self._csd_artists = plot_files([])
+        self._figure = create_figure()
         self.canvas = FigureCanvasTkAgg(self._figure, master=self)
         self.canvas.mpl_connect('draw_event', self.on_draw)
         self.canvas.mpl_connect('resize_event', self._update)
@@ -54,19 +52,34 @@ class Plot(tk.Frame):
     def plotted_files(self):
         return self._plotted_files
 
-    def clear_plot(self):
+    def remove_file(self, file: CSDFile):
+        self._remove_files([file])
+
+    def _remove_files(self, files: List[CSDFile]):
         ax = self.canvas.figure.gca()
-        for artist in self._csd_artists:
-            artist.remove()
-        if ax.get_legend() is not None:
-            ax.get_legend().remove()
-        self._csd_artists = []
-        ax.set_prop_cycle(None)
+        for to_remove in files:
+            if to_remove not in self._plotted_files:
+                continue
+            to_remove.plotted = False
+            to_remove.clear_artist()
+            to_remove.unload_csd()
+            self._plotted_files.remove(to_remove)
+        if not self._plotted_files:
+            if ax.get_legend() is not None:
+                ax.get_legend().remove()
+            ax.set_prop_cycle(None)
         self.update()
 
+    def clear_plot(self):
+        self._remove_files(list(reversed(self._plotted_files)))
+
     def plot(self, file: CSDFile):
-        self._csd_artists.append(file_artist(self._figure.gca(), file))
-        self.update()
+        artist = file_artist(self._figure.gca(), file)
+        if artist is not None:
+            file.artist = artist
+            file.plotted = True
+            self._plotted_files.append(file)
+            self.update()
 
     def autoscale(self):
         ax = self._figure.gca()
@@ -81,8 +94,9 @@ class Plot(tk.Frame):
     def _draw_animated(self, rescale: bool = False):
         fig = self.canvas.figure
         ax = fig.gca()
-        for a in self._csd_artists:
-            fig.draw_artist(a)
+        for artist in [file.artist for file in self._plotted_files
+                       if file.artist is not None]:
+            fig.draw_artist(artist)
 
         # Determine how many elements are visible
         visible_elements = [element for element in 
@@ -100,7 +114,7 @@ class Plot(tk.Frame):
             ax.legend(handles, labels)
 
     def update(self):
-        info(f'Updating plot: CSD artists: {len(self._csd_artists)}, element indicators: {len(self.element_indicators)}')
+        info(f'Updating plot: plotted files: {len(self._plotted_files)}, element indicators: {len(self.element_indicators)}')
         self._update(None)
 
     def _update(self, event):

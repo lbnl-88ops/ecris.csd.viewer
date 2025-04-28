@@ -10,15 +10,16 @@ import subprocess
 
 import ttkbootstrap as ttk
 
+from ecris.csd.analysis import PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS
+
 from ecris.csd.viewer.gui.elements import ElementButtons
 from ecris.csd.viewer.files.configuration import AppConfiguration, create_configuration, CONFIG_FILEPATH
 from ecris.csd.viewer.gui.style.patchMatplotlib import applyPatch
 
-from .gui import FileList, PlotControls, Plot, FileListControls, AppMenu, DiagnosticWindow
-from .analysis.element import PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS
+from .gui import FileList, PlotControls, Plot, FileListControls, AppMenu, DiagnosticWindow, FileInfoPane
 
 
-__version__ = "1.1.0"
+__version__ = "1.2.0-beta.0"
 
 matplotlib.rc('font', size=14)
 applyPatch()
@@ -38,6 +39,7 @@ class CSDViewer(ttk.Window):
         
         self.create_widgets()
         self.create_menu()
+        self._info_visible = False
         self.protocol("WM_DELETE_WINDOW", self.quit)
 
     def quit(self):
@@ -49,18 +51,32 @@ class CSDViewer(ttk.Window):
         self.config(menu=self.menu)
 
     def create_widgets(self):
-        self.file_list = FileList(self.default_path)
-        self.file_list_controls = FileListControls(self, self.file_list)
+
         self.plot = Plot(self) 
-        self.element_buttons = ElementButtons(self, self.plot, PERSISTANT_ELEMENTS, self.variable_elements)
-        self.controls = PlotControls(self, self.plot, self.file_list, self.element_buttons)
+
+        self.center_pane = ttk.Frame(self)
+
+        self.info_pane = FileInfoPane(self)
+        self.file_list = FileList(self.center_pane, self.info_pane, self.default_path)
+        self.file_list_controls = FileListControls(self.center_pane, self.file_list)
+        self.element_buttons = ElementButtons(self.center_pane, self.plot, PERSISTANT_ELEMENTS, self.variable_elements)
+        self.controls = PlotControls(self.center_pane, self.plot, self.file_list, self.element_buttons,
+                                     self.info_pane)
+
         self.plot.set_element_indicators(self.element_buttons.element_visibility)
 
         self.plot.pack(side='left', fill='both', expand=True)
+
+        self.center_pane.pack(side='left', fill='y', expand=True)
+
         self.file_list_controls.pack()
         self.file_list.pack(padx=10, pady=10)
         self.controls.pack()
         self.element_buttons.pack(fill="both", padx=10, pady=10)
+
+        self.info_pane.btRemovePlot.config(command=self.controls.remove_from_plot)
+
+
 
     def diagnostic_mode(self):
         self._diagnostic_window = DiagnosticWindow(self)

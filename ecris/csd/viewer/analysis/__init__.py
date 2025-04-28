@@ -1,1 +1,0 @@
-from .element import PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS, Element

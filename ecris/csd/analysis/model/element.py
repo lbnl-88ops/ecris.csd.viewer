@@ -4,11 +4,11 @@ from dataclasses import dataclass
 class Element:
     name: str
     symbol: str
-    atomic_weight: int
+    atomic_mass: int
     atomic_number: int
 
 PERSISTANT_ELEMENTS = [
-    Element(name=n, symbol=s, atomic_weight=a, atomic_number=z)
+    Element(name=n, symbol=s, atomic_mass=a, atomic_number=z)
     for n,s,a,z in [
         ("Carbon", "C", 12, 6),
         ("Nitrogen", "N", 14, 7),
@@ -17,7 +17,7 @@ PERSISTANT_ELEMENTS = [
 ]
 
 VARIABLE_ELEMENTS = [
-    Element(name=n, symbol=s, atomic_weight=a, atomic_number=z)
+    Element(name=n, symbol=s, atomic_mass=a, atomic_number=z)
     for n,s,a,z in [
         ("Vanadium", "V", 51, 23),
         ("Titanium", "Ti", 50, 22),

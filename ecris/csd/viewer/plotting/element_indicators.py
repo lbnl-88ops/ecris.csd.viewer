@@ -10,7 +10,7 @@ from collections import deque
 from matplotlib.markers import MarkerStyle
 from matplotlib.text import Text
 
-from ecris.csd.viewer.analysis import Element
+from ecris.csd.analysis import Element
 
 @dataclass
 class _Label:
@@ -103,7 +103,7 @@ def add_element_indicators(elements: Dict[Element, tk.BooleanVar], figure: Figur
     for element, visibility in elements.items():
         labels = []
         q_values = range(1, element.atomic_number + 1)
-        m_over_q = [element.atomic_weight/q for q in q_values]
+        m_over_q = [element.atomic_mass/q for q in q_values]
         mask = [mq < 10 for mq in m_over_q]
         q_values = list(compress(q_values, mask))
         m_over_q = list(compress(m_over_q, mask))
@@ -122,7 +122,7 @@ def add_element_indicators(elements: Dict[Element, tk.BooleanVar], figure: Figur
                           ha='center', va='bottom',
                           weight='bold', clip_on = True)
             labels.append(txt)
-        element_artist = ax.text(1.01, 0, f"{element.symbol}-{element.atomic_weight}", 
+        element_artist = ax.text(1.01, 0, f"{element.symbol}-{element.atomic_mass}", 
                                  transform=ax.transAxes, weight='bold', animated=True,
                                  color=ln.get_color())
         element_indicators.append(ElementIndicator(ln, labels, element, visibility, element_artist))

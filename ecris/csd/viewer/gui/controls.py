@@ -8,10 +8,12 @@ from ecris.csd.viewer.gui.elements import ElementButtons
 
 from .file_list import FileList
 from .plot import Plot
+from .file_info_pane import FileInfoPane
 
 class FileListControls(tk.Frame):
     def __init__(self, owner, file_list: FileList, *args, **kwargs):
         super().__init__(owner, *args, **kwargs)
+        self._owner = owner
         self.pad = 3.0
         self.big_button_size = 2
         self.file_list = file_list
@@ -43,9 +45,12 @@ class FileListControls(tk.Frame):
 
 class PlotControls(tk.Frame):
     def __init__(self, owner, plot: Plot, file_list: FileList, 
-                 element_buttons: ElementButtons, *args, **kwargs):
+                 element_buttons: ElementButtons, 
+                 info_pane: FileInfoPane, *args, **kwargs):
         super().__init__(owner, *args, **kwargs)
+        self._owner = owner
         self.plot = plot
+        self.info_pane = info_pane
         self.element_buttons = element_buttons
         self.pad = 3.0
         self.big_button_size = 2
@@ -66,23 +71,38 @@ class PlotControls(tk.Frame):
                                      command=self.clear_plot, 
                                      bootstyle=(ttk.OUTLINE))
                                     #  height=self.big_button_size)
+        self.btShowFileInfo = ttk.Button(self, text="File Info",
+                                         command=self.toggle_info_pane,
+                                         bootstyle=(ttk.SUCCESS, ttk.OUTLINE))
         for loc, widget in {
             (0, 0): self.btViewCSD, 
-            (0, 1): self.btAutoScale,
-            (0, 2): self.btClearPlot,
+            (0, 1): self.btShowFileInfo,
+            (0, 2): self.btAutoScale,
+            (0, 3): self.btClearPlot,
             }.items():
             widget.grid(row=loc[0], column=loc[1], padx=self.pad, pady=self.pad, sticky='nsew')
+
+    def remove_from_plot(self):
+        file = self.file_list.get_selected_file()
+        if file is not None:
+            self.plot.remove_file(file)
+            self.file_list.update_colors()
+            self.info_pane.update_info(file)
 
     def plot_file(self):
         file = self.file_list.get_selected_file()
         if file is not None:
             self.plot.plot(file)
-            file.plotted = True
             self.file_list.update_colors()
+            self.info_pane.update_info(file)
 
     def clear_plot(self):
-        for i, file in enumerate(self.plot._plotted_files):
-            self.plot._plotted_files[i].plotted = False
-        self.plot._plotted_files = []
         self.plot.clear_plot()
-        self.file_list.populate_listbox()
+        self.file_list.update_colors()
+
+    def toggle_info_pane(self):
+        if self.info_pane.visible:
+            self.info_pane.pack_forget()
+        else:
+            self.info_pane.pack(side='left', fill='both', expand=True, padx=10, pady=10)
+        self.info_pane.visible = not self.info_pane.visible
