@@ -77,14 +77,8 @@ class PlotControls(tk.Frame):
         file = self.file_list.get_selected_file()
         if file is not None:
             self.plot.plot(file)
-            file.plotted = True
             self.file_list.update_colors()
 
     def clear_plot(self):
-        for file in self.plot._plotted_files:
-            file.plotted = False
-            file.unload_csd()
-            # self.plot._plotted_files[i].plotted = False
-        self.plot._plotted_files = []
         self.plot.clear_plot()
-        self.file_list.populate_listbox()
+        self.file_list.update_colors()

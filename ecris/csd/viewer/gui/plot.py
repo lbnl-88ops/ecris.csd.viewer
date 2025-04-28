@@ -55,6 +55,10 @@ class Plot(tk.Frame):
 
     def clear_plot(self):
         ax = self.canvas.figure.gca()
+        for file in self._plotted_files:
+            file.plotted = False
+            file.unload_csd()
+        self._plotted_files = []
         for artist in self._csd_artists:
             artist.remove()
         if ax.get_legend() is not None:
@@ -68,6 +72,7 @@ class Plot(tk.Frame):
         if artist is not None:
             self._csd_artists.append(artist)
             self._plotted_files.append(file)
+            file.plotted = True
             self.update()
 
     def autoscale(self):

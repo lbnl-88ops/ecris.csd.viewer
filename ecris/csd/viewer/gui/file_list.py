@@ -1,6 +1,7 @@
 from pathlib import Path
 import tkinter as tk
 from typing import List
+import ttkbootstrap as ttk
 
 from ..files.csd_file import CSDFile, get_files
 
@@ -36,16 +37,21 @@ class FileList(tk.Frame):
             return self.files[i]
 
     def update_colors(self):
+        style = ttk.Style()
         for i, file in enumerate(self.files):
-            if file.plotted:
+            if file.plotted and file.valid:
                 self.file_listbox.itemconfigure(i, 
-                                                foreground=BLUE,
-                                                selectbackground=BLUE,
-                                                selectforeground=WHITE)
-            if not file.valid:
+                                                foreground=style.colors.success,
+                                                selectbackground=style.colors.success,
+                                                selectforeground='white')
+            elif not file.valid:
                 self.file_listbox.itemconfigure(i, foreground="gray",
                                                 selectbackground='white',
                                                 selectforeground='gray')
+            else:
+                self.file_listbox.itemconfigure(i, foreground=style.colors.fg,
+                                                selectbackground=style.colors.primary,
+                                                selectforeground='white')
 
     def populate_listbox(self, retain_plotted=False):
         """Populates the listbox with files from the specified directory."""
