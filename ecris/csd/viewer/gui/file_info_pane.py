@@ -11,6 +11,7 @@ class FileInfoPane(ttk.Frame):
         self._subtitle_font = (self._font, 12)
         self._info_widgets = []
         self._info = {}
+        self.visible = False
 
         self.create_widgets()
 

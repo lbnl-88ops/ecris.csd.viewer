@@ -39,6 +39,7 @@ class CSDViewer(ttk.Window):
         
         self.create_widgets()
         self.create_menu()
+        self._info_visible = False
         self.protocol("WM_DELETE_WINDOW", self.quit)
 
     def quit(self):
@@ -59,7 +60,8 @@ class CSDViewer(ttk.Window):
         self.file_list = FileList(self.center_pane, self.info_pane, self.default_path)
         self.file_list_controls = FileListControls(self.center_pane, self.file_list)
         self.element_buttons = ElementButtons(self.center_pane, self.plot, PERSISTANT_ELEMENTS, self.variable_elements)
-        self.controls = PlotControls(self.center_pane, self.plot, self.file_list, self.element_buttons)
+        self.controls = PlotControls(self.center_pane, self.plot, self.file_list, self.element_buttons,
+                                     self.info_pane)
 
         self.plot.set_element_indicators(self.element_buttons.element_visibility)
 
@@ -72,11 +74,7 @@ class CSDViewer(ttk.Window):
         self.controls.pack()
         self.element_buttons.pack(fill="both", padx=10, pady=10)
 
-        self.info_pane.pack(side='left', fill='both', expand=True, padx=10, pady=10)
 
-    def toggle_info_pane(self):
-        pass
-        
 
     def diagnostic_mode(self):
         self._diagnostic_window = DiagnosticWindow(self)

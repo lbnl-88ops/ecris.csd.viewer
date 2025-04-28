@@ -8,6 +8,7 @@ from ecris.csd.viewer.gui.elements import ElementButtons
 
 from .file_list import FileList
 from .plot import Plot
+from .file_info_pane import FileInfoPane
 
 class FileListControls(tk.Frame):
     def __init__(self, owner, file_list: FileList, *args, **kwargs):
@@ -44,10 +45,12 @@ class FileListControls(tk.Frame):
 
 class PlotControls(tk.Frame):
     def __init__(self, owner, plot: Plot, file_list: FileList, 
-                 element_buttons: ElementButtons, *args, **kwargs):
+                 element_buttons: ElementButtons, 
+                 info_pane: FileInfoPane, *args, **kwargs):
         super().__init__(owner, *args, **kwargs)
         self._owner = owner
         self.plot = plot
+        self.info_pane = info_pane
         self.element_buttons = element_buttons
         self.pad = 3.0
         self.big_button_size = 2
@@ -90,5 +93,8 @@ class PlotControls(tk.Frame):
         self.file_list.update_colors()
 
     def toggle_info_pane(self):
-        pass
-        # self._owner.toggle_info_pane()
+        if self.info_pane.visible:
+            self.info_pane.pack_forget()
+        else:
+            self.info_pane.pack(side='left', fill='both', expand=True, padx=10, pady=10)
+        self.info_pane.visible = not self.info_pane.visible
