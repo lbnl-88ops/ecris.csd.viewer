@@ -74,6 +74,8 @@ class CSDViewer(ttk.Window):
         self.controls.pack()
         self.element_buttons.pack(fill="both", padx=10, pady=10)
 
+        self.info_pane.btRemovePlot.config(command=self.controls.remove_from_plot)
+
 
 
     def diagnostic_mode(self):

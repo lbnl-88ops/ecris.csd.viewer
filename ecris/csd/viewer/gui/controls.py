@@ -82,6 +82,13 @@ class PlotControls(tk.Frame):
             }.items():
             widget.grid(row=loc[0], column=loc[1], padx=self.pad, pady=self.pad, sticky='nsew')
 
+    def remove_from_plot(self):
+        file = self.file_list.get_selected_file()
+        if file is not None:
+            self.plot.remove_file(file)
+            self.file_list.update_colors()
+            self.info_pane.update_info(file)
+
     def plot_file(self):
         file = self.file_list.get_selected_file()
         if file is not None:

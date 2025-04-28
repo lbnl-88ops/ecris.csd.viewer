@@ -52,22 +52,26 @@ class Plot(tk.Frame):
     def plotted_files(self):
         return self._plotted_files
 
-    def remove_file(self, to_remove: CSDFile):
-        if to_remove not in self._plotted_files:
-            return
-        to_remove.plotted = False
-        to_remove.clear_artist()
-        to_remove.unload_csd()
-        self._plotted_files.remove(to_remove)
+    def remove_file(self, file: CSDFile):
+        self._remove_files([file])
+
+    def _remove_files(self, files: List[CSDFile]):
+        ax = self.canvas.figure.gca()
+        for to_remove in files:
+            if to_remove not in self._plotted_files:
+                continue
+            to_remove.plotted = False
+            to_remove.clear_artist()
+            to_remove.unload_csd()
+            self._plotted_files.remove(to_remove)
+        if not self._plotted_files:
+            if ax.get_legend() is not None:
+                ax.get_legend().remove()
+            ax.set_prop_cycle(None)
+        self.update()
 
     def clear_plot(self):
-        ax = self.canvas.figure.gca()
-        for file in reversed(self._plotted_files):
-            self.remove_file(file)
-        if ax.get_legend() is not None:
-            ax.get_legend().remove()
-        ax.set_prop_cycle(None)
-        self.update()
+        self._remove_files(list(reversed(self._plotted_files)))
 
     def plot(self, file: CSDFile):
         artist = file_artist(self._figure.gca(), file)
