@@ -13,6 +13,7 @@ class CSDInfo:
 class FileInfoPane(ttk.Frame):
     def __init__(self, owner, *args, **kwargs):
         super().__init__(owner, *args, **kwargs)
+        self._owner = owner
         self._font = "TkDefaultFont"
         self._title_font = (self._font, 14)
         self._subtitle_font = (self._font, 12)
@@ -24,11 +25,16 @@ class FileInfoPane(ttk.Frame):
 
         self.create_widgets()
 
+    def toggle_visibility(self):
+        self.visible.set(not self.visible.get())
+
     def set_visible(self, *args, **kwargs):
         if not self.visible.get():
             self.pack_forget()
+            self._owner.strToggleInfoText.set('>>')
         else:
             self.pack(side='left', fill='both', expand=True, padx=10, pady=10)
+            self._owner.strToggleInfoText.set('<<')
 
     def create_widgets(self):
         tk.Label(self, text='File Info', font=self._title_font).pack()
@@ -50,13 +56,16 @@ class FileInfoPane(ttk.Frame):
                       justify='left').grid(column=0, row=i, sticky='w')
             ttk.Label(self._csd_info_frame, textvariable=self._csd_info[attribute], 
                       justify='right').grid(column=1, row=i, sticky='e')
-        self._csd_info_frame.pack()
+        self._csd_info_frame.pack(fill='y', expand=True)
 
-        self.btRemovePlot = ttk.Button(self,
+        self._controls_frame = ttk.Frame(self)
+
+        self.btRemovePlot = ttk.Button(self._controls_frame,
                                        text="Remove from plot",
                                        bootstyle=(ttk.DANGER, ttk.OUTLINE),
                                        state=tk.DISABLED)
         self.btRemovePlot.pack(side='bottom')
+        self._controls_frame.pack()
 
     def update_info(self, file: CSDFile | None = None):
         if file is None:

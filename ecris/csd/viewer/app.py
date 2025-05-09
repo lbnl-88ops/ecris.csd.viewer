@@ -73,6 +73,12 @@ class CSDViewer(ttk.Window):
         self.file_list.pack(padx=10, pady=10)
         self.controls.pack()
         self.element_buttons.pack(fill="both", padx=10, pady=10)
+        self.strToggleInfoText = ttk.StringVar(value='>>')
+        self.btToggleFileInfo = ttk.Button(self, textvariable=self.strToggleInfoText,
+                                           command=self.info_pane.toggle_visibility,
+                                           width=2,
+                                           bootstyle=ttk.LINK + ttk.SECONDARY)
+        self.btToggleFileInfo.pack(fill='y', side='left')
 
         self.info_pane.btRemovePlot.config(command=self.controls.remove_from_plot)
 

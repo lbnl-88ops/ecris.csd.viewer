@@ -76,9 +76,8 @@ class PlotControls(tk.Frame):
                                          bootstyle=(ttk.SUCCESS, ttk.OUTLINE))
         for loc, widget in {
             (0, 0): self.btViewCSD, 
-            (0, 1): self.btShowFileInfo,
-            (0, 2): self.btAutoScale,
-            (0, 3): self.btClearPlot,
+            (0, 1): self.btAutoScale,
+            (0, 2): self.btClearPlot,
             }.items():
             widget.grid(row=loc[0], column=loc[1], padx=self.pad, pady=self.pad, sticky='nsew')
 
