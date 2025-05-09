@@ -71,7 +71,7 @@ class PlotControls(tk.Frame):
                                      command=self.clear_plot, 
                                      bootstyle=(ttk.OUTLINE))
                                     #  height=self.big_button_size)
-        self.btShowFileInfo = ttk.Button(self, text="File Info",
+        self.btShowFileInfo = ttk.Button(self, text="File info",
                                          command=self.toggle_info_pane,
                                          bootstyle=(ttk.SUCCESS, ttk.OUTLINE))
         for loc, widget in {
@@ -101,8 +101,4 @@ class PlotControls(tk.Frame):
         self.file_list.update_colors()
 
     def toggle_info_pane(self):
-        if self.info_pane.visible:
-            self.info_pane.pack_forget()
-        else:
-            self.info_pane.pack(side='left', fill='both', expand=True, padx=10, pady=10)
-        self.info_pane.visible = not self.info_pane.visible
+        self.info_pane.visible.set(not self.info_pane.visible.get())

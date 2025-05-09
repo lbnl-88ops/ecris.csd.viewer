@@ -19,9 +19,16 @@ class FileInfoPane(ttk.Frame):
         self._info_widgets = []
         self._file_info = {}
         self._csd_info = {}
-        self.visible = False
+        self.visible = tk.BooleanVar(value=False)
+        self.visible.trace_add('write', self.set_visible)
 
         self.create_widgets()
+
+    def set_visible(self, *args, **kwargs):
+        if not self.visible.get():
+            self.pack_forget()
+        else:
+            self.pack(side='left', fill='both', expand=True, padx=10, pady=10)
 
     def create_widgets(self):
         tk.Label(self, text='File Info', font=self._title_font).pack()
