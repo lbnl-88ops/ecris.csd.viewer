@@ -20,5 +20,7 @@ class AppMenu(tk.Menu):
         self.hamburger_menu.add_command(label='Open diagnostic window', 
                                         command=self._owner.diagnostic_mode)
         self.hamburger_menu.add_separator()
+        self.hamburger_menu.add_command(label="Export data...",command=self._owner.export_data)
+        self.hamburger_menu.add_separator()
         self.hamburger_menu.add_command(label='Quit', command=self._owner.quit)
 

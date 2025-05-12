@@ -3,6 +3,7 @@ import logging
 from pathlib import Path
 import tkinter as tk
 from tkinter import messagebox
+from tkinter import filedialog
 import matplotlib
 import platform
 import os
@@ -83,6 +84,27 @@ class CSDViewer(ttk.Window):
         self.info_pane.btRemovePlot.config(command=self.controls.remove_from_plot)
 
 
+    def export_data(self):
+        if len(self.plot.plotted_files()) > 1:
+            messagebox.showerror('Error', 'Can only export a single file. Please remove all but one datafile from the plot.')
+            return
+        elif len(self.plot.plotted_files()) == 0:
+            messagebox.showerror('Error', 'No plotted data to export.')
+            return
+        else:
+            export_file = filedialog.asksaveasfile(title='Save exported data as', 
+                                                   defaultextension='.csv', 
+                                                   filetypes=(("CSV files", "*.csv"), 
+                                                              ("All files", "*.*")), 
+                                                   initialdir=self.configuration.default_directory)
+            if export_file is not None:
+                csd = self.plot.plotted_files()[0].csd
+                if csd is not None:
+                    try:
+                        csd.save_to_file(str(export_file))
+                        messagebox.showinfo('Success', 'Export successful.')
+                    except ValueError:
+                        logging.info('No m_over_q in file')
 
     def diagnostic_mode(self):
         self._diagnostic_window = DiagnosticWindow(self)
