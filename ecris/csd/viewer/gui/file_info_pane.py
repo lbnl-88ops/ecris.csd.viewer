@@ -11,17 +11,20 @@ _TITLE_FONT = (_FONT, 14)
 _SUBTITLE_FONT = (_FONT, 12)
 
 _INFO_BLOCKS = [
-    "Vacuum (torr)"
+    "Vacuum (torr)", 
+    "Superconductors (A)"
 ]
 
 _INFO_BLOCKS_FORMATS = [
-    '.1e'
+    '.1e',
+    '6.2f'
 ]
 
 _INFO_BLOCKS_LABELS_AND_VALUES = [
     {'Injection': 'inj_mbar',
      'Extraction': 'ext_mbar',
-     'Beam line': 'bl_mig2_torr'}
+     'Beam line': 'bl_mig2_torr'},
+     ['inj_i', 'ext_i', 'mid_i', 'sext_i']
 ]
 
 class CSDInfoFrame(ttk.Frame):
@@ -41,7 +44,11 @@ class CSDInfoFrame(ttk.Frame):
 
     def create_widgets(self):
         ttk.Label(self, text=self.frame_title, font=_SUBTITLE_FONT).pack(side='top')
-        for label in self.labels_and_values.keys():
+        if isinstance(self.labels_and_values, dict):
+            labels = self.labels_and_values.keys()
+        else:
+            labels = self.labels_and_values
+        for label in labels:
             frInfo = ttk.Frame(self)
             ttk.Label(frInfo, text=label).pack(side='left')
             self.labels[label] = ttk.Label(frInfo)
@@ -50,7 +57,16 @@ class CSDInfoFrame(ttk.Frame):
         self.update_data_labels(None)
 
     def update_data_labels(self, csd: CSD | None):
-        for label, value in self.labels_and_values.items():
+        if isinstance(self.labels_and_values, dict):
+            labels = self.labels_and_values.keys()
+            values = self.labels_and_values.values()
+        elif isinstance(self.labels_and_values, list):
+            labels = self.labels_and_values
+            values = self.labels_and_values
+        else:
+            raise ValueError('Incorrect form')
+
+        for label, value in zip(labels, values):
             if csd is None:
                 text = 'No CSD data'
             else:
