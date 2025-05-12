@@ -11,6 +11,14 @@ class CSD:
         self.timestamp = timestamp
         self._m_over_q: np.ndarray | None = None
 
+    def save_to_file(self, filename):
+        if self._m_over_q is not None:
+            data = np.hstack((self._m_over_q, self.data))
+            np.savetxt(filename, data, 
+                       header='m_over_q,dipole_current,dipole_field,beam_current')
+        else:
+            raise ValueError('No m_over_q set')
+
     @property
     def m_over_q(self) -> np.ndarray | None:
         return self._m_over_q
