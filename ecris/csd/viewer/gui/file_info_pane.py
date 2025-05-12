@@ -12,19 +12,32 @@ _SUBTITLE_FONT = (_FONT, 12)
 
 _INFO_BLOCKS = [
     "Vacuum (torr)", 
-    "Superconductors (A)"
+    "Superconductors (A)",
+    "HV Voltage (V)",
+    "HV Current (mA)",
+    "Glaser (A)",
 ]
 
 _INFO_BLOCKS_FORMATS = [
     '.1e',
-    '6.2f'
+    '6.2f',
+    '.2f',
+    '.3e',
+    '.1f'
 ]
 
 _INFO_BLOCKS_LABELS_AND_VALUES = [
     {'Injection': 'inj_mbar',
      'Extraction': 'ext_mbar',
      'Beam line': 'bl_mig2_torr'},
-     ['inj_i', 'ext_i', 'mid_i', 'sext_i']
+     ['inj_i', 'ext_i', 'mid_i', 'sext_i'],
+     {'Extraction': 'extraction_v',
+      'Puller': 'puller_v',
+      'Biased Disk': 'bias_v'},
+     {'Extraction': 'extraction_i',
+      'Puller': 'puller_i',
+      'Biased Disk': 'bias_i'},
+      ['glaser_1']
 ]
 
 class CSDInfoFrame(ttk.Frame):
