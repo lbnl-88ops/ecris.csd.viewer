@@ -1,8 +1,47 @@
+import logging
 import tkinter as tk
 import ttkbootstrap as ttk
+from typing import Dict
 
 from ecris.csd.analysis import CSD
 from ecris.csd.viewer.files import CSDFile
+
+_FONT = "TkDefaultFont"
+_TITLE_FONT = (_FONT, 14)
+_SUBTITLE_FONT = (_FONT, 12)
+
+class CSDInfoFrame(ttk.Frame):
+    def __init__(self, 
+                 owner, 
+                 frame_title: str,
+                 format: str,
+                 labels_and_values: Dict[str, str],
+                 *args, 
+                 **kwargs):
+        super().__init__(owner, *args, **kwargs)
+        self.frame_title = frame_title
+        self.format = format
+        self.labels_and_values = labels_and_values
+        self.labels: Dict = {}
+        self.create_widgets()
+
+    def create_widgets(self):
+        ttk.Label(self, text=self.frame_title, font=_SUBTITLE_FONT).pack(side='top')
+        for label in self.labels_and_values:
+            frInfo = ttk.Frame(self)
+            ttk.Label(frInfo, text=label).pack(side='left')
+            self.labels[label] = ttk.Label(frInfo)
+            self.labels[label].pack(side='right')
+            frInfo.pack(fill='x')
+            self.update_data_labels(None)
+
+    def update_data_labels(self, csd: CSD | None):
+        for label, value in self.labels_and_values.items():
+            if csd is None:
+                text = 'No CSD data'
+            else:
+                text = f'{csd.settings[value]:{self.format}}'
+            self.labels[label].config(text=text)
 
 class CSDInfo:
     def __init__(self, csd: CSD):
@@ -19,7 +58,7 @@ class FileInfoPane(ttk.Frame):
         self._subtitle_font = (self._font, 12)
         self._info_widgets = []
         self._file_info = {}
-        self._csd_info = {}
+        self._csd_info_frames = []
         self.visible = tk.BooleanVar(value=False)
         self.visible.trace_add('write', self.set_visible)
 
@@ -47,16 +86,12 @@ class FileInfoPane(ttk.Frame):
             ttk.Label(self._info_frame, textvariable=self._file_info[attribute], 
                       justify='right').grid(column=1, row=i, sticky='e')
         self._info_frame.pack()
+        
         tk.Label(self, text='CSD Info', font=self._title_font).pack()
-        self._csd_info_frame = ttk.Frame(self)
-        for i, (name, attribute) in enumerate(zip(['Data Points', 'Extraction Voltage'],
-                                                  ['data_points', 'extraction_voltage'])):
-            self._csd_info[attribute] = tk.StringVar(value='No file selected')
-            ttk.Label(self._csd_info_frame, text=name,
-                      justify='left').grid(column=0, row=i, sticky='w')
-            ttk.Label(self._csd_info_frame, textvariable=self._csd_info[attribute], 
-                      justify='right').grid(column=1, row=i, sticky='e')
-        self._csd_info_frame.pack(fill='y', expand=True)
+
+        vacuum_frame = CSDInfoFrame(self, 'Vacuum (torr)','.1e', {'Injection': 'inj_mbar'})
+        self._csd_info_frames.append(vacuum_frame)
+        vacuum_frame.pack(fill='x')
 
         self._controls_frame = ttk.Frame(self)
 
@@ -71,23 +106,19 @@ class FileInfoPane(ttk.Frame):
         if file is None:
             for attribute, variable in self._file_info.items():
                 variable.set('No file selected')
-            for attribute, variable in self._csd_info.items():
-                variable.set('No file selected')
             self.btRemovePlot.configure(state=tk.DISABLED)
+            for frame in self._csd_info_frames:
+                frame.update_data_labels(None)
         elif not file.valid:
             for attribute, variable in self._file_info.items():
                 variable.set('Invalid file')
-            for attribute, variable in self._csd_info.items():
-                variable.set('Invalid file')
             self.btRemovePlot.configure(state=tk.DISABLED)
+            for frame in self._csd_info_frames:
+                frame.update_data_labels(None)
         else:
-            for attribute, variable in self._file_info.items():
-                variable.set(str(getattr(file, attribute)))
             csd = file.csd
-            if file.csd is not None:
-                csd_info = CSDInfo(file.csd)
-                for attribute, variable in self._csd_info.items():
-                    variable.set(str(getattr(csd_info, attribute)))
+            for frame in self._csd_info_frames:
+                frame.update_data_labels(csd)
             if file.plotted:
                 self.btRemovePlot.configure(state=tk.NORMAL)
             else:
