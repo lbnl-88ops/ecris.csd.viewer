@@ -47,9 +47,8 @@ class CSDFile:
         try:
             if self._csd is None:
                 self.valid = True
-                return read_csd_from_file_pair(self.path)
-            else:
-                return self._csd
+                self._csd = read_csd_from_file_pair(self.path)
+            return self._csd
         except BaseException as e:
             logging.info(f'File is invalid: {self.path}: {e}')
             self.valid = False
