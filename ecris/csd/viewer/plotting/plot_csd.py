@@ -3,7 +3,7 @@ from matplotlib.figure import Figure
 from matplotlib.artist import Artist
 
 from ecris.csd.viewer.files import CSDFile
-from ecris.csd.analysis.m_over_q import estimate_m_over_q, rescale_with_oxygen
+from ecris.csd.analysis import scale_with_oxygen
 
 def create_figure() -> Figure:
     fig = Figure((9,6), tight_layout=True)
@@ -20,8 +20,7 @@ def _plot_file(ax, file: CSDFile) -> Artist | None:
     if csd is None:
         info(f'File {file.path} is invalid')
         return None
-    csd.m_over_q = estimate_m_over_q(csd)
-    rescale_with_oxygen(csd)
+    scale_with_oxygen(csd)
     ln, = ax.plot(csd.m_over_q, csd.beam_current, 
                   label=file.formatted_datetime, animated=True)
     return ln
