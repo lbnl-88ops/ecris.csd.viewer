@@ -10,6 +10,20 @@ _FONT = "TkDefaultFont"
 _TITLE_FONT = (_FONT, 14)
 _SUBTITLE_FONT = (_FONT, 12)
 
+_INFO_BLOCKS = [
+    "Vacuum (torr)"
+]
+
+_INFO_BLOCKS_FORMATS = [
+    '.1e'
+]
+
+_INFO_BLOCKS_LABELS_AND_VALUES = [
+    {'Injection': 'inj_mbar',
+     'Extraction': 'ext_mbar',
+     'Beam line': 'bl_mig2_torr'}
+]
+
 class CSDInfoFrame(ttk.Frame):
     def __init__(self, 
                  owner, 
@@ -27,13 +41,13 @@ class CSDInfoFrame(ttk.Frame):
 
     def create_widgets(self):
         ttk.Label(self, text=self.frame_title, font=_SUBTITLE_FONT).pack(side='top')
-        for label in self.labels_and_values:
+        for label in self.labels_and_values.keys():
             frInfo = ttk.Frame(self)
             ttk.Label(frInfo, text=label).pack(side='left')
             self.labels[label] = ttk.Label(frInfo)
             self.labels[label].pack(side='right')
             frInfo.pack(fill='x')
-            self.update_data_labels(None)
+        self.update_data_labels(None)
 
     def update_data_labels(self, csd: CSD | None):
         for label, value in self.labels_and_values.items():
@@ -89,9 +103,9 @@ class FileInfoPane(ttk.Frame):
         
         tk.Label(self, text='CSD Info', font=self._title_font).pack()
 
-        vacuum_frame = CSDInfoFrame(self, 'Vacuum (torr)','.1e', {'Injection': 'inj_mbar'})
-        self._csd_info_frames.append(vacuum_frame)
-        vacuum_frame.pack(fill='x')
+        for title, fmt, data in zip(_INFO_BLOCKS, _INFO_BLOCKS_FORMATS, _INFO_BLOCKS_LABELS_AND_VALUES):
+            self._csd_info_frames.append(CSDInfoFrame(self, title, fmt, data))
+            self._csd_info_frames[-1].pack(fill='x')
 
         self._controls_frame = ttk.Frame(self)
 
