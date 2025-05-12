@@ -119,22 +119,28 @@ class FileInfoPane(ttk.Frame):
             self._owner.strToggleInfoText.set('<<')
 
     def create_widgets(self):
-        tk.Label(self, text='File Info', font=self._title_font).pack()
-        self._info_frame = ttk.Frame(self)
+        self.canvas = ttk.Canvas(self)
+        tk.Label(self.canvas, text='File Info', font=self._title_font).pack()
+        self._info_frame = ttk.Frame(self.canvas)
         for i, (name, attribute) in enumerate(zip(['Filename', 'Time Stamp'], 
                                                   ['filename', 'timestamp'])):
             self._file_info[attribute] = tk.StringVar(value='No file selected')
-            frInfo = ttk.Frame(self)
+            frInfo = ttk.Frame(self.canvas)
             ttk.Label(frInfo, text=name).pack(side='left')
             ttk.Label(frInfo, textvariable=self._file_info[attribute]).pack(side='right')
             frInfo.pack(fill='x')
         self._info_frame.pack()
         
-        tk.Label(self, text='CSD Info', font=self._title_font).pack()
+        tk.Label(self.canvas, text='CSD Info', font=self._title_font).pack()
 
         for title, fmt, data in zip(_INFO_BLOCKS, _INFO_BLOCKS_FORMATS, _INFO_BLOCKS_LABELS_AND_VALUES):
-            self._csd_info_frames.append(CSDInfoFrame(self, title, fmt, data))
+            self._csd_info_frames.append(CSDInfoFrame(self.canvas, title, fmt, data))
             self._csd_info_frames[-1].pack(fill='x')
+
+        self.scrollbar = ttk.Scrollbar(self, orient='vertical')
+        self.canvas.pack(side='left', fill='both', padx=10)
+        self.canvas.config(yscrollcommand=self.scrollbar.set)
+        self.scrollbar.pack(side='right', fill='y')
 
         self._controls_frame = ttk.Frame(self)
 
