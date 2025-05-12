@@ -67,17 +67,17 @@ class PlotControls(tk.Frame):
                                      command=self.plot.autoscale,
                                      bootstyle=(ttk.SUCCESS, ttk.OUTLINE))
                                     #  height=self.big_button_size)
+        self.btRemoveFromPlot = ttk.Button(self, text="Remove from plot",
+                                           command=self.remove_from_plot,
+                                        #    state=ttk.DISABLED,
+                                           bootstyle=(ttk.OUTLINE, ttk.DANGER))
         self.btClearPlot = ttk.Button(self, text="Clear Plot", 
                                      command=self.clear_plot, 
                                      bootstyle=(ttk.OUTLINE))
-                                    #  height=self.big_button_size)
-        self.btShowFileInfo = ttk.Button(self, text="File Info",
-                                         command=self.toggle_info_pane,
-                                         bootstyle=(ttk.SUCCESS, ttk.OUTLINE))
         for loc, widget in {
             (0, 0): self.btViewCSD, 
-            (0, 1): self.btShowFileInfo,
-            (0, 2): self.btAutoScale,
+            (0, 1): self.btAutoScale,
+            (0, 2): self.btRemoveFromPlot,
             (0, 3): self.btClearPlot,
             }.items():
             widget.grid(row=loc[0], column=loc[1], padx=self.pad, pady=self.pad, sticky='nsew')
@@ -101,8 +101,4 @@ class PlotControls(tk.Frame):
         self.file_list.update_colors()
 
     def toggle_info_pane(self):
-        if self.info_pane.visible:
-            self.info_pane.pack_forget()
-        else:
-            self.info_pane.pack(side='left', fill='both', expand=True, padx=10, pady=10)
-        self.info_pane.visible = not self.info_pane.visible
+        self.info_pane.visible.set(not self.info_pane.visible.get())

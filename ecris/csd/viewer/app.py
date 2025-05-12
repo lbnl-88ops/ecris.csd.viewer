@@ -3,6 +3,7 @@ import logging
 from pathlib import Path
 import tkinter as tk
 from tkinter import messagebox
+from tkinter import filedialog
 import matplotlib
 import platform
 import os
@@ -13,6 +14,7 @@ import ttkbootstrap as ttk
 from ecris.csd.analysis import PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS
 
 from ecris.csd.viewer.gui.elements import ElementButtons
+from ecris.csd.viewer.files.csd_file import export_to_file
 from ecris.csd.viewer.files.configuration import AppConfiguration, create_configuration, CONFIG_FILEPATH
 from ecris.csd.viewer.gui.style.patchMatplotlib import applyPatch
 
@@ -73,10 +75,32 @@ class CSDViewer(ttk.Window):
         self.file_list.pack(padx=10, pady=10)
         self.controls.pack()
         self.element_buttons.pack(fill="both", padx=10, pady=10)
+        self.strToggleInfoText = ttk.StringVar(value='>>')
+        self.btToggleFileInfo = ttk.Button(self, textvariable=self.strToggleInfoText,
+                                           command=self.info_pane.toggle_visibility,
+                                           width=2,
+                                           bootstyle=ttk.LINK + ttk.SECONDARY)
+        self.btToggleFileInfo.pack(fill='y', side='left')
 
-        self.info_pane.btRemovePlot.config(command=self.controls.remove_from_plot)
-
-
+    def export_data(self):
+        # if len(self.plot.plotted_files()) > 1:
+            # messagebox.showerror('Error', 'Can only export a single file. Please remove all but one datafile from the plot.')
+            # return
+        if len(self.plot.plotted_files()) == 0:
+            messagebox.showerror('Error', 'No plotted data to export.')
+            return
+        else:
+            export_file = filedialog.asksaveasfile(title='Save exported data as', 
+                                                   defaultextension='.csv', 
+                                                   filetypes=(("CSV files", "*.csv"), 
+                                                              ("All files", "*.*")), 
+                                                   initialdir=self.configuration.default_directory)
+            if export_file is not None:
+                try:
+                    export_to_file(export_file, self.plot.plotted_files())
+                    messagebox.showinfo('Success', 'Export successful.')
+                except ValueError as e:
+                    messagebox.showerror('Error', f'Error exporting: {e}')
 
     def diagnostic_mode(self):
         self._diagnostic_window = DiagnosticWindow(self)

@@ -26,7 +26,7 @@ class FileList(tk.Frame):
         self.file_listbox = tk.Listbox(self, width=50, selectmode=tk.SINGLE,
                                        listvariable=self.stringvar)
         self.file_listbox.pack(side='left', fill='y')
-        self.scrollbar = tk.Scrollbar(self, orient='vertical', width=20)
+        self.scrollbar = ttk.Scrollbar(self, orient='vertical')
         self.scrollbar.config(command=self.file_listbox.yview)
         self.scrollbar.pack(side='left', fill='y')
         self.file_listbox.config(yscrollcommand=self.scrollbar.set)

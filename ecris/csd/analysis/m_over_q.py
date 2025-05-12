@@ -11,6 +11,10 @@ from ecris.csd.analysis.peaks import find_element_peaks, ElementPeaks
 # measure [tesla] and M/Q: alpha = B_batman[tesla]/sqrt(M/Q * Vext[kV])
 _ALPHA: float = 0.00824
 
+def scale_with_oxygen(csd: CSD) -> None:
+    csd.m_over_q = estimate_m_over_q(csd)
+    rescale_with_oxygen(csd)
+
 def estimate_m_over_q(csd: CSD) -> np.ndarray:
     """Estimate a value of M/Q using the constant alpha.
 

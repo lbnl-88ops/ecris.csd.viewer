@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 from typing import List
 
+import numpy as np
 from matplotlib.artist import Artist
 
 from ecris.csd.analysis import CSD
@@ -46,10 +47,11 @@ class CSDFile:
             return None
         try:
             if self._csd is None:
+                logging.info(f'Loading CSD data for file {self.filename}')
                 self.valid = True
-                return read_csd_from_file_pair(self.path)
-            else:
-                return self._csd
+                self._csd = read_csd_from_file_pair(self.path)
+            logging.info(f'CSD data accessed: m_over_q exists {self._csd.m_over_q is not None}')
+            return self._csd
         except BaseException as e:
             logging.info(f'File is invalid: {self.path}: {e}')
             self.valid = False
@@ -63,3 +65,26 @@ def get_files(path: Path) -> List[CSDFile]:
     glob = "csd_" + "[0-9]"*10
     return [CSDFile(p, file_size=os.path.getsize(p)) 
             for p in reversed(sorted(Path(path).glob(glob)))]
+
+def export_to_file(file_stream, files: List[CSDFile]):
+    data = None
+    headers=[]
+    for file in files:
+        csd = file.csd
+        if csd is None:
+            raise ValueError(f'No CSD for file {file.filename}')
+        elif csd.m_over_q is None:
+            raise ValueError(f'No m_over_q calculated for file {file.filename}')
+        print(csd.m_over_q.shape, csd.data.shape)
+        if data is None:
+            data = np.concatenate((csd.m_over_q.reshape(-1, 1), csd.data), axis=1)
+        else:
+            data = np.concatenate((data, csd.m_over_q.reshape(-1, 1), csd.data), axis=1)
+        headers.append(','.join([f'{col_name}_{file.filename}' for col_name in [
+                                                                            'm_over_q', 
+                                                                            'time',
+                                                                            'dipole_current', 
+                                                                            'dipole_field', 
+                                                                            'beam_current']]))
+    if data is not None: 
+        np.savetxt(file_stream, data, delimiter=',', header=','.join(headers), comments='')

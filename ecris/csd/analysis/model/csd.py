@@ -11,6 +11,8 @@ class CSD:
         self.timestamp = timestamp
         self._m_over_q: np.ndarray | None = None
 
+
+
     @property
     def m_over_q(self) -> np.ndarray | None:
         return self._m_over_q
