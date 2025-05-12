@@ -124,10 +124,10 @@ class FileInfoPane(ttk.Frame):
         for i, (name, attribute) in enumerate(zip(['Filename', 'Time Stamp'], 
                                                   ['filename', 'timestamp'])):
             self._file_info[attribute] = tk.StringVar(value='No file selected')
-            ttk.Label(self._info_frame, text=name, 
-                      justify='left').grid(column=0, row=i, sticky='w')
-            ttk.Label(self._info_frame, textvariable=self._file_info[attribute], 
-                      justify='right').grid(column=1, row=i, sticky='e')
+            frInfo = ttk.Frame(self)
+            ttk.Label(frInfo, text=name).pack(side='left')
+            ttk.Label(frInfo, textvariable=self._file_info[attribute]).pack(side='right')
+            frInfo.pack(fill='x')
         self._info_frame.pack()
         
         tk.Label(self, text='CSD Info', font=self._title_font).pack()
@@ -138,31 +138,22 @@ class FileInfoPane(ttk.Frame):
 
         self._controls_frame = ttk.Frame(self)
 
-        self.btRemovePlot = ttk.Button(self._controls_frame,
-                                       text="Remove from plot",
-                                       bootstyle=(ttk.DANGER, ttk.OUTLINE),
-                                       state=tk.DISABLED)
-        self.btRemovePlot.pack(side='bottom')
         self._controls_frame.pack()
 
     def update_info(self, file: CSDFile | None = None):
         if file is None:
             for attribute, variable in self._file_info.items():
                 variable.set('No file selected')
-            self.btRemovePlot.configure(state=tk.DISABLED)
             for frame in self._csd_info_frames:
                 frame.update_data_labels(None)
         elif not file.valid:
             for attribute, variable in self._file_info.items():
                 variable.set('Invalid file')
-            self.btRemovePlot.configure(state=tk.DISABLED)
             for frame in self._csd_info_frames:
                 frame.update_data_labels(None)
         else:
+            for attribute, variable in self._file_info.items():
+                variable.set(getattr(file, attribute))
             csd = file.csd
             for frame in self._csd_info_frames:
                 frame.update_data_labels(csd)
-            if file.plotted:
-                self.btRemovePlot.configure(state=tk.NORMAL)
-            else:
-                self.btRemovePlot.configure(state=tk.DISABLED)

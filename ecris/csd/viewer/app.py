@@ -82,9 +82,6 @@ class CSDViewer(ttk.Window):
                                            bootstyle=ttk.LINK + ttk.SECONDARY)
         self.btToggleFileInfo.pack(fill='y', side='left')
 
-        self.info_pane.btRemovePlot.config(command=self.controls.remove_from_plot)
-
-
     def export_data(self):
         # if len(self.plot.plotted_files()) > 1:
             # messagebox.showerror('Error', 'Can only export a single file. Please remove all but one datafile from the plot.')
