@@ -14,6 +14,7 @@ import ttkbootstrap as ttk
 from ecris.csd.analysis import PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS
 
 from ecris.csd.viewer.gui.elements import ElementButtons
+from ecris.csd.viewer.files.csd_file import export_to_file
 from ecris.csd.viewer.files.configuration import AppConfiguration, create_configuration, CONFIG_FILEPATH
 from ecris.csd.viewer.gui.style.patchMatplotlib import applyPatch
 
@@ -85,10 +86,10 @@ class CSDViewer(ttk.Window):
 
 
     def export_data(self):
-        if len(self.plot.plotted_files()) > 1:
-            messagebox.showerror('Error', 'Can only export a single file. Please remove all but one datafile from the plot.')
-            return
-        elif len(self.plot.plotted_files()) == 0:
+        # if len(self.plot.plotted_files()) > 1:
+            # messagebox.showerror('Error', 'Can only export a single file. Please remove all but one datafile from the plot.')
+            # return
+        if len(self.plot.plotted_files()) == 0:
             messagebox.showerror('Error', 'No plotted data to export.')
             return
         else:
@@ -98,13 +99,11 @@ class CSDViewer(ttk.Window):
                                                               ("All files", "*.*")), 
                                                    initialdir=self.configuration.default_directory)
             if export_file is not None:
-                csd = self.plot.plotted_files()[0].csd
-                if csd is not None:
-                    try:
-                        csd.save_to_file(str(export_file))
-                        messagebox.showinfo('Success', 'Export successful.')
-                    except ValueError:
-                        logging.info('No m_over_q in file')
+                try:
+                    export_to_file(export_file, self.plot.plotted_files())
+                    messagebox.showinfo('Success', 'Export successful.')
+                except ValueError as e:
+                    messagebox.showerror('Error', f'Error exporting: {e}')
 
     def diagnostic_mode(self):
         self._diagnostic_window = DiagnosticWindow(self)
