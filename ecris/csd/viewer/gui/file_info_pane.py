@@ -16,7 +16,7 @@ _COLUMN_FONT = (_FONT, 10)
 class CSDInfoRow:
     def __init__(self, csd_settings: str | List[str], formats: str | List[str], info_label: Optional[str] = ''):
         if isinstance(csd_settings, str):
-            if info_label is None:
+            if not info_label:
                 info_label = csd_settings
             csd_settings = [csd_settings]
         if isinstance(formats, str):
@@ -29,9 +29,7 @@ class CSDInfoRow:
 
 class CSDInfoBlock(ttk.Label):
     def __init__(self, owner: ttk.Frame, csd_setting: str, format: str):
-        super().__init__(owner, relief=ttk.RAISED, borderwidth=2
-                      
-                         )
+        super().__init__(owner)
         self.csd_setting = csd_setting
         self.format = format
     
@@ -43,15 +41,30 @@ class CSDInfoBlock(ttk.Label):
 
 _FRAMES = [
     'Vacuum',
+    'Superconductors',
+    'High voltage'
     ]
 _COLUMNS = [
-    ['(torr)']
+    ['(torr)'],
+    ['(A)'],
+    ['(V)', '(mA)']
     ]
 _INFO_ROWS = [
     [
         CSDInfoRow('inj_mbar', '.1e', 'Injection'),
         CSDInfoRow('ext_mbar', '.1e', 'Extraction'),
         CSDInfoRow('bl_mig2_torr', '.1e', 'Beam line'),
+    ],
+    [
+        CSDInfoRow('inj_i', '6.2f'),
+        CSDInfoRow('ext_i', '6.2f'),
+        CSDInfoRow('mid_i', '6.2f'),
+        CSDInfoRow('sext_i', '6.2f'),
+    ],
+    [
+        CSDInfoRow(['extraction_v', 'extraction_i'], ['.2f', '.3e'], 'Extraction'),
+        CSDInfoRow(['puller_v', 'puller_i'], ['.2f', '.3e'], 'Puller'),
+        CSDInfoRow(['bias_v', 'bias_i'], ['.2f', '.3e'], 'Biased disk')
     ]
 ]
 
@@ -60,7 +73,7 @@ class CSDInfoFrame(ttk.Frame):
     def __init__(self, owner, frame_title: str, 
                  csd_info_rows: CSDInfoRow | List[CSDInfoRow], 
                  column_titles: List[str] | None):
-        super().__init__(owner, relief=ttk.RAISED)
+        super().__init__(owner)
         self.frame_title = frame_title
         if not isinstance(csd_info_rows, list):
             csd_info_rows = [csd_info_rows]
@@ -75,25 +88,21 @@ class CSDInfoFrame(ttk.Frame):
     def create_widgets(self):
         grid_width = 1 + max(len(row.csd_settings) for row in self.info_rows)
         row_start = 1 if self.column_titles is None else 2
-        ttk.Label(self, text=self.frame_title, font=_SUBTITLE_FONT,
-                    relief=ttk.RAISED, borderwidth=2,
-                  ).grid(row=0, column=0,
+        self.columnconfigure(0, weight=1)
+        self.columnconfigure(list(range(1, grid_width)), weight=10)
+        ttk.Label(self, text=self.frame_title, font=_SUBTITLE_FONT).grid(row=0, column=0,
                                                                          columnspan=grid_width)
         for i, title in enumerate(self.column_titles):
-            ttk.Label(self, text=title, font=_COLUMN_FONT, 
-                    relief=ttk.RAISED, borderwidth=2,
-                      ).grid(row=1, column=1 + i)
+            ttk.Label(self, text=title, font=_COLUMN_FONT).grid(row=1, column=1 + i)
 
         for i, row in enumerate(self.info_rows):
             n_row = row_start + i
-            ttk.Label(self, text=row.info_label,
-                    relief=ttk.RAISED, borderwidth=2,
-                      ).grid(row=n_row, column=0, 
+            ttk.Label(self, text=row.info_label).grid(row=n_row, column=0, 
                                                       sticky='w')
             for j, setting in enumerate(row.csd_settings):
                 self.info_blocks.append(CSDInfoBlock(self, setting, row.formats[j]))
                 self.info_blocks[-1].grid(row=n_row, column = j + 1, 
-                                          sticky='ew')
+                                          sticky='e')
 
     def update_csd_info(self, csd: CSD | None = None):
         for info_block in self.info_blocks:
