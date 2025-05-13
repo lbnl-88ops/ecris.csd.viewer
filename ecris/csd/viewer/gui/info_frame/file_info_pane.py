@@ -7,41 +7,10 @@ from typing import Dict, List, Optional
 from ecris.csd.analysis import CSD
 from ecris.csd.viewer.files import CSDFile
 from .csd_info import CSDInfoRow, CSDInfoFrame
+from .info_to_display import _FRAMES, _COLUMNS, _INFO_ROWS
 
 _FONT = "TkDefaultFont"
-_TITLE_FONT = (_FONT, 14)
-_SUBTITLE_FONT = (_FONT, 12)
 _COLUMN_FONT = (_FONT, 10)
-
-
-_FRAMES = [
-    'Vacuum',
-    'Superconductors',
-    'High voltage'
-    ]
-_COLUMNS = [
-    ['(torr)'],
-    ['(A)'],
-    ['(V)', '(mA)']
-    ]
-_INFO_ROWS = [
-    [
-        CSDInfoRow('inj_mbar', '.1e', 'Injection'),
-        CSDInfoRow('ext_mbar', '.1e', 'Extraction'),
-        CSDInfoRow('bl_mig2_torr', '.1e', 'Beam line'),
-    ],
-    [
-        CSDInfoRow('inj_i', '6.2f'),
-        CSDInfoRow('ext_i', '6.2f'),
-        CSDInfoRow('mid_i', '6.2f'),
-        CSDInfoRow('sext_i', '6.2f'),
-    ],
-    [
-        CSDInfoRow(['extraction_v', 'extraction_i'], ['.2f', '.3e'], 'Extraction'),
-        CSDInfoRow(['puller_v', 'puller_i'], ['.2f', '.3e'], 'Puller'),
-        CSDInfoRow(['bias_v', 'bias_i'], ['.2f', '.3e'], 'Biased disk')
-    ]
-]
 
 class FileInfoPane(ttk.Frame):
     def __init__(self, owner, *args, **kwargs):
