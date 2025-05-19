@@ -3,23 +3,26 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 jobs:
   build:
-    name: Build and release executable
+    name: Windows Build
     runs-on: windows-latest
     permissions:
       contents: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2 
+        uses: actions/checkout@v4 
       - name: Set up python
-        uses: actions/setup-python@v2 
+        uses: actions/setup-python@v5 
         with:
           python-version: 3.13
       - name: Install dependencies
-        run: pip install pipenv && pipenv install pyinstaller && pipenv install
-      - name: Build
-        run: pipenv run pyinstaller --noconsole --onefile csd_viewer.py
+        run: |
+          pip install pipenv pyinstaller
+          pipenv install --system
+      - name: Build executable
+        run: pyinstaller --noconsole --onefile csd_viewer.py
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v2
