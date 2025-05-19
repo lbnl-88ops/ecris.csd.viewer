@@ -13,6 +13,7 @@ class FileList(tk.Frame):
     def __init__(self, owner, file_info_pane: FileInfoPane, 
                  path: Path, *args, **kwargs):
         super().__init__(owner, *args, **kwargs)
+        self.owner = owner
         self.current_directory = path
         self.file_info_pane = file_info_pane
 
@@ -34,7 +35,7 @@ class FileList(tk.Frame):
         self.populate_listbox()
     
     def onselect(self, event):
-        self.file_info_pane.update_info(self.get_selected_file())
+        self.owner.master.set_selected_file(self.get_selected_file())
 
     def update_label(self):
         self.directory_label.config(text=f"Viewing: {self.current_directory}")

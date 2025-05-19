@@ -14,7 +14,7 @@ import ttkbootstrap as ttk
 from ecris.csd.analysis import PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS
 
 from ecris.csd.viewer.gui.elements import ElementButtons
-from ecris.csd.viewer.files.csd_file import export_to_file
+from ecris.csd.viewer.files.csd_file import CSDFile, export_to_file
 from ecris.csd.viewer.files.configuration import AppConfiguration, create_configuration, CONFIG_FILEPATH
 from ecris.csd.viewer.gui.style.patchMatplotlib import applyPatch
 
@@ -81,6 +81,10 @@ class CSDViewer(ttk.Window):
                                            width=2,
                                            bootstyle=ttk.LINK + ttk.SECONDARY)
         self.btToggleFileInfo.pack(fill='y', side='left')
+    
+    def set_selected_file(self, file: CSDFile):
+        self.info_pane.update_info(file)
+        self.controls.set_button_status(file.plotted)
 
     def export_data(self):
         # if len(self.plot.plotted_files()) > 1:

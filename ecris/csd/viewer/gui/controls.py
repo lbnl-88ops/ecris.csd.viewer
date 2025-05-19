@@ -61,7 +61,6 @@ class PlotControls(tk.Frame):
         self.widgets = []
         self.btViewCSD = ttk.Button(self, text="Plot CSD",
                                   command=self.plot_file,
-                                #   height=self.big_button_size,
                                   bootstyle=(ttk.SUCCESS))
         self.btAutoScale = ttk.Button(self, text="Reset Scale",
                                      command=self.plot.autoscale,
@@ -69,7 +68,7 @@ class PlotControls(tk.Frame):
                                     #  height=self.big_button_size)
         self.btRemoveFromPlot = ttk.Button(self, text="Remove from plot",
                                            command=self.remove_from_plot,
-                                        #    state=ttk.DISABLED,
+                                           state=ttk.DISABLED,
                                            bootstyle=(ttk.OUTLINE, ttk.DANGER))
         self.btClearPlot = ttk.Button(self, text="Clear Plot", 
                                      command=self.clear_plot, 
@@ -82,12 +81,21 @@ class PlotControls(tk.Frame):
             }.items():
             widget.grid(row=loc[0], column=loc[1], padx=self.pad, pady=self.pad, sticky='nsew')
 
+    def set_button_status(self, file_is_plotted=False):
+        if file_is_plotted:
+            self.btViewCSD.config(state='disabled')
+            self.btRemoveFromPlot.config(state='enabled')
+        else:
+            self.btViewCSD.config(state='enabled')
+            self.btRemoveFromPlot.config(state='disabled')
+
     def remove_from_plot(self):
         file = self.file_list.get_selected_file()
         if file is not None:
             self.plot.remove_file(file)
             self.file_list.update_colors()
             self.info_pane.update_info(file)
+            self.set_button_status(False)
 
     def plot_file(self):
         file = self.file_list.get_selected_file()
@@ -95,6 +103,7 @@ class PlotControls(tk.Frame):
             self.plot.plot(file)
             self.file_list.update_colors()
             self.info_pane.update_info(file)
+            self.set_button_status(True)
 
     def clear_plot(self):
         self.plot.clear_plot()
