@@ -4,8 +4,7 @@ from pathlib import Path
 
 import ttkbootstrap as ttk
 
-from ecris.csd.viewer.gui.elements import ElementButtons
-
+from .elements import ElementButtons
 from .file_list import FileList
 from ..plot import Plot
 from ..file_info_pane import FileInfoPane

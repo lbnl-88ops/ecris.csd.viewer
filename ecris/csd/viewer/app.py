@@ -13,7 +13,7 @@ import ttkbootstrap as ttk
 
 from ecris.csd.analysis import PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS
 
-from ecris.csd.viewer.gui.elements import ElementButtons
+from ecris.csd.viewer.gui.controls import ElementButtons
 from ecris.csd.viewer.files.csd_file import CSDFile, export_to_file
 from ecris.csd.viewer.files.configuration import AppConfiguration, create_configuration, CONFIG_FILEPATH
 from ecris.csd.viewer.gui.style.patchMatplotlib import applyPatch
