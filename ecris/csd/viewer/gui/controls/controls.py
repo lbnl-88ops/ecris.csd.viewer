@@ -7,8 +7,8 @@ import ttkbootstrap as ttk
 from ecris.csd.viewer.gui.elements import ElementButtons
 
 from .file_list import FileList
-from .plot import Plot
-from .file_info_pane import FileInfoPane
+from ..plot import Plot
+from ..file_info_pane import FileInfoPane
 
 class FileListControls(tk.Frame):
     def __init__(self, owner, file_list: FileList, *args, **kwargs):

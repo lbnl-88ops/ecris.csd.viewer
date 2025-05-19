@@ -1,5 +1,4 @@
-from .controls import PlotControls, FileListControls
-from .file_list import FileList
+from .controls import PlotControls, FileListControls, FileList
 from .plot import Plot
 from .elements import ElementButtons
 from .menu import AppMenu

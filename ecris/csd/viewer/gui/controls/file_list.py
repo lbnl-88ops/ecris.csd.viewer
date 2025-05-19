@@ -3,8 +3,8 @@ import tkinter as tk
 from typing import List
 import ttkbootstrap as ttk
 
-from ..files.csd_file import CSDFile, get_files
-from .file_info_pane import FileInfoPane
+from ...files.csd_file import CSDFile, get_files
+from ..file_info_pane import FileInfoPane
 
 BLUE = "#5200FF"
 WHITE = "#FFFFFF"
