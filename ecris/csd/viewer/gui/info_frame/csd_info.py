@@ -1,20 +1,15 @@
-import logging
-from dataclasses import dataclass
-import tkinter as tk
 import ttkbootstrap as ttk
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 from ecris.csd.analysis import CSD
-from ecris.csd.viewer.files import CSDFile
 
 _FONT = "TkDefaultFont"
 _TITLE_FONT = (_FONT, 14)
 _SUBTITLE_FONT = (_FONT, 12)
 _COLUMN_FONT = (_FONT, 10)
 
-
 class CSDInfoRow:
-    def __init__(self, csd_settings: str | List[str], formats: str | List[str], info_label: Optional[str] = ''):
+    def __init__(self, csd_settings: str | List[str], formats: str | List[str], info_label: str = ''):
         if isinstance(csd_settings, str):
             if not info_label:
                 info_label = csd_settings

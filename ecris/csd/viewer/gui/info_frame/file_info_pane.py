@@ -1,12 +1,10 @@
-import logging
-from dataclasses import dataclass
 import tkinter as tk
 import ttkbootstrap as ttk
-from typing import Dict, List, Optional
+from typing import List
 
-from ecris.csd.analysis import CSD
 from ecris.csd.viewer.files import CSDFile
-from .csd_info import CSDInfoRow, CSDInfoFrame
+
+from .csd_info import CSDInfoFrame
 from .info_to_display import _FRAMES, _COLUMNS, _INFO_ROWS
 
 _FONT = "TkDefaultFont"
