@@ -31,11 +31,11 @@ class FileList(tk.Frame):
         self.scrollbar.config(command=self.file_listbox.yview)
         self.scrollbar.pack(side='left', fill='y')
         self.file_listbox.config(yscrollcommand=self.scrollbar.set)
-        self.file_listbox.bind("<<ListboxSelect>>", self.onselect)
+        # self.file_listbox.bind("<<ListboxSelect>>", self.onselect)
         self.populate_listbox()
     
-    def onselect(self, event):
-        self.owner.master.set_selected_file(self.get_selected_file())
+    # def onselect(self, event):
+        # self.owner.master.set_selected_file(self.get_selected_file())
 
     def update_label(self):
         self.directory_label.config(text=f"Viewing: {self.current_directory}")
