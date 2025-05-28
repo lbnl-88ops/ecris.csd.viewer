@@ -59,8 +59,9 @@ class CSDViewer(ttk.Window):
         self.center_pane = ttk.Frame(self)
 
         self.info_pane = FileInfoPane(self)
-        self.file_list = FileList(self.center_pane, self.info_pane, self.default_path)
-        self.file_list_controls = FileListControls(self.center_pane, self.file_list)
+        self.file_list = FileList(self.center_pane, self.default_path)
+        self.file_list_controls = FileListControls(self.center_pane)
+
         self.element_buttons = ElementButtons(self.center_pane, self.plot, PERSISTANT_ELEMENTS, self.variable_elements)
         self.plot_controls = PlotControls(self.center_pane, self.plot, self.file_list, self.element_buttons,
                                      self.info_pane)
@@ -82,7 +83,7 @@ class CSDViewer(ttk.Window):
                                            bootstyle=ttk.LINK + ttk.SECONDARY)
         self.btToggleFileInfo.pack(fill='y', side='left')
         self.coordinator = Coordinator([self.plot_controls, self.info_pane,
-                                        self.file_list])
+                                        self.file_list, self.file_list_controls])
     
     def export_data(self):
         # if len(self.plot.plotted_files()) > 1:

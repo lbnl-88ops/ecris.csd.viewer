@@ -10,12 +10,10 @@ BLUE = "#5200FF"
 WHITE = "#FFFFFF"
 
 class FileList(tk.Frame):
-    def __init__(self, owner, file_info_pane: FileInfoPane, 
-                 path: Path, *args, **kwargs):
+    def __init__(self, owner, path: Path, *args, **kwargs):
         super().__init__(owner, *args, **kwargs)
         self.owner = owner
         self.current_directory = path
-        self.file_info_pane = file_info_pane
 
         # Listbox to display files
         self.directory_label = tk.Label(self)
@@ -31,16 +29,12 @@ class FileList(tk.Frame):
         self.scrollbar.config(command=self.file_listbox.yview)
         self.scrollbar.pack(side='left', fill='y')
         self.file_listbox.config(yscrollcommand=self.scrollbar.set)
-        # self.file_listbox.bind("<<ListboxSelect>>", self.onselect)
         self.populate_listbox()
     
-    # def onselect(self, event):
-        # self.owner.master.set_selected_file(self.get_selected_file())
-
     def update_label(self):
         self.directory_label.config(text=f"Viewing: {self.current_directory}")
     
-    def get_selected_file(self) -> CSDFile:
+    def get_selected_file(self) -> CSDFile | None:
         for i in self.file_listbox.curselection():
             return self.files[i]
 
