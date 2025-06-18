@@ -38,7 +38,7 @@ def load_configuration() -> AppConfiguration | None:
                         try:
                             custom_elements.append(
                                 Element(name=name, symbol=data['symbol'],
-                                        atomic_weight=data['atomic_mass'], 
+                                        atomic_mass=data['atomic_mass'], 
                                         atomic_number=data['atomic_number']))
                             info(f'Parsed element {custom_elements[-1]}')
                         except KeyError as e:
