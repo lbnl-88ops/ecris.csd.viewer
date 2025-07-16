@@ -3,7 +3,9 @@ from matplotlib.figure import Figure
 
 from ecris.csd.analysis.model import CSD
 
-def plot_file(csd: CSD) -> Figure:
+def plot_csd(csd: CSD) -> Figure:
+    if csd.m_over_q is None:
+        raise RuntimeError('CSD m_over_q is not set, estimate or scale the value before plotting')
     fig = plt.figure(figsize=(9,6), tight_layout=True)
     ax = fig.gca()
     plt.plot(csd.m_over_q, csd.beam_current)
