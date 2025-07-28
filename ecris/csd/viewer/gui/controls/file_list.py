@@ -38,6 +38,10 @@ class FileList(tk.Frame):
         for i in self.file_listbox.curselection():
             return self.files[i]
 
+    def clear_loaded(self) -> None:
+        for file in self.files:
+            file.unload_csd()
+
     def update_colors(self):
         style = ttk.Style()
         for i, file in enumerate(self.files):
@@ -58,6 +62,7 @@ class FileList(tk.Frame):
     def populate_listbox(self, retain_plotted=False):
         """Populates the listbox with files from the specified directory."""
         plotted = []
+        self.clear_loaded()
         if retain_plotted:
             plotted = [f.path for f in self.files if f.plotted]
         self.files = get_files(self.current_directory)

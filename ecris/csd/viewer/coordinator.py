@@ -1,3 +1,4 @@
+from logging import getLogger
 from pathlib import Path
 from tkinter import filedialog
 from typing import Any, List
@@ -6,6 +7,8 @@ from ecris.csd.viewer.gui.controls.controls import FileListControls, PlotControl
 from ecris.csd.viewer.gui.controls.file_list import FileList
 from ecris.csd.viewer.gui.info_frame.file_info_pane import FileInfoPane
 from ecris.csd.viewer.gui import Plot, FileInfoPane
+
+_log = getLogger(__name__)
 
 
 class Coordinator:
@@ -51,6 +54,7 @@ class Coordinator:
             self._file_list.update_label()
 
     def clear_plot(self, *_):
+        self._file_list.clear_loaded()
         self._plot.clear_plot()
         self._file_list.update_colors()
         self._plot_controls.set_button_status(False)
@@ -75,6 +79,7 @@ class Coordinator:
         self._file_list.populate_listbox(retain_plotted=True)
 
     def set_selected_file(self, *_):
+        self._file_list.clear_loaded()
         file = self._file_list.get_selected_file()
         self._file_info_pane.update_info(file)
         if file is not None:
