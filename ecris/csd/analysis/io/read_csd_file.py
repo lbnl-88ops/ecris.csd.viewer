@@ -15,12 +15,12 @@ def file_raw_timestamp(file: Path) -> float | None:
         logging.info(f'Failed to parse timestamp for file {file}: {e}')
         return None
 
-def file_formatted_timestamp(file: Path) -> str | None:
+def file_formatted_timestamp(file: Path) -> str:
     raw_timestamp = file_raw_timestamp(file)
     if raw_timestamp is not None:
         return dt.datetime.fromtimestamp(raw_timestamp).strftime(DATETIME_FORMAT)
     else:
-        return None
+        return 'UNKNOWN'
         
 
 def read_csd_from_file_pair(csd_file: Path) -> CSD:

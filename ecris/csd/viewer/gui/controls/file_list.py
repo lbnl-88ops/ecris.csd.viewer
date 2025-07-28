@@ -21,7 +21,7 @@ class FileList(tk.Frame):
         self.directory_label.pack(side='top')
 
         self.files: List[CSDFile] = []
-        self.stringvar = tk.StringVar(value=["No CSD files found"])
+        self.stringvar = tk.Variable(value=["No CSD files found"])
         self.file_listbox = tk.Listbox(self, width=50, selectmode=tk.SINGLE,
                                        listvariable=self.stringvar)
         self.file_listbox.pack(side='left', fill='y')
@@ -43,20 +43,22 @@ class FileList(tk.Frame):
             file.unload_csd()
 
     def update_colors(self):
-        style = ttk.Style()
+        style: ttk.Colors = ttk.Style().colors
+        if not isinstance(style, ttk.Colors):
+            raise RuntimeError
         for i, file in enumerate(self.files):
             if file.plotted and file.valid:
                 self.file_listbox.itemconfigure(i, 
-                                                foreground=style.colors.success,
-                                                selectbackground=style.colors.success,
+                                                foreground=style.success,
+                                                selectbackground=style.success,
                                                 selectforeground='white')
             elif not file.valid:
                 self.file_listbox.itemconfigure(i, foreground="gray",
                                                 selectbackground='white',
                                                 selectforeground='gray')
             else:
-                self.file_listbox.itemconfigure(i, foreground=style.colors.fg,
-                                                selectbackground=style.colors.primary,
+                self.file_listbox.itemconfigure(i, foreground=style.fg,
+                                                selectbackground=style.primary,
                                                 selectforeground='white')
 
     def populate_listbox(self, retain_plotted=False):
