@@ -76,6 +76,7 @@ class Coordinator:
             self._plot_controls.set_button_status(False)
 
     def refresh_file_list(self, *_):
+        self._file_list.clear_loaded()
         self._file_list.populate_listbox(retain_plotted=True)
 
     def set_selected_file(self, *_):

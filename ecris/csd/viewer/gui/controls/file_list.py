@@ -62,7 +62,6 @@ class FileList(tk.Frame):
     def populate_listbox(self, retain_plotted=False):
         """Populates the listbox with files from the specified directory."""
         plotted = []
-        self.clear_loaded()
         if retain_plotted:
             plotted = [f.path for f in self.files if f.plotted]
         self.files = get_files(self.current_directory)

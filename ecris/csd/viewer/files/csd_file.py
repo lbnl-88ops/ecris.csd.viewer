@@ -8,7 +8,8 @@ import numpy as np
 from matplotlib.artist import Artist
 
 from ecris.csd.analysis import CSD
-from ecris.csd.analysis.io.read_csd_file import read_csd_from_file_pair, file_timestamp
+from ecris.csd.analysis.io.read_csd_file import (file_raw_timestamp, read_csd_from_file_pair, 
+                                                 file_formatted_timestamp)
 
 class CSDFile:
     def __init__(self, path, file_size: float = 0):
@@ -16,8 +17,9 @@ class CSDFile:
         self.filename = self.path.name
         self.plotted: bool = False
         self.file_size: float = file_size
-        self.valid: bool = True
-        self.timestamp = file_timestamp(path)
+        self.valid: bool = file_size > 0
+        self.timestamp = file_formatted_timestamp(path)
+        self.raw_timestamp = file_raw_timestamp(path)
         self._csd = None
         self._artist = None
 
@@ -36,7 +38,10 @@ class CSDFile:
 
     @property
     def formatted_datetime(self) -> str:
-        return self.timestamp
+        if self.timestamp is not None:
+            return self.timestamp
+        else:
+            return "Invalid timestamp"
 
     def unload_csd(self) -> None:
         self._csd = None
@@ -59,7 +64,7 @@ class CSDFile:
 
     @property
     def list_value(self) -> str:
-        return f"{self.formatted_datetime}"
+        return f"{self.raw_timestamp:.0f} ({self.formatted_datetime})"
 
 def get_files(path: Path) -> List[CSDFile]:
     glob = "csd_" + "[0-9]"*10
