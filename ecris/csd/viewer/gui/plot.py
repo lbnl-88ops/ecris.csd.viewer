@@ -85,6 +85,7 @@ class Plot(tk.Frame):
         ax = self._figure.gca()
         ax.relim(visible_only=True)
         ax.autoscale()
+        ax.set_ybound(lower=0)
         self.update()
 
     def on_draw(self, event):
@@ -112,6 +113,7 @@ class Plot(tk.Frame):
         handles, labels = ax.get_legend_handles_labels()
         if handles and any(not l.startswith('_') for l in labels):
             ax.legend(handles, labels)
+        ax.set_ybound(lower=0)
 
     def update(self):
         info(f'Updating plot: plotted files: {len(self._plotted_files)}, element indicators: {len(self.element_indicators)}')

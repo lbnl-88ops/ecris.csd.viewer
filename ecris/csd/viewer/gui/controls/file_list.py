@@ -3,18 +3,17 @@ import tkinter as tk
 from typing import List
 import ttkbootstrap as ttk
 
-from ..files.csd_file import CSDFile, get_files
-from .file_info_pane import FileInfoPane
+from ecris.csd.viewer.files import CSDFile, get_files
+from ecris.csd.viewer.gui.info_frame import FileInfoPane
 
 BLUE = "#5200FF"
 WHITE = "#FFFFFF"
 
 class FileList(tk.Frame):
-    def __init__(self, owner, file_info_pane: FileInfoPane, 
-                 path: Path, *args, **kwargs):
+    def __init__(self, owner, path: Path, *args, **kwargs):
         super().__init__(owner, *args, **kwargs)
+        self.owner = owner
         self.current_directory = path
-        self.file_info_pane = file_info_pane
 
         # Listbox to display files
         self.directory_label = tk.Label(self)
@@ -22,7 +21,7 @@ class FileList(tk.Frame):
         self.directory_label.pack(side='top')
 
         self.files: List[CSDFile] = []
-        self.stringvar = tk.StringVar(value=["No CSD files found"])
+        self.stringvar = tk.Variable(value=["No CSD files found"])
         self.file_listbox = tk.Listbox(self, width=50, selectmode=tk.SINGLE,
                                        listvariable=self.stringvar)
         self.file_listbox.pack(side='left', fill='y')
@@ -30,34 +29,36 @@ class FileList(tk.Frame):
         self.scrollbar.config(command=self.file_listbox.yview)
         self.scrollbar.pack(side='left', fill='y')
         self.file_listbox.config(yscrollcommand=self.scrollbar.set)
-        self.file_listbox.bind("<<ListboxSelect>>", self.onselect)
         self.populate_listbox()
     
-    def onselect(self, event):
-        self.file_info_pane.update_info(self.get_selected_file())
-
     def update_label(self):
         self.directory_label.config(text=f"Viewing: {self.current_directory}")
     
-    def get_selected_file(self) -> CSDFile:
+    def get_selected_file(self) -> CSDFile | None:
         for i in self.file_listbox.curselection():
             return self.files[i]
 
+    def clear_loaded(self) -> None:
+        for file in self.files:
+            file.unload_csd()
+
     def update_colors(self):
-        style = ttk.Style()
+        style: ttk.Colors = ttk.Style().colors
+        if not isinstance(style, ttk.Colors):
+            raise RuntimeError
         for i, file in enumerate(self.files):
             if file.plotted and file.valid:
                 self.file_listbox.itemconfigure(i, 
-                                                foreground=style.colors.success,
-                                                selectbackground=style.colors.success,
+                                                foreground=style.success,
+                                                selectbackground=style.success,
                                                 selectforeground='white')
             elif not file.valid:
                 self.file_listbox.itemconfigure(i, foreground="gray",
                                                 selectbackground='white',
                                                 selectforeground='gray')
             else:
-                self.file_listbox.itemconfigure(i, foreground=style.colors.fg,
-                                                selectbackground=style.colors.primary,
+                self.file_listbox.itemconfigure(i, foreground=style.fg,
+                                                selectbackground=style.primary,
                                                 selectforeground='white')
 
     def populate_listbox(self, retain_plotted=False):
