@@ -45,6 +45,7 @@ class Coordinator:
         self._plot_controls.btRemoveFromPlot.config(command=self.remove_from_plot)
         self._plot_controls.btViewCSD.config(command=self.plot_file)
         self._plot_controls.btAutoScale.config(command=self._plot.autoscale)
+        self._plot_controls.set_button_status(True)
 
     def choose_directory(self, *_):
         new_directory = filedialog.askdirectory()
@@ -54,6 +55,8 @@ class Coordinator:
             self._file_list.update_label()
 
     def clear_plot(self, *_):
+        for file in self._file_list.files:
+            file.plotted = False
         self._file_list.clear_loaded()
         self._plot.clear_plot()
         self._file_list.update_colors()
@@ -62,6 +65,7 @@ class Coordinator:
     def plot_file(self):
         file = self._file_list.get_selected_file()
         if file is not None:
+            file.plotted = True
             self._plot.plot(file)
             self._file_list.update_colors()
             self._file_info_pane.update_info(file)
@@ -70,6 +74,8 @@ class Coordinator:
     def remove_from_plot(self, *_):
         file = self._file_list.get_selected_file()
         if file is not None:
+            file.plotted = False
+            file.unload_csd()
             self._plot.remove_file(file)
             self._file_list.update_colors()
             self._file_info_pane.update_info(file)
@@ -78,6 +84,7 @@ class Coordinator:
     def refresh_file_list(self, *_):
         self._file_list.clear_loaded()
         self._file_list.populate_listbox(retain_plotted=True)
+        self._plot_controls.set_button_status(True)
 
     def set_selected_file(self, *_):
         self._file_list.clear_loaded()

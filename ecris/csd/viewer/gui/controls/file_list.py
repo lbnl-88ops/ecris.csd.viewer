@@ -39,7 +39,7 @@ class FileList(tk.Frame):
             return self.files[i]
 
     def clear_loaded(self) -> None:
-        for file in self.files:
+        for file in [f for f in self.files if not f.plotted]:
             file.unload_csd()
 
     def update_colors(self):
@@ -67,6 +67,11 @@ class FileList(tk.Frame):
         if retain_plotted:
             plotted = [f.path for f in self.files if f.plotted]
         self.files = get_files(self.current_directory)
+
+        for plotted_file in plotted:
+            for i, file in enumerate(self.files):
+                if file == plotted_file:
+                    self.files[i] = plotted_file
         self.file_listbox.delete(0, tk.END)
         if not self.files:
             self.stringvar.set(["No CSD files found"])

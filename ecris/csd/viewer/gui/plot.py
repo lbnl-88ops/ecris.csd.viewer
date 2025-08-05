@@ -58,11 +58,13 @@ class Plot(tk.Frame):
     def _remove_files(self, files: List[CSDFile]):
         ax = self.canvas.figure.gca()
         for to_remove in files:
-            if to_remove not in self._plotted_files:
+            # if to_remove not in self._plotted_files:
+                # continue
+            try:
+                idx = self._plotted_files.index(to_remove)
+            except ValueError:
                 continue
-            to_remove.plotted = False
-            to_remove.clear_artist()
-            to_remove.unload_csd()
+            self._plotted_files[idx].clear_artist()
             self._plotted_files.remove(to_remove)
         if not self._plotted_files:
             if ax.get_legend() is not None:
@@ -77,7 +79,6 @@ class Plot(tk.Frame):
         artist = file_artist(self._figure.gca(), file)
         if artist is not None:
             file.artist = artist
-            file.plotted = True
             self._plotted_files.append(file)
             self.update()
 
@@ -98,6 +99,7 @@ class Plot(tk.Frame):
         for artist in [file.artist for file in self._plotted_files
                        if file.artist is not None]:
             fig.draw_artist(artist)
+        info(f'Updated plot with {len(self._plotted_files)} files')
 
         # Determine how many elements are visible
         visible_elements = [element for element in 
