@@ -19,7 +19,6 @@ class Coordinator:
         self.attach(objects)
         self.configure_objects()
         self.rescale_using_oxygen = tk.BooleanVar(value=True)
-        
 
     def attach(self, objects: List[Any]) -> None:
         for object in objects:

@@ -3,7 +3,8 @@ import tkinter as tk
 class AppMenu(tk.Menu):
     def __init__(self, owner, 
                  use_blitting: tk.BooleanVar, 
-                 rescale: tk.BooleanVar, *args, **kwargs):
+                 rescale: tk.BooleanVar, 
+                 *args, **kwargs):
         super().__init__(owner, relief=tk.FLAT, *args, **kwargs)
         self._owner = owner
         self.create_menus(use_blitting, rescale)

@@ -70,7 +70,9 @@ class CSDViewer(ttk.Window):
         self.plot.pack(side='left', fill='both', expand=True)
 
         self.center_pane.pack(side='left', fill='y', expand=True)
-
+        self.strWarning = ttk.StringVar(value='')
+        self.lblWarning = ttk.Label(self.center_pane, textvariable=self.strWarning)
+        self.lblWarning.pack()
         self.file_list_controls.pack()
         self.file_list.pack(padx=10, pady=10)
         self.plot_controls.pack()
@@ -109,8 +111,14 @@ class CSDViewer(ttk.Window):
         self._diagnostic_window = DiagnosticWindow(self)
 
     def toggle_rescale(self):
-        self.coordinator.rescale_using_oxygen.set(
-            not self.coordinator.rescale_using_oxygen)
+        if not self.coordinator.rescale_using_oxygen.get():
+            logging.info('Turning off oxygen rescaling')
+            self.strWarning.set('⚠️ Warning: Not rescaling with Oxygen')
+            self.lblWarning.config(bootstyle='inverse-danger')
+        else:
+            logging.info('Turning on oxygen rescaling')
+            self.strWarning.set('')
+            self.lblWarning.config(bootstyle='danger')
 
     def toggle_blitting(self):
         logging.info(self.plot.use_blitting.get())
