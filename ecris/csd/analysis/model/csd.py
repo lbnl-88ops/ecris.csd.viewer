@@ -10,6 +10,13 @@ class CSD:
         self.settings = settings
         self.timestamp = timestamp
         self._m_over_q: np.ndarray | None = None
+        try:
+            self.settings['ht_oven_w'] = (
+                self.settings['ht_oven_i']
+                * self.settings['ht_oven_v']
+            )
+        except KeyError:
+            self.settings['ht_oven_w'] = -1
 
 
 

@@ -23,6 +23,11 @@ class CSDFile:
         self._csd = None
         self._artist = None
 
+    def __eq__(self, value: object) -> bool:
+        if isinstance(value, CSDFile):
+            return value.filename == self.filename
+        return False
+
     @property
     def artist(self) -> Artist | None:
         return self._artist

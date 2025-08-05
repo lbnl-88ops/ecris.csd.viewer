@@ -22,7 +22,7 @@ from ecris.csd.viewer.gui.style.patchMatplotlib import applyPatch
 from .gui import FileList, PlotControls, Plot, FileListControls, AppMenu, DiagnosticWindow, FileInfoPane
 
 
-__version__ = "1.2.0-beta.3"
+__version__ = "1.2.0-beta.4"
 
 matplotlib.rc('font', size=14)
 applyPatch()
@@ -49,7 +49,7 @@ class CSDViewer(ttk.Window):
         self.destroy()
 
     def create_menu(self):
-        self.menu = AppMenu(self, self.plot.use_blitting)
+        self.menu = AppMenu(self, self.plot.use_blitting, self.coordinator.rescale_using_oxygen)
         self.config(menu=self.menu)
 
     def create_widgets(self):
@@ -70,7 +70,9 @@ class CSDViewer(ttk.Window):
         self.plot.pack(side='left', fill='both', expand=True)
 
         self.center_pane.pack(side='left', fill='y', expand=True)
-
+        self.strWarning = ttk.StringVar(value='')
+        self.lblWarning = ttk.Label(self.center_pane, textvariable=self.strWarning)
+        self.lblWarning.pack()
         self.file_list_controls.pack()
         self.file_list.pack(padx=10, pady=10)
         self.plot_controls.pack()
@@ -107,6 +109,16 @@ class CSDViewer(ttk.Window):
 
     def diagnostic_mode(self):
         self._diagnostic_window = DiagnosticWindow(self)
+
+    def toggle_rescale(self):
+        if not self.coordinator.rescale_using_oxygen.get():
+            logging.info('Turning off oxygen rescaling')
+            self.strWarning.set('⚠️ Warning: Not rescaling with Oxygen')
+            self.lblWarning.config(bootstyle='inverse-danger')
+        else:
+            logging.info('Turning on oxygen rescaling')
+            self.strWarning.set('')
+            self.lblWarning.config(bootstyle='danger')
 
     def toggle_blitting(self):
         logging.info(self.plot.use_blitting.get())

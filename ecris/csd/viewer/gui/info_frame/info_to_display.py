@@ -5,12 +5,14 @@ _FRAMES = [
     'Superconductors',
     'High voltage',
     'Glaser',
+    'High temp oven'
     ]
 _COLUMNS = [
     ['(torr)'],
     ['(A)'],
     ['(V)', '(mA)'],
     ['(A)'],
+    []
     ]
 _INFO_ROWS = [
     [CSDInfoRow(s, '.1e', l) for s, l in [('inj_mbar', 'Injection'), 
@@ -22,6 +24,9 @@ _INFO_ROWS = [
         (['extraction_v', 'extraction_i'], 'Extraction'),
         (['puller_v', 'puller_i'], 'Puller'),
         (['bias_v', 'bias_i'], 'Biased disk')]],
-    [CSDInfoRow('glaser_1', '.1f')]
+    [CSDInfoRow('glaser_1', '.1f')],
+    [CSDInfoRow(s, '6.2f', l) for s, l in [('ht_oven_i', 'Current (A)'), 
+                                           ('ht_oven_v', 'Voltage (V)'),
+                                           ('ht_oven_w', 'Power (W)')]]
 ]
 

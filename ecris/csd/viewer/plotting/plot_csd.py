@@ -2,6 +2,7 @@ from logging import info
 from matplotlib.figure import Figure
 from matplotlib.artist import Artist
 
+from ecris.csd.analysis.m_over_q import estimate_m_over_q
 from ecris.csd.viewer.files import CSDFile
 from ecris.csd.analysis import scale_with_oxygen
 
@@ -12,15 +13,23 @@ def create_figure() -> Figure:
     ax.set_ylabel(r'current [$\mu$A]')
     return fig
 
-def file_artist(axis, file: CSDFile) -> Artist | None:
-    return _plot_file(axis, file)
+def file_artist(axis, file: CSDFile, rescale: bool) -> Artist | None:
+    return _plot_file(axis, file, rescale)
 
-def _plot_file(ax, file: CSDFile) -> Artist | None:
+def _plot_file(ax, file: CSDFile, rescale) -> Artist | None:
     csd = file.csd
     if csd is None:
         info(f'File {file.path} is invalid')
         return None
-    scale_with_oxygen(csd)
+
+    if rescale:
+        scale_with_oxygen(csd)
+        label = file.formatted_datetime
+    else:
+        info('Skipping oxygen rescale')
+        csd.m_over_q = estimate_m_over_q(csd)
+        label = file.formatted_datetime + ' (not rescaled)'
+
     ln, = ax.plot(csd.m_over_q, csd.beam_current, 
-                  label=file.formatted_datetime, animated=True)
+                  label=label, animated=True)
     return ln
