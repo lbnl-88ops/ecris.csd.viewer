@@ -24,10 +24,12 @@ def _plot_file(ax, file: CSDFile, rescale) -> Artist | None:
 
     if rescale:
         scale_with_oxygen(csd)
+        label = file.formatted_datetime
     else:
         info('Skipping oxygen rescale')
         csd.m_over_q = estimate_m_over_q(csd)
+        label = file.formatted_datetime + ' (not rescaled)'
 
     ln, = ax.plot(csd.m_over_q, csd.beam_current, 
-                  label=file.formatted_datetime, animated=True)
+                  label=label, animated=True)
     return ln
