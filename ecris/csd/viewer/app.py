@@ -49,7 +49,7 @@ class CSDViewer(ttk.Window):
         self.destroy()
 
     def create_menu(self):
-        self.menu = AppMenu(self, self.plot.use_blitting)
+        self.menu = AppMenu(self, self.plot.use_blitting, self.coordinator.rescale_using_oxygen)
         self.config(menu=self.menu)
 
     def create_widgets(self):
@@ -107,6 +107,10 @@ class CSDViewer(ttk.Window):
 
     def diagnostic_mode(self):
         self._diagnostic_window = DiagnosticWindow(self)
+
+    def toggle_rescale(self):
+        self.coordinator.rescale_using_oxygen.set(
+            not self.coordinator.rescale_using_oxygen)
 
     def toggle_blitting(self):
         logging.info(self.plot.use_blitting.get())

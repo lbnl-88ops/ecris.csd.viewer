@@ -2,6 +2,7 @@ from logging import getLogger
 from pathlib import Path
 from tkinter import filedialog
 from typing import Any, List
+import tkinter as tk
 
 from ecris.csd.viewer.gui.controls.controls import FileListControls, PlotControls
 from ecris.csd.viewer.gui.controls.file_list import FileList
@@ -17,6 +18,7 @@ class Coordinator:
             objects = [objects]
         self.attach(objects)
         self.configure_objects()
+        self.rescale_using_oxygen = tk.BooleanVar(value=True)
         
 
     def attach(self, objects: List[Any]) -> None:
