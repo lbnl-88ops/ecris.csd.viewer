@@ -67,7 +67,7 @@ class Coordinator:
         file = self._file_list.get_selected_file()
         if file is not None:
             file.plotted = True
-            self._plot.plot(file)
+            self._plot.plot(file, self.rescale_using_oxygen.get())
             self._file_list.update_colors()
             self._file_info_pane.update_info(file)
             self._plot_controls.set_button_status(True)

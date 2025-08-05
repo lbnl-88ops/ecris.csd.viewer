@@ -22,7 +22,7 @@ from ecris.csd.viewer.gui.style.patchMatplotlib import applyPatch
 from .gui import FileList, PlotControls, Plot, FileListControls, AppMenu, DiagnosticWindow, FileInfoPane
 
 
-__version__ = "1.2.0-beta.3"
+__version__ = "1.2.0-beta.4"
 
 matplotlib.rc('font', size=14)
 applyPatch()

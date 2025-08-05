@@ -75,8 +75,8 @@ class Plot(tk.Frame):
     def clear_plot(self):
         self._remove_files(list(reversed(self._plotted_files)))
 
-    def plot(self, file: CSDFile):
-        artist = file_artist(self._figure.gca(), file)
+    def plot(self, file: CSDFile, rescale: bool = True):
+        artist = file_artist(self._figure.gca(), file, rescale)
         if artist is not None:
             file.artist = artist
             self._plotted_files.append(file)
