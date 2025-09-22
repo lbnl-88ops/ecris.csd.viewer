@@ -4,10 +4,10 @@ from tkinter import filedialog
 from typing import Any, List
 import tkinter as tk
 
-from ecris.csd.viewer.gui.controls.controls import FileListControls, PlotControls
-from ecris.csd.viewer.gui.controls.file_list import FileList
-from ecris.csd.viewer.gui.info_frame.file_info_pane import FileInfoPane
-from ecris.csd.viewer.gui import Plot, FileInfoPane
+from ops.ecris.csd_viewer.gui.controls.controls import FileListControls, PlotControls
+from ops.ecris.csd_viewer.gui.controls.file_list import FileList
+from ops.ecris.csd_viewer.gui.info_frame.file_info_pane import FileInfoPane
+from ops.ecris.csd_viewer.gui import Plot, FileInfoPane
 
 _log = getLogger(__name__)
 

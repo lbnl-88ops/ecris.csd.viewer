@@ -3,8 +3,8 @@ import tkinter as tk
 from typing import List
 import ttkbootstrap as ttk
 
-from ecris.csd.viewer.files import CSDFile, get_files
-from ecris.csd.viewer.gui.info_frame import FileInfoPane
+from ops.ecris.csd_viewer.files import CSDFile, get_files
+from ops.ecris.csd_viewer.gui.info_frame import FileInfoPane
 
 BLUE = "#5200FF"
 WHITE = "#FFFFFF"

@@ -5,8 +5,8 @@ from typing import Dict, List
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backends._backend_tk import NavigationToolbar2Tk
 from ..plotting.plot_csd import create_figure, file_artist
-from ecris.csd.viewer.files import CSDFile
-from ecris.csd.viewer.plotting.element_indicators import ElementIndicator, add_element_indicators
+from ops.ecris.csd_viewer.files import CSDFile
+from ops.ecris.csd_viewer.plotting.element_indicators import ElementIndicator, add_element_indicators
 from ops.ecris.analysis.model import Element
 
 class Plot(tk.Frame):

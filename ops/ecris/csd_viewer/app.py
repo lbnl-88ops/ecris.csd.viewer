@@ -14,10 +14,10 @@ import ttkbootstrap as ttk
 from ops.ecris.analysis.model.element import PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS
 
 from .coordinator import Coordinator
-from ecris.csd.viewer.gui.controls import ElementButtons
-from ecris.csd.viewer.files.csd_file import CSDFile, export_to_file
-from ecris.csd.viewer.files.configuration import AppConfiguration, create_configuration, CONFIG_FILEPATH
-from ecris.csd.viewer.gui.style.patchMatplotlib import applyPatch
+from ops.ecris.csd_viewer.gui.controls import ElementButtons
+from ops.ecris.csd_viewer.files.csd_file import CSDFile, export_to_file
+from ops.ecris.csd_viewer.files.configuration import AppConfiguration, create_configuration, CONFIG_FILEPATH
+from ops.ecris.csd_viewer.gui.style.patchMatplotlib import applyPatch
 
 from .gui import FileList, PlotControls, Plot, FileListControls, AppMenu, DiagnosticWindow, FileInfoPane
 
