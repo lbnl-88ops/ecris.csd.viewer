@@ -11,7 +11,7 @@ import subprocess
 
 import ttkbootstrap as ttk
 
-from ecris.csd.analysis import PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS
+from ops.ecris.analysis.model.element import PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS
 
 from .coordinator import Coordinator
 from ecris.csd.viewer.gui.controls import ElementButtons

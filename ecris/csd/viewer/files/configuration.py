@@ -8,7 +8,7 @@ from typing import List
 
 from appdirs import user_config_dir
 
-from ecris.csd.analysis import Element
+from ops.ecris.analysis.model import Element
 
 APP_NAME = 'csd_viewer'
 APP_AUTHOR = 'lbnl_88ops'

@@ -7,9 +7,9 @@ from typing import List
 import numpy as np
 from matplotlib.artist import Artist
 
-from ecris.csd.analysis import CSD
-from ecris.csd.analysis.io.read_csd_file import (file_raw_timestamp, read_csd_from_file_pair, 
-                                                 file_formatted_timestamp)
+from ops.ecris.analysis.model import CSD
+from ops.ecris.analysis.io.read_csd_file import (_file_raw_timestamp, read_csd_from_file_pair, 
+                                                 _file_formatted_timestamp)
 
 class CSDFile:
     def __init__(self, path, file_size: float = 0):
@@ -18,8 +18,8 @@ class CSDFile:
         self.plotted: bool = False
         self.file_size: float = file_size
         self.valid: bool = file_size > 0
-        self.timestamp = file_formatted_timestamp(path)
-        self.raw_timestamp = file_raw_timestamp(path)
+        self.timestamp = _file_formatted_timestamp(path)
+        self.raw_timestamp = _file_raw_timestamp(path)
         self._csd = None
         self._artist = None
 

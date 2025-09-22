@@ -1,16 +1,15 @@
 from dataclasses import dataclass
 from logging import info
 import tkinter as tk
-from matplotlib import transforms
 from matplotlib.figure import Figure
-from typing import List, Dict
+from typing import Dict
 from itertools import compress
 from collections import deque
 
 from matplotlib.markers import MarkerStyle
 from matplotlib.text import Text
 
-from ecris.csd.analysis import Element
+from ops.ecris.analysis.model import Element
 
 @dataclass
 class _Label:

@@ -6,7 +6,7 @@ from typing import List, Tuple
 
 import ttkbootstrap as ttk
 
-from ecris.csd.analysis import Element
+from ops.ecris.analysis.model import Element
 
 @dataclass
 class _CustomElement:

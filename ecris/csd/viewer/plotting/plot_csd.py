@@ -2,9 +2,8 @@ from logging import info
 from matplotlib.figure import Figure
 from matplotlib.artist import Artist
 
-from ecris.csd.analysis.m_over_q import estimate_m_over_q
+from ops.ecris.analysis.csd.m_over_q import estimate_m_over_q, scale_with_oxygen
 from ecris.csd.viewer.files import CSDFile
-from ecris.csd.analysis import scale_with_oxygen
 
 def create_figure() -> Figure:
     fig = Figure((9,6), tight_layout=True)

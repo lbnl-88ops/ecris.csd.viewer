@@ -1,7 +1,7 @@
 import ttkbootstrap as ttk
 from typing import List, Optional
 
-from ecris.csd.analysis import CSD
+from ops.ecris.analysis.model import CSD
 
 _FONT = "TkDefaultFont"
 _TITLE_FONT = (_FONT, 14)
