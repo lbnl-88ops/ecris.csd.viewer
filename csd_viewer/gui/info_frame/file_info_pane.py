@@ -2,7 +2,7 @@ import tkinter as tk
 import ttkbootstrap as ttk
 from typing import List
 
-from ops.ecris.csd_viewer.files import CSDFile
+from csd_viewer.files import CSDFile
 
 from .csd_info import CSDInfoFrame
 from .info_to_display import _FRAMES, _COLUMNS, _INFO_ROWS

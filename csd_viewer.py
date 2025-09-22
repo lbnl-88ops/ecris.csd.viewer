@@ -2,8 +2,8 @@ from pathlib import Path
 
 import yaml
 
-from ops.ecris.csd_viewer import CSDViewer
-from ops.ecris.csd_viewer.files.configuration import load_configuration, AppConfiguration
+from csd_viewer import CSDViewer
+from csd_viewer.files.configuration import load_configuration, AppConfiguration
 
 def csd_viewer():
 

@@ -3,7 +3,7 @@ from matplotlib.figure import Figure
 from matplotlib.artist import Artist
 
 from ops.ecris.analysis.csd.m_over_q import estimate_m_over_q, scale_with_oxygen
-from ops.ecris.csd_viewer.files import CSDFile
+from csd_viewer.files import CSDFile
 
 def create_figure() -> Figure:
     fig = Figure((9,6), tight_layout=True)
