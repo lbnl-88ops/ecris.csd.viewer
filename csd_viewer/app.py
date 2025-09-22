@@ -27,6 +27,9 @@ __version__ = "1.2.0-beta.4"
 matplotlib.rc('font', size=14)
 applyPatch()
 
+logger = logging.getLogger('ops')
+logger.setLevel(logging.DEBUG)
+logger.addHandler(logging.StreamHandler())
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class CSDViewer(ttk.Window):
