@@ -11,7 +11,7 @@ numpy = "*"
 pyyaml = "*"
 appdirs = "*"
 ttkbootstrap = "*"
-"ops.ecris.analysis" = {git = "https://github.com/lbnl-88ops/ecris.analysis.git", ref="v1.2.0"}
+"ops.ecris.analysis" = {git = "https://github.com/lbnl-88ops/ecris.analysis.git", ref="v1.2.1"}
 
 [dev-packages]
 
