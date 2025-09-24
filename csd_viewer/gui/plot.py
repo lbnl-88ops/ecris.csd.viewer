@@ -2,8 +2,7 @@ from logging import info
 import tkinter as tk
 from typing import Dict, List
 
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.backends._backend_tk import NavigationToolbar2Tk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from ..plotting.plot_csd import create_figure, file_artist
 from csd_viewer.files import CSDFile
 from csd_viewer.plotting.element_indicators import ElementIndicator, add_element_indicators
