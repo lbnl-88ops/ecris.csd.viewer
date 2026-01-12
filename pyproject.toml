@@ -1,0 +1,25 @@
+[project]
+name = "csd-viewer"
+version = "1.3.0-beta.0"
+description = ""
+authors = [
+    {name = "Jessica Rehak",email = "rehak@lbl.gov"}
+]
+# readme = "README.md"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "pyqt6 (>=6.10.2,<7.0.0)",
+    "tk (>=0.1.0,<0.2.0)",
+    "matplotlib (>=3.10.8,<4.0.0)",
+    "numpy (>=2.4.1,<3.0.0)",
+    "pyyaml (>=6.0.3,<7.0.0)",
+    "scipy (>=1.17.0,<2.0.0)",
+    "appdirs (>=1.4.4,<2.0.0)",
+    "ttkbootstrap (>=1.20.0,<2.0.0)",
+    "ops-ecris-analysis @ git+ssh://git@github.com/lbnl-88ops/ecris.analysis.git@v1.2.1"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
