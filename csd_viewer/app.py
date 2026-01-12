@@ -1,4 +1,5 @@
 """Main CSD Viewer App"""
+
 import logging
 from pathlib import Path
 import tkinter as tk
@@ -16,21 +17,36 @@ from ops.ecris.analysis.model.element import PERSISTANT_ELEMENTS, VARIABLE_ELEME
 from .coordinator import Coordinator
 from csd_viewer.gui.controls import ElementButtons
 from csd_viewer.files.csd_file import CSDFile, export_to_file
-from csd_viewer.files.configuration import AppConfiguration, create_configuration, CONFIG_FILEPATH
+from csd_viewer.files.configuration import (
+    AppConfiguration,
+    create_configuration,
+    CONFIG_FILEPATH,
+)
 from csd_viewer.gui.style.patchMatplotlib import applyPatch
 
-from .gui import FileList, PlotControls, Plot, FileListControls, AppMenu, DiagnosticWindow, FileInfoPane
+from .gui import (
+    FileList,
+    PlotControls,
+    Plot,
+    FileListControls,
+    AppMenu,
+    DiagnosticWindow,
+    FileInfoPane,
+)
 
 
 __version__ = "1.2.0-beta.8"
 
-matplotlib.rc('font', size=14)
+matplotlib.rc("font", size=14)
 applyPatch()
 
-logger = logging.getLogger('ops')
+logger = logging.getLogger("ops")
 logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler())
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
 
 class CSDViewer(ttk.Window):
     def __init__(self, configuration: AppConfiguration | None):
@@ -52,12 +68,13 @@ class CSDViewer(ttk.Window):
         self.destroy()
 
     def create_menu(self):
-        self.menu = AppMenu(self, self.plot.use_blitting, self.coordinator.rescale_using_oxygen)
+        self.menu = AppMenu(
+            self, self.plot.use_blitting, self.coordinator.rescale_using_oxygen
+        )
         self.config(menu=self.menu)
 
     def create_widgets(self):
-
-        self.plot = Plot(self) 
+        self.plot = Plot(self)
 
         self.center_pane = ttk.Frame(self)
 
@@ -65,82 +82,101 @@ class CSDViewer(ttk.Window):
         self.file_list = FileList(self.center_pane, self.default_path)
         self.file_list_controls = FileListControls(self.center_pane)
 
-        self.element_buttons = ElementButtons(self.center_pane, self.plot, PERSISTANT_ELEMENTS, self.variable_elements)
+        self.element_buttons = ElementButtons(
+            self.center_pane, self.plot, PERSISTANT_ELEMENTS, self.variable_elements
+        )
         self.plot_controls = PlotControls(self.center_pane)
 
         self.plot.set_element_indicators(self.element_buttons.element_visibility)
 
-        self.plot.pack(side='left', fill='both', expand=True)
+        self.plot.pack(side="left", fill="both", expand=True)
 
-        self.center_pane.pack(side='left', fill='y', expand=True)
-        self.strWarning = ttk.StringVar(value='')
+        self.center_pane.pack(side="left", fill="y", expand=True)
+        self.strWarning = ttk.StringVar(value="")
         self.lblWarning = ttk.Label(self.center_pane, textvariable=self.strWarning)
         self.lblWarning.pack()
         self.file_list_controls.pack()
         self.file_list.pack(padx=10, pady=10)
         self.plot_controls.pack()
         self.element_buttons.pack(fill="both", padx=10, pady=10)
-        self.strToggleInfoText = ttk.StringVar(value='>>')
-        self.btToggleFileInfo = ttk.Button(self, textvariable=self.strToggleInfoText,
-                                           command=self.info_pane.toggle_visibility,
-                                           width=2,
-                                           bootstyle=ttk.LINK + ttk.SECONDARY)
-        self.btToggleFileInfo.pack(fill='y', side='left')
-        self.coordinator = Coordinator([self.plot_controls, self.info_pane,
-                                        self.file_list, self.file_list_controls,
-                                        self.plot, self.info_pane])
-    
+        self.strToggleInfoText = ttk.StringVar(value=">>")
+        self.btToggleFileInfo = ttk.Button(
+            self,
+            textvariable=self.strToggleInfoText,
+            command=self.info_pane.toggle_visibility,
+            width=2,
+            bootstyle="link-secondary",
+        )
+        self.btToggleFileInfo.pack(fill="y", side="left")
+        self.coordinator = Coordinator(
+            [
+                self.plot_controls,
+                self.info_pane,
+                self.file_list,
+                self.file_list_controls,
+                self.plot,
+                self.info_pane,
+            ]
+        )
+
     def export_data(self):
         # if len(self.plot.plotted_files()) > 1:
-            # messagebox.showerror('Error', 'Can only export a single file. Please remove all but one datafile from the plot.')
-            # return
+        # messagebox.showerror('Error', 'Can only export a single file. Please remove all but one datafile from the plot.')
+        # return
         if len(self.plot.plotted_files()) == 0:
-            messagebox.showerror('Error', 'No plotted data to export.')
+            messagebox.showerror("Error", "No plotted data to export.")
             return
         else:
-            export_file = filedialog.asksaveasfile(title='Save exported data as', 
-                                                   defaultextension='.csv', 
-                                                   filetypes=(("CSV files", "*.csv"), 
-                                                              ("All files", "*.*")), 
-                                                   initialdir=self.configuration.default_directory)
+            export_file = filedialog.asksaveasfile(
+                title="Save exported data as",
+                defaultextension=".csv",
+                filetypes=(("CSV files", "*.csv"), ("All files", "*.*")),
+                initialdir=self.configuration.default_directory,
+            )
             if export_file is not None:
                 try:
                     export_to_file(export_file, self.plot.plotted_files())
-                    messagebox.showinfo('Success', 'Export successful.')
+                    messagebox.showinfo("Success", "Export successful.")
                 except ValueError as e:
-                    messagebox.showerror('Error', f'Error exporting: {e}')
+                    messagebox.showerror("Error", f"Error exporting: {e}")
 
     def diagnostic_mode(self):
         self._diagnostic_window = DiagnosticWindow(self)
 
     def toggle_rescale(self):
         if not self.coordinator.rescale_using_oxygen.get():
-            logging.info('Turning off oxygen rescaling')
-            self.strWarning.set('⚠️ Warning: Not rescaling with Oxygen')
-            self.lblWarning.config(bootstyle='inverse-danger')
+            logging.info("Turning off oxygen rescaling")
+            self.strWarning.set("⚠️ Warning: Not rescaling with Oxygen")
+            self.lblWarning.config(bootstyle="inverse-danger")
         else:
-            logging.info('Turning on oxygen rescaling')
-            self.strWarning.set('')
-            self.lblWarning.config(bootstyle='danger')
+            logging.info("Turning on oxygen rescaling")
+            self.strWarning.set("")
+            self.lblWarning.config(bootstyle="danger")
 
     def toggle_blitting(self):
         logging.info(self.plot.use_blitting.get())
         if self.plot.use_blitting.get():
-            if not messagebox.askokcancel('Warning', """Activating blitting may cause some plot elements to not update automatically unless resized, are you sure you want to do this?"""):
+            if not messagebox.askokcancel(
+                "Warning",
+                """Activating blitting may cause some plot elements to not update automatically unless resized, are you sure you want to do this?""",
+            ):
                 self.plot.use_blitting.set(False)
 
     def _open_directory(self, path):
-        if platform.system() == 'Windows':
+        if platform.system() == "Windows":
             os.startfile(path)
         elif platform.system() == "Darwin":
             subprocess.Popen(["open", path])
         elif platform.system() == "Linux":
             subprocess.Popen(["xdg-open", path])
         else:
-            messagebox.showerror('Error', 'Cannot open directory: unsupported operating system')
+            messagebox.showerror(
+                "Error", "Cannot open directory: unsupported operating system"
+            )
 
     def open_config_directory(self):
         self._open_directory(CONFIG_FILEPATH)
 
     def open_data_directory(self):
         self._open_directory(self.default_path)
+
