@@ -4,11 +4,12 @@ from tkinter import filedialog
 from typing import Any, List
 import tkinter as tk
 
+from csd_viewer.files.csd_file import CSDFile
 from csd_viewer.gui.controls.controls import FileListControls, PlotControls
 from csd_viewer.gui.controls.file_list import FileList
 from csd_viewer.gui.info_frame.file_info_pane import FileInfoPane
 from csd_viewer.gui import Plot, FileInfoPane
-from csd_viewer.files.client import list_files
+from csd_viewer.files.client import list_files, download_filepair
 
 _log = getLogger(__name__)
 
@@ -71,10 +72,11 @@ class Coordinator:
     def plot_file(self):
         file = self._file_list.get_selected_file()
         if file is not None:
-            file.plotted = True
+            csd_file = download_filepair(file)
+            file = CSDFile(csd_file, 1)
             self._plot.plot(file, self.rescale_using_oxygen.get())
-            self._file_list.update_colors()
-            self._file_info_pane.update_info(file)
+            # self._file_list.update_colors()
+            # self._file_info_pane.update_info(file)
             self._plot_controls.set_button_status(True)
 
     def remove_from_plot(self, *_):
