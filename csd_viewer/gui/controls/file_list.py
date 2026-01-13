@@ -19,8 +19,6 @@ class FileList(tk.Frame):
 
         # Listbox to display files
         self.directory_label = tk.Label(self)
-        self.update_label()
-        self.directory_label.pack(side="top")
 
         self.files: List[Path] = []
         self.stringvar = tk.Variable(value=[""])
@@ -33,42 +31,9 @@ class FileList(tk.Frame):
         self.scrollbar.pack(side="left", fill="y")
         self.file_listbox.config(yscrollcommand=self.scrollbar.set)
 
-    def update_label(self):
-        self.directory_label.config(text=f"")
-
     def get_selected_file(self) -> Path | None:
         for i in self.file_listbox.curselection():
             return self.files[i]
-
-    def clear_loaded(self) -> None:
-        for file in [f for f in self.files if not f.plotted]:
-            file.unload_csd()
-
-    def update_colors(self):
-        style = ttk.Style()
-        colors = style.colors
-        for i, file in enumerate(self.files):
-            if file.plotted and file.valid:
-                self.file_listbox.itemconfigure(
-                    i,
-                    foreground=colors.success,
-                    selectbackground=colors.success,
-                    selectforeground="white",
-                )
-            elif not file.valid:
-                self.file_listbox.itemconfigure(
-                    i,
-                    foreground="gray",
-                    selectbackground="white",
-                    selectforeground="gray",
-                )
-            else:
-                self.file_listbox.itemconfigure(
-                    i,
-                    foreground=colors.fg,
-                    selectbackground=colors.primary,
-                    selectforeground="white",
-                )
 
     def fill_list_box(self, file_list: List[Path]):
         self.files = file_list
@@ -79,29 +44,3 @@ class FileList(tk.Frame):
         else:
             self.stringvar.set([_file_formatted_timestamp(f) for f in file_list])
             self.file_listbox.configure(state=tk.NORMAL)
-
-    def populate_listbox(self, retain_plotted=False):
-        old_plotted_files = {}
-        if retain_plotted:
-            old_plotted_files = {f.path: f for f in self.files if f.plotted}
-
-        current_files_on_disk = get_files(self.current_directory)
-
-        new_file_list = []
-        for file_obj in current_files_on_disk:
-            if file_obj.path in old_plotted_files:
-                new_file_list.append(old_plotted_files[file_obj.path])
-            else:
-                new_file_list.append(file_obj)
-
-        self.files = new_file_list
-
-        self.file_listbox.delete(0, tk.END)
-        if not self.files:
-            self.stringvar.set(["No CSD files found"])
-            self.file_listbox.configure(state=tk.DISABLED)
-        else:
-            self.stringvar.set([f.list_value for f in self.files])
-            self.file_listbox.configure(state=tk.NORMAL)
-
-        self.update_colors()

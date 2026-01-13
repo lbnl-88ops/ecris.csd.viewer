@@ -14,7 +14,7 @@ import ttkbootstrap as ttk
 
 from ops.ecris.analysis.model.element import PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS
 
-from .coordinator import Coordinator, FileListType
+from .coordinator import Coordinator, FileListType, WidgetType
 from csd_viewer.gui.controls import ElementButtons
 from csd_viewer.files.csd_file import CSDFile, export_to_file
 from csd_viewer.files.configuration import (
@@ -97,6 +97,9 @@ class CSDViewer(ttk.Window):
 
         self.center_pane.pack(side="left", fill="y", expand=True)
         self.strWarning = ttk.StringVar(value="")
+        self.strStatus = tk.StringVar(value="")
+        self.lblStatus = ttk.Label(self.center_pane, textvariable=self.strStatus)
+        self.lblStatus.pack()
         self.lblWarning = ttk.Label(self.center_pane, textvariable=self.strWarning)
         self.lblWarning.pack()
         self.file_list_controls.pack()
@@ -125,6 +128,7 @@ class CSDViewer(ttk.Window):
         )
         self.coordinator.attach(self.file_list, FileListType.TO_PLOT)
         self.coordinator.attach(self.plotted_file_list, FileListType.PLOTTED)
+        self.coordinator.attach(self.strStatus, WidgetType.STATUS_STRING)
         self.coordinator.initialize()
 
     def export_data(self):
