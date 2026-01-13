@@ -14,7 +14,7 @@ import ttkbootstrap as ttk
 
 from ops.ecris.analysis.model.element import PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS
 
-from .coordinator import Coordinator
+from .coordinator import Coordinator, FileListType
 from csd_viewer.gui.controls import ElementButtons
 from csd_viewer.files.csd_file import CSDFile, export_to_file
 from csd_viewer.files.configuration import (
@@ -118,12 +118,14 @@ class CSDViewer(ttk.Window):
             [
                 self.plot_controls,
                 self.info_pane,
-                self.file_list,
                 self.file_list_controls,
                 self.plot,
                 self.info_pane,
             ]
         )
+        self.coordinator.attach(self.file_list, FileListType.TO_PLOT)
+        self.coordinator.attach(self.plotted_file_list, FileListType.PLOTTED)
+        self.coordinator.initialize()
 
     def export_data(self):
         # if len(self.plot.plotted_files()) > 1:
