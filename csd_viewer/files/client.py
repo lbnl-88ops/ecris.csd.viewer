@@ -6,7 +6,7 @@ import requests
 
 _log = getLogger(__name__)
 
-API_URL = "http://127.0.0.1:5000"
+API_URL = "http://ecris.lbl.gov:5000"
 
 
 def list_files() -> List[Path]:

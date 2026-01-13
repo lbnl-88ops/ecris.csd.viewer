@@ -88,7 +88,7 @@ class Coordinator:
             self._plot_controls.set_button_status(False)
 
     def refresh_file_list(self, *_):
-        files = list_files()
+        files = reversed(sorted(list_files()))
         self._file_list.clear_loaded()
         self._file_list.fill_list_box(files)
         self._plot_controls.set_button_status(True)
