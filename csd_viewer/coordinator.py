@@ -79,14 +79,27 @@ class Coordinator:
                 raise RuntimeError(f"Coordinator passed bad object {object}")
 
     def _configure_objects(self) -> None:
-        self._file_list.file_listbox.bind("<<ListboxSelect>>", self.set_file_to_plot)
+        self._file_list.file_listbox.bind(
+            "<<ListboxSelect>>", self.update_button_states
+        )
+        self._plotted_file_list.file_listbox.bind(
+            "<<ListboxSelect>>", self.update_button_states
+        )
         self._file_list_controls.btRefresh.config(command=self.refresh_file_list)
         self._file_list_controls.btChangeDirectory.config(command=self.choose_directory)
         self._plot_controls.btClearPlot.config(command=self.clear_plot)
         self._plot_controls.btRemoveFromPlot.config(command=self.remove_from_plot)
-        self._plot_controls.btViewCSD.config(command=self.plot_file)
+        self._plot_controls.btPlotCSD.config(command=self.plot_file)
         self._plot_controls.btAutoScale.config(command=self._plot.autoscale)
-        self._plot_controls.set_button_status(True)
+        # self._plot_controls.set_button_status(True)
+
+    def update_button_states(self, *_):
+        if self._file_list.file_listbox.curselection():
+            self._plot_controls.activate_buttons(True, False)  # Can plot
+        elif self._plotted_file_list.file_listbox.curselection():
+            self._plot_controls.activate_buttons(False, True)  # Can remove
+        else:
+            self._plot_controls.activate_buttons(False, False)
 
     def update_status(self) -> None:
         if self.mode == FileMode.REMOTE:
@@ -141,7 +154,4 @@ class Coordinator:
         self._file_list.fill_list_box(files)
         self._plotted_file_list.fill_list_box(self.plotted_files)
         self.update_status()
-
-    def set_file_to_plot(self, *_):
-        file = self._file_list.get_selected_file()
-        self._plot_controls.set_button_status(False)
+        self.update_button_states()
