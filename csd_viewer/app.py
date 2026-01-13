@@ -23,6 +23,7 @@ from csd_viewer.files.configuration import (
     CONFIG_FILEPATH,
 )
 from csd_viewer.gui.style.patchMatplotlib import applyPatch
+from csd_viewer.files.client import clear_temp_files
 
 from .gui import (
     FileList,
@@ -64,6 +65,7 @@ class CSDViewer(ttk.Window):
         self.protocol("WM_DELETE_WINDOW", self.quit)
 
     def quit(self):
+        clear_temp_files()
         self.plot.destroy()
         self.destroy()
 

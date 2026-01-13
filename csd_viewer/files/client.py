@@ -8,6 +8,7 @@ import requests
 _log = getLogger(__name__)
 
 API_URL = "http://ecris.lbl.gov:5000"
+TEMP_FOLDER = Path("./tmp/")
 
 
 def list_files() -> List[Path]:
@@ -30,14 +31,19 @@ def download_filepair(filepath: Path):
 def download_file(filename: str) -> Path | None:
     """Download a file from the API and save it as a temporary file."""
     _log.info(f"Attempting to download {filename}")
-    temp_folder = Path("./tmp/")
-    temp_folder.mkdir(exist_ok=True)
+    TEMP_FOLDER.mkdir(exist_ok=True)
     response = requests.get(f"{API_URL}/download/{filename}")
     if response.status_code == 200:
-        temp_file = temp_folder / filename
+        temp_file = TEMP_FOLDER / filename
         with open(temp_file, "wb") as f:
             f.write(response.content)
         return temp_file
     else:
         print("File not found on server.")
         return None
+
+
+def clear_temp_files() -> None:
+    if TEMP_FOLDER.exists():
+        for file in TEMP_FOLDER.glob("*"):
+            file.unlink()
