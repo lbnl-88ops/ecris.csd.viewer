@@ -77,9 +77,11 @@ class CSDViewer(ttk.Window):
         self.plot = Plot(self)
 
         self.center_pane = ttk.Frame(self)
+        self.file_list_pane = ttk.Frame(self.center_pane)
 
         self.info_pane = FileInfoPane(self)
-        self.file_list = FileList(self.center_pane, self.default_path)
+        self.file_list = FileList(self.file_list_pane)
+        self.plotted_file_list = FileList(self.file_list_pane)
         self.file_list_controls = FileListControls(self.center_pane)
 
         self.element_buttons = ElementButtons(
@@ -96,7 +98,9 @@ class CSDViewer(ttk.Window):
         self.lblWarning = ttk.Label(self.center_pane, textvariable=self.strWarning)
         self.lblWarning.pack()
         self.file_list_controls.pack()
-        self.file_list.pack(padx=10, pady=10)
+        self.file_list_pane.pack()
+        self.file_list.pack(side="left", padx=10, pady=10)
+        self.plotted_file_list.pack(side="right", padx=10, pady=10)
         self.plot_controls.pack()
         self.element_buttons.pack(fill="both", padx=10, pady=10)
         self.strToggleInfoText = ttk.StringVar(value=">>")
@@ -179,4 +183,3 @@ class CSDViewer(ttk.Window):
 
     def open_data_directory(self):
         self._open_directory(self.default_path)
-

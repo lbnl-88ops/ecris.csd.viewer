@@ -13,32 +13,30 @@ WHITE = "#FFFFFF"
 
 
 class FileList(tk.Frame):
-    def __init__(self, owner, path: Path, *args, **kwargs):
+    def __init__(self, owner, *args, **kwargs):
         super().__init__(owner, *args, **kwargs)
         self.owner = owner
-        self.current_directory = path
 
         # Listbox to display files
         self.directory_label = tk.Label(self)
         self.update_label()
         self.directory_label.pack(side="top")
 
-        self.files: List[CSDFile] = []
-        self.stringvar = tk.Variable(value=["Refresh file list to connect."])
+        self.files: List[Path] = []
+        self.stringvar = tk.Variable(value=[""])
         self.file_listbox = tk.Listbox(
-            self, width=50, selectmode=tk.SINGLE, listvariable=self.stringvar
+            self, width=25, selectmode=tk.SINGLE, listvariable=self.stringvar
         )
         self.file_listbox.pack(side="left", fill="y")
         self.scrollbar = ttk.Scrollbar(self, orient="vertical")
         self.scrollbar.config(command=self.file_listbox.yview)
         self.scrollbar.pack(side="left", fill="y")
         self.file_listbox.config(yscrollcommand=self.scrollbar.set)
-        self.populate_listbox()
 
     def update_label(self):
-        self.directory_label.config(text=f"Viewing: {self.current_directory}")
+        self.directory_label.config(text=f"")
 
-    def get_selected_file(self) -> CSDFile | None:
+    def get_selected_file(self) -> Path | None:
         for i in self.file_listbox.curselection():
             return self.files[i]
 
@@ -73,6 +71,7 @@ class FileList(tk.Frame):
                 )
 
     def fill_list_box(self, file_list: List[Path]):
+        self.files = file_list
         self.file_listbox.delete(0, tk.END)
         if not self.files:
             self.stringvar.set(["No CSD files found"])
