@@ -10,7 +10,7 @@ from csd_viewer.gui.controls.controls import FileListControls, PlotControls
 from csd_viewer.gui.controls.file_list import FileList
 from csd_viewer.gui.info_frame.file_info_pane import FileInfoPane
 from csd_viewer.gui import Plot, FileInfoPane
-from csd_viewer.files.client import list_files, download_filepair
+from csd_viewer.files.client import list_files, download_filepair, clear_temp_files
 
 _log = getLogger(__name__)
 
@@ -75,12 +75,11 @@ class Coordinator:
             self._file_list.update_label()
 
     def clear_plot(self, *_):
-        for file in self._file_list.files:
-            file.plotted = False
-        self._file_list.clear_loaded()
+        self.plotted_files = []
+        self.refresh_file_list()
         self._plot.clear_plot()
-        self._file_list.update_colors()
         self._plot_controls.set_button_status(False)
+        clear_temp_files()
 
     def plot_file(self):
         file = self._file_list.get_selected_file()
@@ -89,7 +88,8 @@ class Coordinator:
             csd_file = download_filepair(file)
             file = CSDFile(csd_file, 1)
             self._plot.plot(file, self.rescale_using_oxygen.get())
-            self._plot_controls.set_button_status(True)
+            self._plotted_file_list.fill_list_box(self.plotted_files)
+            self.refresh_file_list()
 
     def remove_from_plot(self, *_):
         file = self._file_list.get_selected_file()
@@ -102,10 +102,13 @@ class Coordinator:
             self._plot_controls.set_button_status(False)
 
     def refresh_file_list(self, *_):
-        files = list(reversed(sorted(list_files())))
-        self._file_list.clear_loaded()
+        files = [
+            f
+            for f in list(reversed(sorted(list_files())))
+            if f not in self.plotted_files
+        ]
         self._file_list.fill_list_box(files)
-        self._plot_controls.set_button_status(True)
+        self._plotted_file_list.fill_list_box(self.plotted_files)
 
     def set_file_to_plot(self, *_):
         file = self._file_list.get_selected_file()
