@@ -5,6 +5,8 @@ import ttkbootstrap as ttk
 
 from csd_viewer.files import CSDFile, get_files
 from csd_viewer.gui.info_frame import FileInfoPane
+from csd_viewer.files.client import list_files
+from ops.ecris.analysis.io.read_csd_file import _file_formatted_timestamp
 
 BLUE = "#5200FF"
 WHITE = "#FFFFFF"
@@ -22,7 +24,7 @@ class FileList(tk.Frame):
         self.directory_label.pack(side="top")
 
         self.files: List[CSDFile] = []
-        self.stringvar = tk.Variable(value=["No CSD files found"])
+        self.stringvar = tk.Variable(value=["Refresh file list to connect."])
         self.file_listbox = tk.Listbox(
             self, width=50, selectmode=tk.SINGLE, listvariable=self.stringvar
         )
@@ -69,6 +71,15 @@ class FileList(tk.Frame):
                     selectbackground=colors.primary,
                     selectforeground="white",
                 )
+
+    def fill_list_box(self, file_list: List[Path]):
+        self.file_listbox.delete(0, tk.END)
+        if not self.files:
+            self.stringvar.set(["No CSD files found"])
+            self.file_listbox.configure(state=tk.DISABLED)
+        else:
+            self.stringvar.set([_file_formatted_timestamp(f) for f in file_list])
+            self.file_listbox.configure(state=tk.NORMAL)
 
     def populate_listbox(self, retain_plotted=False):
         old_plotted_files = {}
