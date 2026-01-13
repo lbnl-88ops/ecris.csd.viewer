@@ -35,7 +35,7 @@ from .gui import (
 )
 
 
-__version__ = "1.2.0-beta.8"
+__version__ = "1.3.0-beta.0"
 
 matplotlib.rc("font", size=14)
 applyPatch()

@@ -45,7 +45,8 @@ class FileList(tk.Frame):
             file.unload_csd()
 
     def update_colors(self):
-        colors = ttk.Style().colors
+        style = ttk.Style()
+        colors = style.colors
         for i, file in enumerate(self.files):
             if file.plotted and file.valid:
                 self.file_listbox.itemconfigure(
