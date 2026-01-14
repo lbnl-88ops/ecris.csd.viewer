@@ -78,13 +78,16 @@ class Coordinator:
         self._plotted_file_list.file_listbox.bind(
             "<<ListboxSelect>>", self.update_button_states
         )
-        self._file_list_controls.btRefresh.config(command=self.refresh_file_list)
-        self._file_list_controls.btChangeDirectory.config(command=self.choose_directory)
+        self._status_pane.file_list_controls.btRefresh.config(
+            command=self.refresh_file_list
+        )
+        self._status_pane.file_list_controls.btChangeDirectory.config(
+            command=self.choose_directory
+        )
         self._plot_controls.btClearPlot.config(command=self.clear_plot)
         self._plot_controls.btRemoveFromPlot.config(command=self.remove_from_plot)
         self._plot_controls.btPlotCSD.config(command=self.plot_file)
         self._plot_controls.btAutoScale.config(command=self._plot.autoscale)
-        # self._plot_controls.set_button_status(True)
 
     def update_button_states(self, *_):
         if self._file_list.file_listbox.curselection():

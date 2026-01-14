@@ -87,7 +87,6 @@ class CSDViewer(ttk.Window):
 
         self.file_list = FileList(self.file_list_pane)
         self.plotted_file_list = FileList(self.file_list_pane)
-        self.file_list_controls = FileListControls(self.status_pane)
 
         self.element_buttons = ElementButtons(
             self.center_pane, self.plot, PERSISTANT_ELEMENTS, self.variable_elements
@@ -100,7 +99,6 @@ class CSDViewer(ttk.Window):
 
         self.center_pane.pack(side="left", fill="y", expand=True)
         self.status_pane.pack()
-        self.file_list_controls.pack()
         self.file_list_pane.pack()
         self.file_list.pack(side="left", padx=10, pady=10)
         self.plotted_file_list.pack(side="right", padx=10, pady=10)
@@ -119,7 +117,6 @@ class CSDViewer(ttk.Window):
             [
                 self.plot_controls,
                 self.info_pane,
-                self.file_list_controls,
                 self.plot,
                 self.info_pane,
             ]

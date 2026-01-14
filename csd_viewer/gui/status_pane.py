@@ -3,6 +3,8 @@ from enum import Enum, auto
 import ttkbootstrap as ttk
 import tkinter as tk
 
+from csd_viewer.gui.controls.controls import FileListControls
+
 
 class FileMode:
     REMOTE = auto()
@@ -25,6 +27,8 @@ class StatusPane(ttk.Frame):
         self.lblStatus.pack()
         self.lblWarning = ttk.Label(self, textvariable=self.strWarning)
         self.lblWarning.pack()
+        self.file_list_controls = FileListControls(self)
+        self.file_list_controls.pack()
 
     def set_file_mode(self, mode: FileMode, info: str):
         match mode:
