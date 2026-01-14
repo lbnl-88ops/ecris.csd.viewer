@@ -151,7 +151,10 @@ class Coordinator:
         file = self._file_list.get_selected_file()
         if file is not None:
             self.plotted_files.append(file)
-            csd_file = download_filepair(file)
+            if self.mode == FileMode.REMOTE:
+                csd_file = download_filepair(file)
+            else:
+                csd_file = file
             file = CSDFile(csd_file, 1)
             self._plot.plot(file, self.rescale_using_oxygen.get())
             self._plotted_file_list.fill_list_box(self.plotted_files)
