@@ -81,7 +81,7 @@ class Coordinator:
             "<<ListboxSelect>>", self.update_button_states
         )
         self._status_pane.file_list_controls.btRefresh.config(
-            command=self.refresh_file_list
+            command=self.refresh_file_lists
         )
         self._status_pane.file_list_controls.btChangeDirectory.config(
             command=self.choose_directory
@@ -125,12 +125,12 @@ class Coordinator:
     def initialize(self) -> None:
         self._configure_objects()
         self.update_status()
-        self.refresh_file_list()
+        self.refresh_file_lists()
 
     def choose_directory(self, *_):
         new_directory = filedialog.askdirectory()
         self._current_directory = Path(new_directory)
-        self.refresh_file_list()
+        self.refresh_file_lists()
 
     def toggle_mode(self, *_):
         match self.mode:
@@ -138,12 +138,12 @@ class Coordinator:
                 self.mode = FileMode.REMOTE
             case FileMode.REMOTE:
                 self.mode = FileMode.LOCAL
-        self.refresh_file_list()
+        self.refresh_file_lists()
         self.update_status()
 
     def clear_plot(self, *_):
         self.plotted_files = []
-        self.refresh_file_list()
+        self.refresh_file_lists()
         self._plot.clear_plot()
         clear_temp_files()
 
@@ -157,20 +157,16 @@ class Coordinator:
                 csd_file = file
             file = CSDFile(csd_file, 1)
             self._plot.plot(file, self.rescale_using_oxygen.get())
-            self._plotted_file_list.fill_list_box(self.plotted_files)
-            self.refresh_file_list()
+            self.refresh_file_lists()
 
     def remove_from_plot(self, *_):
-        file = self._file_list.get_selected_file()
+        file = self._plotted_file_list.get_selected_file()
         if file is not None:
-            file.plotted = False
-            file.unload_csd()
-            self._plot.remove_file(file)
-            self._file_list.update_colors()
-            self._file_info_pane.update_info(file)
-            self._plot_controls.set_button_status(False)
+            self.plotted_files.remove(file)
+            self.refresh_file_lists()
+            # TODO: Add removal from plot functionality
 
-    def refresh_file_list(self, *_):
+    def refresh_file_lists(self, *_):
         current_time = time.time()
         dt_object = datetime.fromtimestamp(current_time)
         self._last_updated = dt_object.strftime("%Y-%m-%d %H:%M")
