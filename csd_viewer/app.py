@@ -24,6 +24,7 @@ from csd_viewer.files.configuration import (
 )
 from csd_viewer.gui.style.patchMatplotlib import applyPatch
 from csd_viewer.files.client import clear_temp_files
+from csd_viewer.gui.status_pane import StatusPane
 
 from .gui import (
     FileList,
@@ -79,12 +80,14 @@ class CSDViewer(ttk.Window):
         self.plot = Plot(self)
 
         self.center_pane = ttk.Frame(self)
+        self.status_pane = StatusPane(self.center_pane)
         self.file_list_pane = ttk.Frame(self.center_pane)
 
         self.info_pane = FileInfoPane(self)
+
         self.file_list = FileList(self.file_list_pane)
         self.plotted_file_list = FileList(self.file_list_pane)
-        self.file_list_controls = FileListControls(self.center_pane)
+        self.file_list_controls = FileListControls(self.status_pane)
 
         self.element_buttons = ElementButtons(
             self.center_pane, self.plot, PERSISTANT_ELEMENTS, self.variable_elements
@@ -96,12 +99,7 @@ class CSDViewer(ttk.Window):
         self.plot.pack(side="left", fill="both", expand=True)
 
         self.center_pane.pack(side="left", fill="y", expand=True)
-        self.strWarning = ttk.StringVar(value="")
-        self.strStatus = tk.StringVar(value="")
-        self.lblStatus = ttk.Label(self.center_pane, textvariable=self.strStatus)
-        self.lblStatus.pack()
-        self.lblWarning = ttk.Label(self.center_pane, textvariable=self.strWarning)
-        self.lblWarning.pack()
+        self.status_pane.pack()
         self.file_list_controls.pack()
         self.file_list_pane.pack()
         self.file_list.pack(side="left", padx=10, pady=10)
@@ -128,7 +126,7 @@ class CSDViewer(ttk.Window):
         )
         self.coordinator.attach(self.file_list, FileListType.TO_PLOT)
         self.coordinator.attach(self.plotted_file_list, FileListType.PLOTTED)
-        self.coordinator.attach(self.strStatus, WidgetType.STATUS_STRING)
+        self.coordinator.attach(self.status_pane)
         self.coordinator.initialize()
 
     def export_data(self):
@@ -158,12 +156,12 @@ class CSDViewer(ttk.Window):
     def toggle_rescale(self):
         if not self.coordinator.rescale_using_oxygen.get():
             logging.info("Turning off oxygen rescaling")
-            self.strWarning.set("⚠️ Warning: Not rescaling with Oxygen")
-            self.lblWarning.config(bootstyle="inverse-danger")
+            self.status_pane.strWarning.set("⚠️ Warning: Not rescaling with Oxygen")
+            self.status_pane.lblWarning.config(bootstyle="inverse-danger")
         else:
             logging.info("Turning on oxygen rescaling")
-            self.strWarning.set("")
-            self.lblWarning.config(bootstyle="danger")
+            self.status_pane.strWarning.set("")
+            self.status_pane.lblWarning.config(bootstyle="danger")
 
     def toggle_blitting(self):
         logging.info(self.plot.use_blitting.get())

@@ -12,6 +12,7 @@ from csd_viewer.gui.controls.controls import FileListControls, PlotControls
 from csd_viewer.gui.controls.file_list import FileList
 from csd_viewer.gui.info_frame.file_info_pane import FileInfoPane
 from csd_viewer.gui import Plot, FileInfoPane
+from csd_viewer.gui.status_pane import StatusPane, FileMode
 from csd_viewer.files.client import (
     list_files,
     download_filepair,
@@ -26,11 +27,6 @@ _log = getLogger(__name__)
 class FileListType(Enum):
     TO_PLOT = auto()
     PLOTTED = auto()
-
-
-class FileMode(Enum):
-    LOCAL = auto()
-    REMOTE = auto()
 
 
 class WidgetType(Enum):
@@ -53,11 +49,6 @@ class Coordinator:
             self.attach(o)
 
     def attach(self, object: Any, key: Optional[Any] = None) -> None:
-        if key is not None:
-            match key:
-                case WidgetType.STATUS_STRING:
-                    self._status_string = object
-                    return
         match object:
             case PlotControls():
                 self._plot_controls = object
@@ -75,6 +66,8 @@ class Coordinator:
                 self._plot = object
             case FileInfoPane():
                 self._file_info_pane = object
+            case StatusPane():
+                self._status_pane = object
             case _:
                 raise RuntimeError(f"Coordinator passed bad object {object}")
 
@@ -103,8 +96,9 @@ class Coordinator:
 
     def update_status(self) -> None:
         if self.mode == FileMode.REMOTE:
-            self._status_string.set(
-                f"Connected to {API_URL}\nLast update {self._last_updated}, {self._files_available} files found"
+            self._status_pane.set_file_mode(
+                FileMode.REMOTE,
+                f"Connected to {API_URL}\nLast update {self._last_updated}, {self._files_available} files found",
             )
 
     def initialize(self) -> None:
