@@ -162,9 +162,9 @@ class Coordinator:
     def remove_from_plot(self, *_):
         file = self._plotted_file_list.get_selected_file()
         if file is not None:
+            self._plot.remove_file(file)
             self.plotted_files.remove(file)
             self.refresh_file_lists()
-            # TODO: Add removal from plot functionality
 
     def refresh_file_lists(self, *_):
         current_time = time.time()

@@ -12,7 +12,7 @@ TEMP_FOLDER = Path("./tmp/")
 
 
 def list_local_files(directory: Path) -> List[Path]:
-    return list(directory.glob("csd_*"))
+    return [f.resolve() for f in directory.glob("csd_*")]
 
 
 def list_files() -> List[Path]:

@@ -14,11 +14,7 @@ def create_figure() -> Figure:
     return fig
 
 
-def file_artist(axis, file: CSDFile, rescale: bool) -> Artist | None:
-    return _plot_file(axis, file, rescale)
-
-
-def _plot_file(ax, file: CSDFile, rescale) -> Artist | None:
+def plot_file(ax, file: CSDFile, rescale) -> Artist | None:
     csd = file.csd
     if csd is None:
         info(f"File object: {file.path} has no CSD.")
