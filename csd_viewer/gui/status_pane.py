@@ -5,6 +5,9 @@ import tkinter as tk
 
 from csd_viewer.gui.controls.controls import FileListControls
 
+_FONT = "TkDefaultFont"
+_MODE_FONT = (_FONT, 12, "bold")
+
 
 class FileMode:
     REMOTE = auto()
@@ -21,7 +24,9 @@ class StatusPane(ttk.Frame):
         self.create_widgets()
 
     def create_widgets(self):
-        self.lblFileMode = ttk.Label(self, textvariable=self.strFileMode)
+        self.lblFileMode = ttk.Label(
+            self, textvariable=self.strFileMode, font=_MODE_FONT
+        )
         self.lblFileMode.pack()
         self.lblStatus = ttk.Label(self, textvariable=self.strStatus)
         self.lblStatus.pack()
@@ -36,4 +41,5 @@ class StatusPane(ttk.Frame):
                 file_mode = "Remote"
             case _:
                 file_mode = "Local"
-        self.strFileMode.set(f"{file_mode}: {info}")
+        self.strFileMode.set(f"File mode: {file_mode}")
+        self.strStatus.set(info)

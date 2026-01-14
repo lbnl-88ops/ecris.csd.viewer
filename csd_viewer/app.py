@@ -56,7 +56,6 @@ class CSDViewer(ttk.Window):
         self.configuration = configuration
         if self.configuration is None:
             self.configuration = create_configuration()
-        self.default_path = self.configuration.default_directory
         self.title(f"CSD Viewer (v{__version__})")
         self.pad = 5.0
         self.variable_elements = VARIABLE_ELEMENTS + self.configuration.custom_elements
@@ -119,7 +118,8 @@ class CSDViewer(ttk.Window):
                 self.info_pane,
                 self.plot,
                 self.info_pane,
-            ]
+            ],
+            self.configuration.default_directory,
         )
         self.coordinator.attach(self.file_list, FileListType.TO_PLOT)
         self.coordinator.attach(self.plotted_file_list, FileListType.PLOTTED)

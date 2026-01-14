@@ -18,6 +18,7 @@ from csd_viewer.files.client import (
     download_filepair,
     clear_temp_files,
     API_URL,
+    list_local_files,
 )
 
 _log = getLogger(__name__)
@@ -34,7 +35,7 @@ class WidgetType(Enum):
 
 
 class Coordinator:
-    def __init__(self, objects: Any | List[Any]):
+    def __init__(self, objects: Any | List[Any], default_directory: Path):
         if not isinstance(objects, List):
             objects = [objects]
         self.attach_objects(objects)
@@ -43,6 +44,7 @@ class Coordinator:
         self.mode = FileMode.REMOTE
         self._last_updated = "N/A"
         self._files_available = 0
+        self._current_directory = default_directory
 
     def attach_objects(self, objects: List[Any]) -> None:
         for o in objects:
@@ -88,6 +90,9 @@ class Coordinator:
         self._plot_controls.btRemoveFromPlot.config(command=self.remove_from_plot)
         self._plot_controls.btPlotCSD.config(command=self.plot_file)
         self._plot_controls.btAutoScale.config(command=self._plot.autoscale)
+        self._status_pane.file_list_controls.btChangeMode.config(
+            command=self.toggle_mode
+        )
 
     def update_button_states(self, *_):
         if self._file_list.file_listbox.curselection():
@@ -98,10 +103,23 @@ class Coordinator:
             self._plot_controls.activate_buttons(False, False)
 
     def update_status(self) -> None:
+        update_status = (
+            f"Last update {self._last_updated}, {self._files_available} files found"
+        )
         if self.mode == FileMode.REMOTE:
             self._status_pane.set_file_mode(
-                FileMode.REMOTE,
-                f"Connected to {API_URL}\nLast update {self._last_updated}, {self._files_available} files found",
+                FileMode.REMOTE, f"Connected to {API_URL}\n{update_status}"
+            )
+            self._status_pane.file_list_controls.btChangeMode.config(
+                text="Change to local"
+            )
+        if self.mode == FileMode.LOCAL:
+            self._status_pane.set_file_mode(
+                FileMode.LOCAL,
+                f"Browsing directory {self._current_directory}\n{update_status}",
+            )
+            self._status_pane.file_list_controls.btChangeMode.config(
+                text="Change to remote"
             )
 
     def initialize(self) -> None:
@@ -111,7 +129,17 @@ class Coordinator:
 
     def choose_directory(self, *_):
         new_directory = filedialog.askdirectory()
-        pass
+        self._current_directory = Path(new_directory)
+        self.refresh_file_list()
+
+    def toggle_mode(self, *_):
+        match self.mode:
+            case FileMode.LOCAL:
+                self.mode = FileMode.REMOTE
+            case FileMode.REMOTE:
+                self.mode = FileMode.LOCAL
+        self.refresh_file_list()
+        self.update_status()
 
     def clear_plot(self, *_):
         self.plotted_files = []
@@ -145,9 +173,13 @@ class Coordinator:
         self._last_updated = dt_object.strftime("%Y-%m-%d %H:%M")
         match self.mode:
             case FileMode.REMOTE:
-                found_files = list(reversed(sorted(list_files())))
-                self._files_available = len(found_files)
-        files = [f for f in found_files if f not in self.plotted_files]
+                found_files = list_files()
+            case _:
+                found_files = list_local_files(self._current_directory)
+        self._files_available = len(found_files)
+        files = [
+            f for f in reversed(sorted(found_files)) if f not in self.plotted_files
+        ]
         self._file_list.fill_list_box(files)
         self._plotted_file_list.fill_list_box(self.plotted_files)
         self.update_status()

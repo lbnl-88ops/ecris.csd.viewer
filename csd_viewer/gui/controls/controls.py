@@ -17,9 +17,12 @@ class FileListControls(tk.Frame):
         self.btRefresh = ttk.Button(
             self, text="Refresh file list", bootstyle="primary-outline"
         )
+        self.btChangeMode = ttk.Button(self, text="", bootstyle="primary-outline")
+
         for loc, widget in {
             (0, 0): self.btChangeDirectory,
             (0, 1): self.btRefresh,
+            (0, 2): self.btChangeMode,
         }.items():
             widget.grid(
                 row=loc[0], column=loc[1], padx=self.pad, pady=self.pad, sticky="nsew"
