@@ -11,6 +11,7 @@ def create_figure() -> Figure:
     ax = fig.gca()
     ax.set_xlabel("M/Q")
     ax.set_ylabel(r"current [$\mu$A]")
+    ax.set_facecolor("white")
     return fig
 
 

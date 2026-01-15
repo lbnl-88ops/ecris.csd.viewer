@@ -139,6 +139,3 @@ class Plot(tk.Frame):
             else:
                 self.canvas.draw()
         self.canvas.flush_events()
-
-    # def on_resize(self, event):
-    # add_element_indicators(PERSISTANT_ELEMENTS, self.canvas.figure)
