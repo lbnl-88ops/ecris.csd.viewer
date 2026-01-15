@@ -6,7 +6,7 @@ from pathlib import Path
 from matplotlib.artist import Artist
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.widgets import Cursor
-from ..plotting.plot_csd import create_figure, plot_file
+from ..plotting.plot_csd import create_figure, plot_file, Rescale
 from csd_viewer.files import CSDFile
 from csd_viewer.plotting.element_indicators import (
     ElementIndicator,
@@ -82,7 +82,7 @@ class Plot(tk.Frame):
     def clear_plot(self):
         self._remove_files(list(self._file_artists.keys()))
 
-    def plot(self, file: CSDFile, rescale: bool = True):
+    def plot(self, file: CSDFile, rescale: Rescale):
         debug(f"Plotting file {file.path}")
         artist = plot_file(self._figure.gca(), file, rescale)
         if artist is not None:

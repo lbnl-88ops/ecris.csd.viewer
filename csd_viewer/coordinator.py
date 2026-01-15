@@ -21,6 +21,7 @@ from csd_viewer.files.client import (
     API_URL,
     list_local_files,
 )
+from csd_viewer.plotting.plot_csd import Rescale
 
 _log = getLogger(__name__)
 
@@ -152,13 +153,19 @@ class Coordinator:
         file = self._file_list.get_selected_file()
         if file is not None:
             self.plotted_files.append(file)
+            self.refresh_file_lists()
             if self.mode == FileMode.REMOTE:
                 csd_file = download_filepair(file)
             else:
                 csd_file = file
             file = CSDFile(csd_file, 1)
-            self._plot.plot(file, self.rescale_using_oxygen.get())
-            self.refresh_file_lists()
+            if not self.rescale_using_oxygen.get():
+                rescale = Rescale.NONE
+            elif self._plot_controls._use_polynomial_fitting.get():
+                rescale = Rescale.POLYNOMIAL
+            else:
+                rescale = Rescale.LINEAR
+            self._plot.plot(file, rescale)
 
     def remove_from_plot(self, *_):
         file = self._plotted_file_list.get_selected_file()
