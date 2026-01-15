@@ -37,7 +37,7 @@ class PlotControls(tk.Frame):
         self.big_button_size = 2
         self._font = "TkDefaultFont"
         self._subtitle_font = (self._font, 12)
-        self._use_polynomial_fitting = tk.BooleanVar(value=True)
+        self._use_polynomial_fitting = tk.BooleanVar(value=False)
         self.create_widgets()
 
     def create_widgets(self):

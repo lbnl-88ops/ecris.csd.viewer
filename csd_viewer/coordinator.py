@@ -9,6 +9,7 @@ import time
 from datetime import datetime
 
 from csd_viewer.files.csd_file import CSDFile
+from csd_viewer.status_bar import update_status_bar
 from csd_viewer.gui.controls.controls import FileListControls, PlotControls
 from csd_viewer.gui.controls.file_list import FileList
 from csd_viewer.gui.info_frame.file_info_pane import FileInfoPane
@@ -30,10 +31,6 @@ _log = getLogger(__name__)
 class FileListType(Enum):
     TO_PLOT = auto()
     PLOTTED = auto()
-
-
-class WidgetType(Enum):
-    STATUS_STRING = auto()
 
 
 class Coordinator:
@@ -104,7 +101,7 @@ class Coordinator:
         else:
             self._plot_controls.activate_buttons(False, False)
 
-    def update_status(self) -> None:
+    def update_connection_status(self) -> None:
         update_status = (
             f"Last update {self._last_updated}, {self._files_available} files found"
         )
@@ -126,8 +123,9 @@ class Coordinator:
 
     def initialize(self) -> None:
         self._configure_objects()
-        self.update_status()
+        self.update_connection_status()
         self.refresh_file_lists()
+        update_status_bar("Initialized")
 
     def choose_directory(self, *_):
         new_directory = filedialog.askdirectory()
@@ -141,13 +139,14 @@ class Coordinator:
             case FileMode.REMOTE:
                 self.mode = FileMode.LOCAL
         self.refresh_file_lists()
-        self.update_status()
+        self.update_connection_status()
 
     def clear_plot(self, *_):
         self.plotted_files = []
         self.refresh_file_lists()
         self._plot.clear_plot()
         clear_temp_files()
+        update_status_bar("Plot cleared.")
 
     def plot_file(self):
         file = self._file_list.get_selected_file()
@@ -193,5 +192,6 @@ class Coordinator:
         ]
         self._file_list.fill_list_box(files)
         self._plotted_file_list.fill_list_box(self.plotted_files)
-        self.update_status()
+        self.update_connection_status()
         self.update_button_states()
+        update_status_bar("File list refreshed.")

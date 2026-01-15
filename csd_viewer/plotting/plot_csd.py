@@ -3,9 +3,10 @@ from enum import Enum, auto
 from logging import info
 from matplotlib.figure import Figure
 from matplotlib.artist import Artist
-from ops.ecris.analysis.csd.polynomial_fit import default_polynomial_fit
+from ops.ecris.analysis.csd.polynomial_fit import polynomial_fit_mq, Element
 from ops.ecris.analysis.csd.m_over_q import estimate_m_over_q, scale_with_oxygen
 from csd_viewer.files import CSDFile
+from csd_viewer.status_bar import update_status_bar
 
 
 class Rescale(Enum):
@@ -32,9 +33,18 @@ def plot_file(ax, file: CSDFile, rescale_method=Rescale.NONE) -> Artist | None:
 
     match rescale_method:
         case Rescale.POLYNOMIAL:
-            csd.m_over_q, sol = default_polynomial_fit(csd)
+            csd.m_over_q, sol = polynomial_fit_mq(
+                csd,
+                [Element("O", "Oxygen", 15.9949, 8)],
+                polynomial_order=4,
+                max_function_evaluations=5000,
+            )
             info("Polynomial fit complete:")
             info(sol)
+            if sol.success:
+                update_status_bar("Polynomial fit succeeded.")
+            else:
+                update_status_bar(f"Polynomial fit failed: {sol.message}.")
             label = file.formatted_datetime
         case Rescale.LINEAR:
             scale_with_oxygen(csd)

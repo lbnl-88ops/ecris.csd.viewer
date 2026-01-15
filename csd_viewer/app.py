@@ -14,7 +14,7 @@ import ttkbootstrap as ttk
 
 from ops.ecris.analysis.model.element import PERSISTANT_ELEMENTS, VARIABLE_ELEMENTS
 
-from .coordinator import Coordinator, FileListType, WidgetType
+from .coordinator import Coordinator, FileListType
 from csd_viewer.gui.controls import ElementButtons
 from csd_viewer.files.csd_file import CSDFile, export_to_file
 from csd_viewer.files.configuration import (
@@ -25,6 +25,7 @@ from csd_viewer.files.configuration import (
 from csd_viewer.gui.style.patchMatplotlib import applyPatch
 from csd_viewer.files.client import clear_temp_files
 from csd_viewer.gui.status_pane import StatusPane
+from csd_viewer.status_bar import StatusBarSingleton
 
 from .gui import (
     FileList,
@@ -76,13 +77,27 @@ class CSDViewer(ttk.Window):
         self.config(menu=self.menu)
 
     def create_widgets(self):
-        self.plot = Plot(self)
+        self.main_frame = ttk.Frame(self)
+        self.main_frame.pack(fill=tk.BOTH, expand=True)
+        self.status_bar = ttk.Frame(self)
+        self.status_bar.pack(side=tk.BOTTOM, fill=tk.X)
 
-        self.center_pane = ttk.Frame(self)
+        self.status_label = ttk.Label(
+            self.status_bar,
+            textvariable=StatusBarSingleton().get_status_var(),
+            bootstyle="secondary",
+            anchor=tk.W,
+        )
+
+        self.status_label.pack(side=tk.LEFT)
+
+        self.plot = Plot(self.main_frame)
+
+        self.center_pane = ttk.Frame(self.main_frame)
         self.status_pane = StatusPane(self.center_pane)
         self.file_list_pane = ttk.Frame(self.center_pane)
 
-        self.info_pane = FileInfoPane(self)
+        self.info_pane = FileInfoPane(self.main_frame)
 
         self.file_list = FileList(self.file_list_pane)
         self.plotted_file_list = FileList(self.file_list_pane)
@@ -111,7 +126,7 @@ class CSDViewer(ttk.Window):
         self.element_buttons.pack(fill="both", padx=10, pady=10)
         self.strToggleInfoText = ttk.StringVar(value=">>")
         self.btToggleFileInfo = ttk.Button(
-            self,
+            self.main_frame,
             textvariable=self.strToggleInfoText,
             command=self.info_pane.toggle_visibility,
             width=2,
@@ -121,7 +136,6 @@ class CSDViewer(ttk.Window):
         self.coordinator = Coordinator(
             [
                 self.plot_controls,
-                self.info_pane,
                 self.plot,
                 self.info_pane,
             ],
