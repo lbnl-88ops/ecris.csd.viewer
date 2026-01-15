@@ -17,6 +17,7 @@ class Rescale(Enum):
 def create_figure() -> Figure:
     fig = Figure((9, 6), tight_layout=True)
     ax = fig.gca()
+    ax.grid(alpha=0.5, ls="--")
     ax.set_xlabel("M/Q")
     ax.set_ylabel(r"current [$\mu$A]")
     ax.set_facecolor("white")

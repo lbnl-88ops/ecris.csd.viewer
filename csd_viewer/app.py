@@ -159,7 +159,7 @@ class CSDViewer(ttk.Window):
     def toggle_rescale(self):
         if not self.coordinator.rescale_using_oxygen.get():
             logging.info("Turning off oxygen rescaling")
-            self.status_pane.strWarning.set("⚠️ Warning: Not rescaling with Oxygen")
+            self.status_pane.strWarning.set("⚠️ Warning: Not rescaling!")
             self.status_pane.lblWarning.config(bootstyle="inverse-danger")
         else:
             logging.info("Turning on oxygen rescaling")

@@ -41,6 +41,8 @@ class Plot(tk.Frame):
     def set_element_indicators(self, elements: Dict[Element, tk.BooleanVar]):
         self.element_indicators = add_element_indicators(elements, self._figure)
 
+        self._figure.gca().set_prop_cycle(None)
+
     def add_element_indicator(
         self, element: Element, visibility_boolean: tk.BooleanVar
     ):
