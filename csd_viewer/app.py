@@ -99,8 +99,14 @@ class CSDViewer(ttk.Window):
         self.center_pane.pack(side="left", fill="y", expand=True)
         self.status_pane.pack()
         self.file_list_pane.pack()
-        self.file_list.pack(side="left", padx=10, pady=10)
-        self.plotted_file_list.pack(side="right", padx=10, pady=10)
+        ttk.Label(self.file_list_pane, text="Available Files", justify="center").grid(
+            row=0, column=0, sticky="n"
+        )
+        ttk.Label(self.file_list_pane, text="Plotted Files", justify="center").grid(
+            row=0, column=1, sticky="n"
+        )
+        self.file_list.grid(row=1, column=0, sticky="n", padx=10, pady=(0, 10))
+        self.plotted_file_list.grid(row=1, column=1, sticky="n", padx=10, pady=(0, 10))
         self.plot_controls.pack()
         self.element_buttons.pack(fill="both", padx=10, pady=10)
         self.strToggleInfoText = ttk.StringVar(value=">>")
