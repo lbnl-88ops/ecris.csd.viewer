@@ -4,6 +4,7 @@ from pathlib import Path
 from tkinter import filedialog
 from typing import Any, List, Optional
 import tkinter as tk
+from tkinter import messagebox
 import time
 from datetime import datetime
 
@@ -41,7 +42,7 @@ class Coordinator:
         self.attach_objects(objects)
         self.rescale_using_oxygen = tk.BooleanVar(value=True)
         self.plotted_files = []
-        self.mode = FileMode.REMOTE
+        self.mode = FileMode.LOCAL
         self._last_updated = "N/A"
         self._files_available = 0
         self._current_directory = default_directory
@@ -173,6 +174,10 @@ class Coordinator:
         match self.mode:
             case FileMode.REMOTE:
                 found_files = list_files()
+                if not found_files:
+                    messagebox.showerror("Error", "Failed to retrieve files.")
+                    self.mode = FileMode.LOCAL
+                    self.refresh_file_lists()
             case _:
                 found_files = list_local_files(self._current_directory)
         self._files_available = len(found_files)

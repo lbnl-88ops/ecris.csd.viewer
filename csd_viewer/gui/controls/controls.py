@@ -35,6 +35,9 @@ class PlotControls(tk.Frame):
         self._owner = owner
         self.pad = 3.0
         self.big_button_size = 2
+        self._font = "TkDefaultFont"
+        self._subtitle_font = (self._font, 12)
+        self._use_polynomial_fitting = tk.BooleanVar(value=True)
         self.create_widgets()
 
     def create_widgets(self):
@@ -56,6 +59,17 @@ class PlotControls(tk.Frame):
             widget.grid(
                 row=loc[0], column=loc[1], padx=self.pad, pady=self.pad, sticky="nsew"
             )
+        tk.Label(
+            self, text="Plotting options", font=self._subtitle_font, justify="center"
+        ).grid(row=1, column=0, columnspan=self.grid_size()[0], sticky="nsew")
+        ttk.Checkbutton(
+            self,
+            text="Polynomial fitting",
+            bootstyle="round-toggle",
+            onvalue=True,
+            offvalue=False,
+            variable=self._use_polynomial_fitting,
+        ).grid(row=2, column=0, columnspan=self.grid_size()[0], sticky="n")
 
     def activate_buttons(self, can_plot: bool = False, can_remove: bool = False):
         if can_plot:
