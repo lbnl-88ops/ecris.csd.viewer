@@ -92,12 +92,22 @@ class CSDViewer(ttk.Window):
         self.status_label.pack(side=tk.LEFT)
 
         self.plot = Plot(self.main_frame)
-
         self.center_pane = ttk.Frame(self.main_frame)
+        # self.info_pane = FileInfoPane(self.main_frame)
+        # self.btToggleFileInfo = ttk.Button(
+        #     self.main_frame,
+        #     textvariable=self.strToggleInfoText,
+        #     command=self.info_pane.toggle_visibility,
+        #     width=2,
+        #     bootstyle="link-secondary",
+        # )
+
+        self.plot.pack(side="left", fill="both", expand=True)
+        self.center_pane.pack(side="left", fill="y", expand=True)
+        # self.btToggleFileInfo.pack(fill="y", side="left")
+
         self.status_pane = StatusPane(self.center_pane)
         self.file_list_pane = ttk.Frame(self.center_pane)
-
-        self.info_pane = FileInfoPane(self.main_frame)
 
         self.file_list = FileList(self.file_list_pane)
         self.plotted_file_list = FileList(self.file_list_pane)
@@ -109,9 +119,6 @@ class CSDViewer(ttk.Window):
 
         self.plot.set_element_indicators(self.element_buttons.element_visibility)
 
-        self.plot.pack(side="left", fill="both", expand=True)
-
-        self.center_pane.pack(side="left", fill="y", expand=True)
         self.status_pane.pack()
         self.file_list_pane.pack()
         ttk.Label(self.file_list_pane, text="Available Files", justify="center").grid(
@@ -125,19 +132,12 @@ class CSDViewer(ttk.Window):
         self.plot_controls.pack()
         self.element_buttons.pack(fill="both", padx=10, pady=10)
         self.strToggleInfoText = ttk.StringVar(value=">>")
-        self.btToggleFileInfo = ttk.Button(
-            self.main_frame,
-            textvariable=self.strToggleInfoText,
-            command=self.info_pane.toggle_visibility,
-            width=2,
-            bootstyle="link-secondary",
-        )
-        self.btToggleFileInfo.pack(fill="y", side="left")
+
         self.coordinator = Coordinator(
             [
                 self.plot_controls,
                 self.plot,
-                self.info_pane,
+                # self.info_pane,
             ],
             self.configuration.default_directory,
         )
