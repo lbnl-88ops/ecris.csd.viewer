@@ -36,8 +36,7 @@ def plot_file(ax, file: CSDFile, rescale_method=Rescale.NONE) -> Artist | None:
             csd.m_over_q, sol = polynomial_fit_mq(
                 csd,
                 [Element("O", "Oxygen", 15.9949, 8)],
-                polynomial_order=4,
-                max_function_evaluations=5000,
+                polynomial_order=3,
             )
             info("Polynomial fit complete:")
             info(sol)

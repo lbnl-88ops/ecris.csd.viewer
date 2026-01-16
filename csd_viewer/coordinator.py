@@ -128,9 +128,14 @@ class Coordinator:
         update_status_bar("Initialized")
 
     def choose_directory(self, *_):
-        new_directory = filedialog.askdirectory()
-        self._current_directory = Path(new_directory)
-        self.refresh_file_lists()
+        new_directory = filedialog.askdirectory(
+            title="Choose a directory", mustexist=True
+        )
+        try:
+            self._current_directory = Path(new_directory)
+            self.refresh_file_lists()
+        except Exception as e:
+            messagebox.showerror("Failed to open directory: e")
 
     def toggle_mode(self, *_):
         match self.mode:
