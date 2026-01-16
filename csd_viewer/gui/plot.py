@@ -35,8 +35,10 @@ class Plot(tk.Frame):
         self.canvas.get_tk_widget().pack(fill="both", expand=True)
         self.toolbar = NavigationToolbar2Tk(self.canvas, self)
         self.toolbar.update()
-        self.canvas.get_tk_widget().pack()
-        self.cursor = Cursor(self._figure.gca(), useblit=True, color="red", linewidth=1)
+        # self.canvas.get_tk_widget().pack()
+        self.cursor = Cursor(
+            self._figure.gca(), useblit=True, color="blue", linewidth=0.5
+        )
 
     def set_element_indicators(self, elements: Dict[Element, tk.BooleanVar]):
         self.element_indicators = add_element_indicators(elements, self._figure)

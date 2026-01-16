@@ -54,6 +54,9 @@ logging.basicConfig(
 class CSDViewer(ttk.Window):
     def __init__(self, configuration: AppConfiguration | None):
         super().__init__()
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+        self.geometry(f"{int(screen_width * 0.8)}x{int(screen_height * 0.6)}")
         self.configuration = configuration
         if self.configuration is None:
             self.configuration = create_configuration()
@@ -64,6 +67,7 @@ class CSDViewer(ttk.Window):
         self.create_menu()
         self._info_visible = False
         self.protocol("WM_DELETE_WINDOW", self.quit)
+        self.update_idletasks()
 
     def quit(self):
         clear_temp_files()
@@ -78,9 +82,9 @@ class CSDViewer(ttk.Window):
 
     def create_widgets(self):
         self.main_frame = ttk.Frame(self)
-        self.main_frame.pack(fill=tk.BOTH, expand=True)
+        self.main_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         self.status_bar = ttk.Frame(self)
-        self.status_bar.pack(side=tk.BOTTOM, fill=tk.X)
+        self.status_bar.pack(side=tk.BOTTOM, fill=tk.X, expand=False)
 
         self.status_label = ttk.Label(
             self.status_bar,
@@ -92,7 +96,7 @@ class CSDViewer(ttk.Window):
         self.status_label.pack(side=tk.LEFT)
 
         self.plot = Plot(self.main_frame)
-        self.center_pane = ttk.Frame(self.main_frame)
+        self.control_pane = ttk.Frame(self.main_frame)
         # self.info_pane = FileInfoPane(self.main_frame)
         # self.btToggleFileInfo = ttk.Button(
         #     self.main_frame,
@@ -103,19 +107,19 @@ class CSDViewer(ttk.Window):
         # )
 
         self.plot.pack(side="left", fill="both", expand=True)
-        self.center_pane.pack(side="left", fill="y", expand=True)
+        self.control_pane.pack(side="right", fill="y", expand=False)
         # self.btToggleFileInfo.pack(fill="y", side="left")
 
-        self.status_pane = StatusPane(self.center_pane)
-        self.file_list_pane = ttk.Frame(self.center_pane)
+        self.status_pane = StatusPane(self.control_pane)
+        self.file_list_pane = ttk.Frame(self.control_pane)
 
         self.file_list = FileList(self.file_list_pane)
         self.plotted_file_list = FileList(self.file_list_pane)
 
         self.element_buttons = ElementButtons(
-            self.center_pane, self.plot, PERSISTANT_ELEMENTS, self.variable_elements
+            self.control_pane, self.plot, PERSISTANT_ELEMENTS, self.variable_elements
         )
-        self.plot_controls = PlotControls(self.center_pane)
+        self.plot_controls = PlotControls(self.control_pane)
 
         self.plot.set_element_indicators(self.element_buttons.element_visibility)
 
