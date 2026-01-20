@@ -56,7 +56,7 @@ class CSDViewer(ttk.Window):
         super().__init__()
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
-        self.geometry(f"{int(screen_width * 0.8)}x{int(screen_height * 0.6)}")
+        self.geometry(f"{int(screen_width * 0.5)}x{int(screen_height * 0.5)}")
         self.configuration = configuration
         if self.configuration is None:
             self.configuration = create_configuration()

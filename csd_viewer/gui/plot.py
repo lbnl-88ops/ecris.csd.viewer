@@ -23,7 +23,7 @@ class Plot(tk.Frame):
         self.element_indicators: List[ElementIndicator] = []
         self.draw_element_lines = tk.BooleanVar(value=False)
         self.use_blitting = tk.BooleanVar(value=False)
-        self._file_artists: Dict[str, Artist] = {}
+        self._file_artists: Dict[str, List[Artist]] = {}
         self.create_widgets()
 
     def create_widgets(self):
@@ -71,12 +71,13 @@ class Plot(tk.Frame):
             if isinstance(to_remove, Path):
                 to_remove = to_remove.name
             try:
-                artist = self._file_artists.pop(to_remove)
+                artists = self._file_artists.pop(to_remove)
             except KeyError:
                 info(f"Cannot remove file, not found: {to_remove}")
                 info(self._file_artists)
                 continue
-            artist.remove()
+            for a in artists:
+                a.remove()
         if not self._file_artists:
             if ax.get_legend() is not None:
                 ax.get_legend().remove()
@@ -86,12 +87,19 @@ class Plot(tk.Frame):
     def clear_plot(self):
         self._remove_files(list(self._file_artists.keys()))
 
-    def plot(self, file: CSDFile, rescale: Rescale):
+    def plot(self, file: CSDFile, rescaling_methods: List[Rescale]):
         debug(f"Plotting file {file.path}")
-        artist = plot_file(self._figure.gca(), file, rescale)
-        if artist is not None:
+        artists = [
+            a
+            for a in [
+                plot_file(self._figure.gca(), file, method)
+                for method in rescaling_methods
+            ]
+            if a is not None
+        ]
+        if artists:
             debug("Artist was returned")
-            self._file_artists[file.path.name] = artist
+            self._file_artists[file.path.name] = artists
             self.update()
 
     def autoscale(self):
@@ -108,8 +116,9 @@ class Plot(tk.Frame):
     def _draw_animated(self, rescale: bool = False):
         fig = self.canvas.figure
         ax = fig.gca()
-        for artist in self._file_artists.values():
-            fig.draw_artist(artist)
+        for artists in self._file_artists.values():
+            for artist in artists:
+                fig.draw_artist(artist)
 
         # Determine how many elements are visible
         visible_elements = [

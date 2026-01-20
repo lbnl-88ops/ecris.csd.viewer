@@ -119,7 +119,7 @@ class ElementButtons(ttk.Frame):
         for i, element in enumerate(
             sorted(self._persistent_elements, key=lambda e: e.atomic_number)
         ):
-            text = f"{element.symbol}-{element.atomic_mass}"
+            text = f"{element.symbol}-{int(round(element.atomic_mass))}"
             button = ttk.Checkbutton(
                 frElement,
                 text=text,
@@ -240,4 +240,3 @@ class ElementButtons(ttk.Frame):
             ):
                 return None
         return Element(symbol, symbol, int(mass), int(number))
-

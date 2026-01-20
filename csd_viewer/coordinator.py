@@ -163,13 +163,14 @@ class Coordinator:
             else:
                 csd_file = file
             file = CSDFile(csd_file, 1)
-            if not self.rescale_using_oxygen.get():
-                rescale = Rescale.NONE
-            elif self._plot_controls._use_polynomial_fitting.get():
-                rescale = Rescale.POLYNOMIAL
-            else:
-                rescale = Rescale.LINEAR
-            self._plot.plot(file, rescale)
+            rescaling_methods = []
+            if self._plot_controls._use_no_fitting.get():
+                rescaling_methods.append(Rescale.NONE)
+            if self._plot_controls._use_linear_fitting.get():
+                rescaling_methods.append(Rescale.LINEAR)
+            if self._plot_controls._use_polynomial_fitting.get():
+                rescaling_methods.append(Rescale.POLYNOMIAL)
+            self._plot.plot(file, rescaling_methods)
 
     def remove_from_plot(self, *_):
         file = self._plotted_file_list.get_selected_file()

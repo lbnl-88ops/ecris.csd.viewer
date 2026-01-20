@@ -37,7 +37,9 @@ class PlotControls(tk.Frame):
         self.big_button_size = 2
         self._font = "TkDefaultFont"
         self._subtitle_font = (self._font, 12)
-        self._use_polynomial_fitting = tk.BooleanVar(value=False)
+        self._use_polynomial_fitting = tk.BooleanVar(value=True)
+        self._use_linear_fitting = tk.BooleanVar(value=False)
+        self._use_no_fitting = tk.BooleanVar(value=False)
         self.create_widgets()
 
     def create_widgets(self):
@@ -60,16 +62,36 @@ class PlotControls(tk.Frame):
                 row=loc[0], column=loc[1], padx=self.pad, pady=self.pad, sticky="nsew"
             )
         tk.Label(
-            self, text="Plotting options", font=self._subtitle_font, justify="center"
+            self, text="Fitting methods", font=self._subtitle_font, justify="center"
         ).grid(row=1, column=0, columnspan=self.grid_size()[0], sticky="nsew")
+        self.button_frame = tk.Frame(self)
+        self.button_frame.grid(
+            row=2, column=0, columnspan=self.grid_size()[0], sticky="ew"
+        )
         ttk.Checkbutton(
-            self,
-            text="Polynomial fitting",
+            self.button_frame,
+            text="Polynomial",
             bootstyle="round-toggle",
             onvalue=True,
             offvalue=False,
             variable=self._use_polynomial_fitting,
-        ).grid(row=2, column=0, columnspan=self.grid_size()[0], sticky="n")
+        ).pack(side="left", padx=10)
+        ttk.Checkbutton(
+            self.button_frame,
+            text="Linear",
+            bootstyle="round-toggle",
+            onvalue=True,
+            offvalue=False,
+            variable=self._use_linear_fitting,
+        ).pack(side="left", padx=10)
+        ttk.Checkbutton(
+            self.button_frame,
+            text="None",
+            bootstyle="round-toggle",
+            onvalue=True,
+            offvalue=False,
+            variable=self._use_no_fitting,
+        ).pack(side="left", padx=10)
 
     def activate_buttons(self, can_plot: bool = False, can_remove: bool = False):
         if can_plot:

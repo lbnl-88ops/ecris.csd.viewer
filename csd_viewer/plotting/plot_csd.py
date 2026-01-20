@@ -19,6 +19,7 @@ def create_figure() -> Figure:
     fig = Figure((9, 6), tight_layout=True)
     ax = fig.gca()
     ax.grid(alpha=0.5, ls="--")
+    ax.set_xticks(range(1, 11))
     ax.set_xlabel("M/Q")
     ax.set_ylabel(r"current [$\mu$A]")
     ax.set_facecolor("white")
@@ -35,8 +36,9 @@ def plot_file(ax, file: CSDFile, rescale_method=Rescale.NONE) -> Artist | None:
         case Rescale.POLYNOMIAL:
             csd.m_over_q, sol = polynomial_fit_mq(
                 csd,
-                [Element("O", "Oxygen", 15.9949, 8)],
+                [Element("H", "Hydrogen", 1, 1), Element("O", "Oxygen", 15.9949, 8)],
                 polynomial_order=3,
+                optimize_on_failure=False,
             )
             info("Polynomial fit complete:")
             info(sol)
