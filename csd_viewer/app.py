@@ -56,7 +56,8 @@ class CSDViewer(ttk.Window):
         super().__init__()
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
-        self.geometry(f"{int(screen_width * 0.5)}x{int(screen_height * 0.5)}")
+        # self.geometry(f"{int(screen_width * 0.5)}x{int(screen_height * 0.5)}")
+        # self.geometry("800x600")
         self.configuration = configuration
         if self.configuration is None:
             self.configuration = create_configuration()
@@ -67,7 +68,8 @@ class CSDViewer(ttk.Window):
         self.create_menu()
         self._info_visible = False
         self.protocol("WM_DELETE_WINDOW", self.quit)
-        self.update_idletasks()
+        self.update()
+        self.minsize(self.winfo_width(), self.winfo_height())
 
     def quit(self):
         clear_temp_files()
@@ -84,7 +86,7 @@ class CSDViewer(ttk.Window):
         self.main_frame = ttk.Frame(self)
         self.main_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         self.status_bar = ttk.Frame(self)
-        self.status_bar.pack(side=tk.BOTTOM, fill=tk.X, expand=False)
+        self.status_bar.pack(side=tk.TOP, fill=tk.X, expand=False)
 
         self.status_label = ttk.Label(
             self.status_bar,

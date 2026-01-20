@@ -16,12 +16,15 @@ class Rescale(Enum):
 
 
 def create_figure() -> Figure:
-    fig = Figure((9, 6), tight_layout=True)
+    # fig = Figure((9, 6), tight_layout=True)
+    fig = Figure()
     ax = fig.gca()
     ax.grid(alpha=0.5, ls="--")
+    font_size = 10
+    ax.tick_params(labelsize=font_size)
     ax.set_xticks(range(1, 11))
-    ax.set_xlabel("M/Q")
-    ax.set_ylabel(r"current [$\mu$A]")
+    ax.set_xlabel("M/Q", fontsize=font_size)
+    ax.set_ylabel(r"current [$\mu$A]", fontsize=font_size)
     ax.set_facecolor("white")
     return fig
 
@@ -36,9 +39,9 @@ def plot_file(ax, file: CSDFile, rescale_method=Rescale.NONE) -> Artist | None:
         case Rescale.POLYNOMIAL:
             csd.m_over_q, sol = polynomial_fit_mq(
                 csd,
-                [Element("H", "Hydrogen", 1, 1), Element("O", "Oxygen", 15.9949, 8)],
-                polynomial_order=3,
-                optimize_on_failure=False,
+                [Element("O", "Oxygen", 15.9949, 8), Element("H", "Hydrogen", 1, 1)],
+                polynomial_order=5,
+                always_optimize=True,
             )
             info("Polynomial fit complete:")
             info(sol)

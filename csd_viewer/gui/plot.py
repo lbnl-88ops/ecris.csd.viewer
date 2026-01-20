@@ -138,7 +138,7 @@ class Plot(tk.Frame):
             element.draw(fig, lines=self.draw_element_lines.get())
         handles, labels = ax.get_legend_handles_labels()
         if handles and any(not l.startswith("_") for l in labels):
-            ax.legend(handles, labels)
+            ax.legend(handles, labels, fontsize=10)
         ax.set_ybound(lower=0)
 
     def update(self, *_):
