@@ -102,6 +102,7 @@ class Coordinator:
 
     def open_comparison_window(self, *_):
         self._comparison_window = FileComparisonWindow(self._root_window)
+        self._comparison_window.add_files(self.plotted_files)
 
     def update_button_states(self, *_):
         if self._file_list.file_listbox.curselection():
