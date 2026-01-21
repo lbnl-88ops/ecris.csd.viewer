@@ -34,9 +34,10 @@ class FileListType(Enum):
 
 
 class Coordinator:
-    def __init__(self, objects: Any | List[Any], default_directory: Path):
+    def __init__(self, root_window, objects: Any | List[Any], default_directory: Path):
         if not isinstance(objects, List):
             objects = [objects]
+        self._root_window = root_window
         self.attach_objects(objects)
         self.rescale_using_oxygen = tk.BooleanVar(value=True)
         self.plotted_files = []

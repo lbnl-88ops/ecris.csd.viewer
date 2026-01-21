@@ -140,6 +140,7 @@ class CSDViewer(ttk.Window):
         self.strToggleInfoText = ttk.StringVar(value=">>")
 
         self.coordinator = Coordinator(
+            self,
             [
                 self.plot_controls,
                 self.plot,
