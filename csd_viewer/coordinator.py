@@ -10,10 +10,13 @@ from datetime import datetime
 
 from csd_viewer.files.csd_file import CSDFile
 from csd_viewer.status_bar import update_status_bar
-from csd_viewer.gui.controls.controls import FileListControls, PlotControls
-from csd_viewer.gui.controls.file_list import FileList
-from csd_viewer.gui.info_frame.file_info_pane import FileInfoPane
-from csd_viewer.gui import Plot, FileInfoPane
+from csd_viewer.gui import (
+    FileListControls,
+    PlotControls,
+    FittingControls,
+    FileList,
+    Plot,
+)
 from csd_viewer.gui.status_pane import StatusPane, FileMode
 from csd_viewer.files.client import (
     list_files,
@@ -54,8 +57,6 @@ class Coordinator:
         match object:
             case PlotControls():
                 self._plot_controls = object
-            case FileInfoPane():
-                self._file_info_pane = object
             case FileList():
                 match key:
                     case FileListType.PLOTTED:
@@ -66,10 +67,10 @@ class Coordinator:
                 self._file_list_controls = object
             case Plot():
                 self._plot = object
-            case FileInfoPane():
-                self._file_info_pane = object
             case StatusPane():
                 self._status_pane = object
+            case FittingControls():
+                self._fitting_controls = object
             case _:
                 raise RuntimeError(f"Coordinator passed bad object {object}")
 
@@ -165,11 +166,11 @@ class Coordinator:
                 csd_file = file
             file = CSDFile(csd_file, 1)
             rescaling_methods = []
-            if self._plot_controls._use_no_fitting.get():
+            if self._fitting_controls._use_no_fitting.get():
                 rescaling_methods.append(Rescale.NONE)
-            if self._plot_controls._use_linear_fitting.get():
+            if self._fitting_controls._use_linear_fitting.get():
                 rescaling_methods.append(Rescale.LINEAR)
-            if self._plot_controls._use_polynomial_fitting.get():
+            if self._fitting_controls._use_polynomial_fitting.get():
                 rescaling_methods.append(Rescale.POLYNOMIAL)
             self._plot.plot(file, rescaling_methods)
 

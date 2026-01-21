@@ -37,9 +37,6 @@ class PlotControls(tk.Frame):
         self.big_button_size = 2
         self._font = "TkDefaultFont"
         self._subtitle_font = (self._font, 12)
-        self._use_polynomial_fitting = tk.BooleanVar(value=True)
-        self._use_linear_fitting = tk.BooleanVar(value=False)
-        self._use_no_fitting = tk.BooleanVar(value=False)
         self.create_widgets()
 
     def create_widgets(self):
@@ -61,13 +58,37 @@ class PlotControls(tk.Frame):
             widget.grid(
                 row=loc[0], column=loc[1], padx=self.pad, pady=self.pad, sticky="nsew"
             )
+
+    def activate_buttons(self, can_plot: bool = False, can_remove: bool = False):
+        if can_plot:
+            self.btPlotCSD.config(state="normal")  # Enable Plot button
+        else:
+            self.btPlotCSD.config(state="disabled")
+        if can_remove:
+            self.btRemoveFromPlot.config(state="normal")  # Enable Remove button
+        else:
+            self.btRemoveFromPlot.config(state="disabled")
+
+
+class FittingControls(tk.Frame):
+    def __init__(self, owner, *args, **kwargs):
+        super().__init__(owner, *args, **kwargs)
+        self._owner = owner
+        self.pad = 3.0
+        self.big_button_size = 2
+        self._font = "TkDefaultFont"
+        self._subtitle_font = (self._font, 12)
+        self._use_polynomial_fitting = tk.BooleanVar(value=True)
+        self._use_linear_fitting = tk.BooleanVar(value=False)
+        self._use_no_fitting = tk.BooleanVar(value=False)
+        self.create_widgets()
+
+    def create_widgets(self):
         tk.Label(
             self, text="Fitting methods", font=self._subtitle_font, justify="center"
-        ).grid(row=1, column=0, columnspan=self.grid_size()[0], sticky="nsew")
+        ).grid(row=0, column=0, sticky="nsew")
         self.button_frame = tk.Frame(self)
-        self.button_frame.grid(
-            row=2, column=0, columnspan=self.grid_size()[0], sticky="ew"
-        )
+        self.button_frame.grid(row=1, column=0, sticky="ew")
         ttk.Checkbutton(
             self.button_frame,
             text="Polynomial",
@@ -92,13 +113,3 @@ class PlotControls(tk.Frame):
             offvalue=False,
             variable=self._use_no_fitting,
         ).pack(side="left", padx=10)
-
-    def activate_buttons(self, can_plot: bool = False, can_remove: bool = False):
-        if can_plot:
-            self.btPlotCSD.config(state="normal")  # Enable Plot button
-        else:
-            self.btPlotCSD.config(state="disabled")
-        if can_remove:
-            self.btRemoveFromPlot.config(state="normal")  # Enable Remove button
-        else:
-            self.btRemoveFromPlot.config(state="disabled")

@@ -1,4 +1,10 @@
-from .controls import PlotControls, FileListControls, FileList, ElementButtons
+from .controls import (
+    PlotControls,
+    FileListControls,
+    FileList,
+    ElementButtons,
+    FittingControls,
+)
 from .plot import Plot
 from .menu import AppMenu
 from .diagnostic_window import DiagnosticWindow
