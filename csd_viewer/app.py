@@ -28,6 +28,7 @@ from csd_viewer.gui.status_pane import StatusPane
 from csd_viewer.status_bar import StatusBarSingleton
 
 from .gui import (
+    Tools,
     FittingControls,
     FileList,
     PlotControls,
@@ -124,6 +125,7 @@ class CSDViewer(ttk.Window):
         )
         self.plot_controls = PlotControls(self.control_pane)
         self.fitting_controls = FittingControls(self.control_pane)
+        self.tools = Tools(self.control_pane)
 
         self.plot.set_element_indicators(self.element_buttons.element_visibility)
 
@@ -139,6 +141,7 @@ class CSDViewer(ttk.Window):
         self.plotted_file_list.grid(row=1, column=1, sticky="n", padx=10, pady=(0, 10))
         self.plot_controls.pack()
         self.fitting_controls.pack()
+        self.tools.pack()
         self.element_buttons.pack(fill="both", padx=10, pady=10)
         self.strToggleInfoText = ttk.StringVar(value=">>")
 
@@ -148,7 +151,7 @@ class CSDViewer(ttk.Window):
                 self.plot_controls,
                 self.plot,
                 self.fitting_controls,
-                # self.info_pane,
+                self.tools,
             ],
             self.configuration.default_directory,
         )

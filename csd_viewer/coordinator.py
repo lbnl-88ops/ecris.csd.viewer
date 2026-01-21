@@ -11,11 +11,13 @@ from datetime import datetime
 from csd_viewer.files.csd_file import CSDFile
 from csd_viewer.status_bar import update_status_bar
 from csd_viewer.gui import (
+    Tools,
     FileListControls,
     PlotControls,
     FittingControls,
     FileList,
     Plot,
+    FileComparisonWindow,
 )
 from csd_viewer.gui.status_pane import StatusPane, FileMode
 from csd_viewer.files.client import (
@@ -71,6 +73,8 @@ class Coordinator:
                 self._status_pane = object
             case FittingControls():
                 self._fitting_controls = object
+            case Tools():
+                self._tools = object
             case _:
                 raise RuntimeError(f"Coordinator passed bad object {object}")
 
@@ -94,6 +98,10 @@ class Coordinator:
         self._status_pane.file_list_controls.btChangeMode.config(
             command=self.toggle_mode
         )
+        self._tools.btOpenComparisonWindow.config(command=self.open_comparison_window)
+
+    def open_comparison_window(self, *_):
+        self._comparison_window = FileComparisonWindow(self._root_window)
 
     def update_button_states(self, *_):
         if self._file_list.file_listbox.curselection():
@@ -206,6 +214,10 @@ class Coordinator:
         ]
         self._file_list.fill_list_box(files)
         self._plotted_file_list.fill_list_box(self.plotted_files)
+        if self.plotted_files:
+            self._tools.btOpenComparisonWindow.config(state=tk.ACTIVE)
+        else:
+            self._tools.btOpenComparisonWindow.config(state=tk.DISABLED)
         self.update_connection_status()
         self.update_button_states()
         update_status_bar("File list refreshed.")

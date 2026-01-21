@@ -16,8 +16,8 @@ class Rescale(Enum):
 
 
 def create_figure() -> Figure:
-    # fig = Figure((9, 6), tight_layout=True)
-    fig = Figure()
+    fig = Figure(tight_layout=True)
+    # fig = Figure()
     ax = fig.gca()
     ax.grid(alpha=0.5, ls="--")
     font_size = 10

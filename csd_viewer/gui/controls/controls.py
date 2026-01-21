@@ -113,3 +113,24 @@ class FittingControls(tk.Frame):
             offvalue=False,
             variable=self._use_no_fitting,
         ).pack(side="left", padx=10)
+
+
+class Tools(tk.Frame):
+    def __init__(self, owner, *args, **kwargs):
+        super().__init__(owner, *args, **kwargs)
+        self._owner = owner
+        self._font = "TkDefaultFont"
+        self._subtitle_font = (self._font, 12)
+        self.create_widgets()
+
+    def create_widgets(self):
+        tk.Label(self, text="Tools", font=self._subtitle_font, justify="center").pack()
+        self.button_frame = tk.Frame(self)
+        self.button_frame.pack()
+        self.btOpenComparisonWindow = ttk.Button(
+            self.button_frame,
+            text="Compare plotted files",
+            bootstyle="outline+success",
+            state=tk.DISABLED,
+        )
+        self.btOpenComparisonWindow.pack()
