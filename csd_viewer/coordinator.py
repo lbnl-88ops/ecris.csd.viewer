@@ -191,8 +191,14 @@ class Coordinator:
                     messagebox.showerror("Error", "Failed to retrieve files.")
                     self.mode = FileMode.LOCAL
                     self.refresh_file_lists()
+                self._status_pane.file_list_controls.btChangeDirectory.config(
+                    state=tk.DISABLED
+                )
             case _:
                 found_files = list_local_files(self._current_directory)
+                self._status_pane.file_list_controls.btChangeDirectory.config(
+                    state=tk.ACTIVE
+                )
         self._files_available = len(found_files)
         files = [
             f for f in reversed(sorted(found_files)) if f not in self.plotted_files
