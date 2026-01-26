@@ -3,6 +3,7 @@ import tkinter as tk
 from typing import List
 from logging import info
 
+import numpy as np
 import ttkbootstrap as ttk
 
 from ops.ecris.drivers.venus_plc import VENUS_PLC_DATA_DEFINITIONS, GAS_NAMES
@@ -21,9 +22,15 @@ class FileComparisonWindow(tk.Toplevel):
         self.create_widgets()
 
     def create_widgets(self):
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
         self._scrolling_frame = VerticalScrolledFrame(self)
+        self._scrolling_frame.grid(column=0, row=0, sticky="nsew")
         self._info_frame = self._scrolling_frame.interior
-        self._scrolling_frame.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=tk.TRUE)
+        self._info_frame.columnconfigure(0, weight=1)
+        self._info_frame.rowconfigure(0, weight=1)
+        self.tree_view = ttk.Treeview(self._info_frame, height=100)
+        self.tree_view.grid(column=0, row=0, sticky="nsew")
 
     def add_files(self, paths: List[Path]) -> None:
         info(f"Adding files {paths} to comparison window")
@@ -36,6 +43,51 @@ class FileComparisonWindow(tk.Toplevel):
         self._render_data()
 
     def _render_data(self) -> None:
+        labels_by_category = VENUS_PLC_DATA_DEFINITIONS.labels_by_category
+        for category in labels_by_category:
+            self.tree_view.insert("", "end", category, text=category)
+        self.tree_view["columns"] = [file.raw_timestamp for file in self.files]
+        for file in self.files:
+            self.tree_view.column(file.raw_timestamp, anchor=tk.E)
+            self.tree_view.heading(file.raw_timestamp, text=file.formatted_datetime)
+        csds = [file.csd for file in self.files]
+        for category, labels in labels_by_category.items():
+            for label in labels:
+
+                def get_value(settings_dict):
+                    if label.key not in settings_dict:
+                        return ""
+                    value = settings_dict[label.key]
+                    if label.units == "boolean":
+                        value = str(bool(value))
+                    if label.key.startswith("gas_name"):
+                        value = GAS_NAMES[int(value)]
+                    return value
+
+                units = f"({label.units})" if label.units != "nan" else ""
+                values = [get_value(csd.settings) for csd in csds]
+                if label.units != "boolean" and not label.key.startswith("gas_name"):
+                    for i, value in enumerate(values[1:]):
+                        try:
+                            initial, value = float(values[0]), float(value)
+                            if (
+                                np.abs(value - initial)
+                                / (initial if initial != 0 else 1)
+                                < 0.9
+                            ):
+                                values[i + 1] = str(value) + " V"
+                        except ValueError:
+                            continue
+
+                self.tree_view.insert(
+                    category,
+                    "end",
+                    text=f"{label.label} {units}",
+                    values=values,
+                    tags="values",
+                )
+        return
+        return
         x_padding = 10
         row_by_key = {}
         row = 1
@@ -44,9 +96,12 @@ class FileComparisonWindow(tk.Toplevel):
             csd = file.csd
             if csd is None:
                 continue
-            ttk.Label(self._info_frame, text=file.timestamp, justify="center").grid(
-                column=1 + i, row=0, padx=x_padding
-            )
+            ttk.Label(
+                self._info_frame,
+                text=file.timestamp,
+                justify="center",
+                font=(self._font, 10, "bold"),
+            ).grid(column=1 + i, row=0, padx=x_padding)
             for (
                 category,
                 labels,
