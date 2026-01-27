@@ -49,8 +49,12 @@ class FileComparisonWindow(tk.Toplevel):
             self.tree_view.insert("", "end", category, text=category)
         self.tree_view["columns"] = [file.raw_timestamp for file in self.files]
         for file in self.files:
-            self.tree_view.column(file.raw_timestamp, anchor=tk.E)
-            self.tree_view.heading(file.raw_timestamp, text=file.formatted_datetime)
+            if file.raw_timestamp is None:
+                column_id = str(file.path.name)
+            else:
+                column_id = str(file.raw_timestamp)
+            self.tree_view.column(column_id, anchor=tk.E)
+            self.tree_view.heading(column_id, text=file.formatted_datetime)
         csds = [file.csd for file in self.files]
         for category, labels in labels_by_category.items():
             for label in labels:
@@ -66,7 +70,7 @@ class FileComparisonWindow(tk.Toplevel):
                     return value
 
                 units = f"({label.units})" if label.units != "nan" else ""
-                values = [get_value(csd.settings) for csd in csds]
+                values = [get_value(csd.settings) for csd in csds if csd is not None]
                 if label.units != "boolean" and not label.key.startswith("gas_name"):
                     for i, value in enumerate(values[1:]):
                         try:
@@ -88,58 +92,6 @@ class FileComparisonWindow(tk.Toplevel):
                     tags="values",
                 )
         return
-        return
-        x_padding = 10
-        row_by_key = {}
-        row = 1
-        categories_rendered = False
-        for i, file in enumerate(self.files):
-            csd = file.csd
-            if csd is None:
-                continue
-            ttk.Label(
-                self._info_frame,
-                text=file.timestamp,
-                justify="center",
-                font=(self._font, 10, "bold"),
-            ).grid(column=1 + i, row=0, padx=x_padding)
-            for (
-                category,
-                labels,
-            ) in VENUS_PLC_DATA_DEFINITIONS.labels_by_category.items():
-                if not categories_rendered:
-                    ttk.Label(
-                        self._info_frame,
-                        text=category,
-                        justify="left",
-                        font=self._subtitle_font,
-                    ).grid(column=0, row=row, sticky="W", padx=x_padding, pady=(10, 0))
-                    row += 1
-                for label in labels:
-                    if label.key not in row_by_key:
-                        row_by_key[label.key] = row
-                        label_row = row
-                        units = f"({label.units})" if label.units != "nan" else ""
-                        ttk.Label(
-                            self._info_frame,
-                            text=f"{label.label} {units}",
-                            justify="left",
-                        ).grid(column=0, row=row, sticky="W", padx=x_padding)
-                        row += 1
-                    else:
-                        label_row = row_by_key[label.key]
-                    if label.key in csd.settings:
-                        value = csd.settings[label.key]
-                        if label.units == "boolean":
-                            value = str(bool(int(value)))
-                        if label.key.startswith("gas_name"):
-                            value = GAS_NAMES[int(value)]
-                        ttk.Label(
-                            self._info_frame,
-                            text=value,
-                            justify="right",
-                        ).grid(column=1 + i, row=label_row, sticky="e")
-            categories_rendered = True
 
     def on_close(self):
         self.destroy()
