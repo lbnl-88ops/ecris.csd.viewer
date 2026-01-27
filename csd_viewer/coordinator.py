@@ -26,6 +26,7 @@ from csd_viewer.files.client import (
     clear_temp_files,
     API_URL,
     list_local_files,
+    TEMP_FOLDER,
 )
 from csd_viewer.plotting.plot_csd import Rescale
 
@@ -102,7 +103,13 @@ class Coordinator:
 
     def open_comparison_window(self, *_):
         self._comparison_window = FileComparisonWindow(self._root_window)
-        self._comparison_window.add_files(self.plotted_files)
+        if self.mode == FileMode.REMOTE:
+            files_to_compare = [
+                Path(TEMP_FOLDER) / file.name for file in self.plotted_files
+            ]
+        else:
+            files_to_compare = self._root_window
+        self._comparison_window.add_files(files_to_compare)
 
     def update_button_states(self, *_):
         if self._file_list.file_listbox.curselection():
