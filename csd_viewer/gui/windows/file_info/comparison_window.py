@@ -47,7 +47,15 @@ class FileComparisonWindow(tk.Toplevel):
         labels_by_category = VENUS_PLC_DATA_DEFINITIONS.labels_by_category
         for category in labels_by_category:
             self.tree_view.insert("", "end", category, text=category)
+        self.files = sorted(
+            self.files,
+            key=lambda file: file.raw_timestamp
+            if file.raw_timestamp is not None
+            else 0,
+            reverse=True,
+        )
         self.tree_view["columns"] = [file.raw_timestamp for file in self.files]
+
         for file in self.files:
             if file.raw_timestamp is None:
                 column_id = str(file.path.name)
@@ -71,18 +79,6 @@ class FileComparisonWindow(tk.Toplevel):
 
                 units = f"({label.units})" if label.units != "nan" else ""
                 values = [get_value(csd.settings) for csd in csds if csd is not None]
-                if label.units != "boolean" and not label.key.startswith("gas_name"):
-                    for i, value in enumerate(values[1:]):
-                        try:
-                            initial, value = float(values[0]), float(value)
-                            if (
-                                np.abs(value - initial)
-                                / (initial if initial != 0 else 1)
-                                < 0.9
-                            ):
-                                values[i + 1] = str(value) + " V"
-                        except ValueError:
-                            continue
 
                 self.tree_view.insert(
                     category,
