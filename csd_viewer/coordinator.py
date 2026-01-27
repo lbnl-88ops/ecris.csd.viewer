@@ -108,7 +108,7 @@ class Coordinator:
                 Path(TEMP_FOLDER) / file.name for file in self.plotted_files
             ]
         else:
-            files_to_compare = self._root_window
+            files_to_compare = self.plotted_files
         self._comparison_window.add_files(files_to_compare)
 
     def update_button_states(self, *_):
