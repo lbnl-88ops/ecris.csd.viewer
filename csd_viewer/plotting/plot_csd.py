@@ -42,6 +42,7 @@ def plot_file(ax, file: CSDFile, rescale_method=Rescale.NONE) -> Artist | None:
                 [Element("O", "Oxygen", 15.9949, 8)],
                 polynomial_order=4,
                 always_optimize=True,
+                nonlinear_bounds=(-1e-2, 1e-2),
             )
             info("Polynomial fit complete:")
             info(sol)
