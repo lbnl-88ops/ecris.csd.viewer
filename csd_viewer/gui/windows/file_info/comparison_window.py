@@ -13,12 +13,13 @@ from csd_viewer.gui.windows.vertical_scroll_frame import VerticalScrolledFrame
 
 class FileComparisonWindow(tk.Toplevel):
     def __init__(self, owner, *args, **kwargs):
-        super().__init__(owner, takefocus=True)
+        super().__init__(owner, takefocus=True, *args, **kwargs)
         self._font = "TkDefaultFont"
         self._subtitle_font = (self._font, 12)
         self.title("CSD File Comparison")
         self.protocol("WM_DELETE_WINDOW", self.on_close)
         self.files: List[CSDFile] = []
+        self.geometry(owner.winfo_geometry())
         self.create_widgets()
 
     def create_widgets(self):
