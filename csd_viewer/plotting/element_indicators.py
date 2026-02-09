@@ -121,7 +121,27 @@ class ElementIndicator:
                     )
                     figure.draw_artist(line)
 
+    def _update_values(self, figure: Figure, y_value: float, lines: bool) -> None:
+        ax = figure.gca()
+        max_mq = ax.get_xlim()[1]
+        mask = [mq < max_mq for mq in self._m_over_q_values]
+        m_over_q = list(compress(self._m_over_q_values, mask))
+        assert self.marker_artist is not None
+        self.marker_artist.set_ydata([y_value] * len(m_over_q))
+        for label in self._label_artists.values():
+            label.set_y(self._get_label_y_value(y_value, ax.get_ylim()))
+        self.element_artist.set_y(
+            self._get_element_y_value(figure, y_value, ax.get_ylim())
+        )
+        figure.draw_artist(self.marker_artist)
+        figure.draw_artist(self.element_artist)
+        self._draw_labels(figure, lines)
+
     def draw(self, figure: Figure, y_value: float, lines=False) -> None:
+        if self.marker_artist is not None:
+            self._update_values(figure, y_value, lines)
+            return
+
         ax = figure.gca()
         max_mq = ax.get_xlim()[1]
         mask = [mq < max_mq for mq in self._m_over_q_values]
