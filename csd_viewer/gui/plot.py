@@ -41,7 +41,7 @@ class Plot(tk.Frame):
         )
 
     def set_element_indicators(self, elements: Dict[Element, tk.BooleanVar]):
-        self.element_indicators = add_element_indicators(elements, self._figure)
+        self.element_indicators = add_element_indicators(elements)
 
         self._figure.gca().set_prop_cycle(None)
 
@@ -49,7 +49,7 @@ class Plot(tk.Frame):
         self, element: Element, visibility_boolean: tk.BooleanVar
     ):
         self.element_indicators.extend(
-            add_element_indicators({element: visibility_boolean}, self._figure)
+            add_element_indicators({element: visibility_boolean})
         )
 
     def remove_element_indicator(self, element):
@@ -129,13 +129,10 @@ class Plot(tk.Frame):
         y_min, y_max = ax.get_ylim()
         delta_y_height = 0.1 * abs(y_max - y_min)
         for i, element in enumerate(
-            reversed(
-                sorted(visible_elements, key=lambda e: len(e.marker_artist.get_xdata()))
-            )
+            reversed(sorted(visible_elements, key=lambda e: len(e._m_over_q_values)))
         ):
-            element.set_y_value(fig, delta_y_height * (i + 1) + y_min, ax.get_ylim())
-            element.set_x_scale(fig)
-            element.draw(fig, lines=self.draw_element_lines.get())
+            y_value = delta_y_height * (i + 1) + y_min
+            element.draw(fig, y_value=y_value, lines=self.draw_element_lines.get())
         handles, labels = ax.get_legend_handles_labels()
         if handles and any(not l.startswith("_") for l in labels):
             ax.legend(handles, labels, fontsize=10)
