@@ -1,5 +1,7 @@
 from enum import Enum, auto
 
+import numpy as np
+
 from logging import info
 from matplotlib.figure import Figure
 from matplotlib.artist import Artist
@@ -22,7 +24,7 @@ def create_figure() -> Figure:
     ax.grid(alpha=0.5, ls="--")
     font_size = 10
     ax.tick_params(labelsize=font_size)
-    ax.set_xticks(range(1, 11))
+    ax.set_xticks(range(1, 10))
     ax.set_xlabel("M/Q", fontsize=font_size)
     ax.set_ylabel(r"current [$\mu$A]", fontsize=font_size)
     ax.set_facecolor("white")
@@ -60,4 +62,8 @@ def plot_file(ax, file: CSDFile, rescale_method=Rescale.NONE) -> Artist | None:
             label = file.formatted_datetime + " (not rescaled)"
 
     (ln,) = ax.plot(csd.m_over_q, csd.beam_current, label=label, animated=True)
+    current_xtick_max = ax.get_xticks()[-1]
+    x_tick_max = int(np.max(csd.m_over_q)) + 2
+    if x_tick_max > current_xtick_max:
+        ax.set_xticks(range(0, x_tick_max))
     return ln
