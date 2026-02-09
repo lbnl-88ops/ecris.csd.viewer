@@ -142,9 +142,12 @@ class ElementIndicator:
         old_mask = [mq < self._max_plotted_mq for mq in self._m_over_q_values]
         mask = [mq < max_mq for mq in self._m_over_q_values]
         redraw = sum(old_mask) != sum(mask)
-        if not redraw and self.marker_artist is not None:
-            self._update_values(figure, y_value, lines)
-            return
+        if self.marker_artist is not None:
+            if not redraw:
+                self._update_values(figure, y_value, lines)
+                return
+            else:
+                self._remove_artists()
 
         self._max_plotted_mq = max_mq
         m_over_q = list(compress(self._m_over_q_values, mask))
