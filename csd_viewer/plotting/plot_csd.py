@@ -16,8 +16,8 @@ class Rescale(Enum):
 
 
 def create_figure() -> Figure:
-    # fig = Figure((9, 6), tight_layout=True)
-    fig = Figure()
+    fig = Figure(tight_layout=True)
+    # fig = Figure()
     ax = fig.gca()
     ax.grid(alpha=0.5, ls="--")
     font_size = 10
@@ -40,8 +40,9 @@ def plot_file(ax, file: CSDFile, rescale_method=Rescale.NONE) -> Artist | None:
             csd.m_over_q, sol = polynomial_fit_mq(
                 csd,
                 [Element("O", "Oxygen", 15.9949, 8)],
-                polynomial_order=3,
+                polynomial_order=4,
                 always_optimize=True,
+                nonlinear_bounds=(-1e-2, 1e-2),
             )
             info("Polynomial fit complete:")
             info(sol)

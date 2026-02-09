@@ -166,7 +166,7 @@ def add_element_indicators(elements: Dict[Element, tk.BooleanVar], figure: Figur
         element_artist = ax.text(
             1.01,
             0,
-            f"{element.symbol}-{element.atomic_mass}",
+            f"{element.symbol}-{round(element.atomic_mass)}",
             transform=ax.transAxes,
             weight="bold",
             animated=True,
@@ -176,4 +176,3 @@ def add_element_indicators(elements: Dict[Element, tk.BooleanVar], figure: Figur
             ElementIndicator(ln, labels, element, visibility, element_artist)
         )
     return element_indicators
-

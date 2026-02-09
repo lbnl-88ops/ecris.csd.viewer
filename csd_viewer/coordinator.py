@@ -5,17 +5,20 @@ from tkinter import filedialog
 from typing import Any, List, Optional
 import tkinter as tk
 from tkinter import messagebox
+import os
 import time
 from datetime import datetime
 
 from csd_viewer.files.csd_file import CSDFile
 from csd_viewer.status_bar import update_status_bar
 from csd_viewer.gui import (
+    Tools,
     FileListControls,
     PlotControls,
     FittingControls,
     FileList,
     Plot,
+    FileComparisonWindow,
 )
 from csd_viewer.gui.status_pane import StatusPane, FileMode
 from csd_viewer.files.client import (
@@ -24,6 +27,7 @@ from csd_viewer.files.client import (
     clear_temp_files,
     API_URL,
     list_local_files,
+    TEMP_FOLDER,
 )
 from csd_viewer.plotting.plot_csd import Rescale
 
@@ -71,6 +75,8 @@ class Coordinator:
                 self._status_pane = object
             case FittingControls():
                 self._fitting_controls = object
+            case Tools():
+                self._tools = object
             case _:
                 raise RuntimeError(f"Coordinator passed bad object {object}")
 
@@ -94,6 +100,17 @@ class Coordinator:
         self._status_pane.file_list_controls.btChangeMode.config(
             command=self.toggle_mode
         )
+        self._tools.btOpenComparisonWindow.config(command=self.open_comparison_window)
+
+    def open_comparison_window(self, *_):
+        self._comparison_window = FileComparisonWindow(self._root_window)
+        if self.mode == FileMode.REMOTE:
+            files_to_compare = [
+                Path(TEMP_FOLDER) / file.name for file in self.plotted_files
+            ]
+        else:
+            files_to_compare = self.plotted_files
+        self._comparison_window.add_files(files_to_compare)
 
     def update_button_states(self, *_):
         if self._file_list.file_listbox.curselection():
@@ -112,7 +129,7 @@ class Coordinator:
                 FileMode.REMOTE, f"Connected to {API_URL}\n{update_status}"
             )
             self._status_pane.file_list_controls.btChangeMode.config(
-                text="Change to local"
+                text="Disconnect from remote"
             )
         if self.mode == FileMode.LOCAL:
             self._status_pane.set_file_mode(
@@ -120,7 +137,7 @@ class Coordinator:
                 f"Browsing directory {self._current_directory}\n{update_status}",
             )
             self._status_pane.file_list_controls.btChangeMode.config(
-                text="Change to remote"
+                text="Connect to remote"
             )
 
     def initialize(self) -> None:
@@ -158,13 +175,20 @@ class Coordinator:
     def plot_file(self):
         file = self._file_list.get_selected_file()
         if file is not None:
-            self.plotted_files.append(file)
-            self.refresh_file_lists()
             if self.mode == FileMode.REMOTE:
                 csd_file = download_filepair(file)
             else:
                 csd_file = file
-            file = CSDFile(csd_file, 1)
+            file_size = os.path.getsize(csd_file)
+            if file_size < 1:
+                messagebox.showerror(
+                    "File invalid",
+                    "Invalid file: file size is 0. CSD may still be in progress.",
+                )
+                return
+            self.plotted_files.append(file)
+            self.refresh_file_lists()
+            file = CSDFile(csd_file, file_size)
             rescaling_methods = []
             if self._fitting_controls._use_no_fitting.get():
                 rescaling_methods.append(Rescale.NONE)
@@ -189,12 +213,14 @@ class Coordinator:
             case FileMode.REMOTE:
                 found_files = list_files()
                 if not found_files:
-                    messagebox.showerror("Error", "Failed to retrieve files.")
+                    messagebox.showerror("Error", "Failed to connect to remote server.")
                     self.mode = FileMode.LOCAL
                     self.refresh_file_lists()
-                self._status_pane.file_list_controls.btChangeDirectory.config(
-                    state=tk.DISABLED
-                )
+                    return
+                else:
+                    self._status_pane.file_list_controls.btChangeDirectory.config(
+                        state=tk.DISABLED
+                    )
             case _:
                 found_files = list_local_files(self._current_directory)
                 self._status_pane.file_list_controls.btChangeDirectory.config(
@@ -206,6 +232,10 @@ class Coordinator:
         ]
         self._file_list.fill_list_box(files)
         self._plotted_file_list.fill_list_box(self.plotted_files)
+        if self.plotted_files:
+            self._tools.btOpenComparisonWindow.config(state=tk.ACTIVE)
+        else:
+            self._tools.btOpenComparisonWindow.config(state=tk.DISABLED)
         self.update_connection_status()
         self.update_button_states()
         update_status_bar("File list refreshed.")
