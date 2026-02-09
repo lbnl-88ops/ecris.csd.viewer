@@ -55,10 +55,7 @@ class Plot(tk.Frame):
     def remove_element_indicator(self, element):
         for indicator in self.element_indicators:
             if indicator.element == element:
-                indicator.element_artist.remove()
-                indicator.marker_artist.remove()
-                for label in indicator.label_artists:
-                    label.artist.remove()
+                indicator._remove_artists()
                 self.element_indicators.remove(indicator)
                 break
 
