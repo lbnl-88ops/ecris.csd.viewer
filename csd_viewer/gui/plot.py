@@ -122,9 +122,7 @@ class Plot(tk.Frame):
 
         # Determine how many elements are visible
         visible_elements = [
-            element
-            for element in self.element_indicators
-            if element.is_visible(ax.get_xlim()) and element.is_plotted
+            element for element in self.element_indicators if element.is_plotted
         ]
         y_min, y_max = ax.get_ylim()
         delta_y_height = 0.1 * abs(y_max - y_min)

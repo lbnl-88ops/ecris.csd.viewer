@@ -38,6 +38,7 @@ class ElementIndicator:
         self._marker = None
         self._label_artists: Dict[float, Artist] = {}
         self.color = None
+        self._max_plotted_mq = 0
 
     def is_visible(self, x_limits):
         x_min, x_max = x_limits
@@ -69,11 +70,12 @@ class ElementIndicator:
             for label in self._label_artists.values():
                 label.remove()
             self._label_artists = {}
+        if self.element_artist is not None:
+            self.element_artist.remove()
+            self.element_artist = None
 
     def _set_label(self, *args, **kwargs):
         if self.marker_artist is not None:
-            self.marker_artist.set_label(f"_{self.element.name}")
-            info(f"is_plotted: {self._is_plotted.get()}")
             self._remove_artists()
 
     def _draw_labels(self, figure: Figure, plot_lines: bool):
@@ -123,11 +125,8 @@ class ElementIndicator:
 
     def _update_values(self, figure: Figure, y_value: float, lines: bool) -> None:
         ax = figure.gca()
-        max_mq = ax.get_xlim()[1]
-        mask = [mq < max_mq for mq in self._m_over_q_values]
-        m_over_q = list(compress(self._m_over_q_values, mask))
         assert self.marker_artist is not None
-        self.marker_artist.set_ydata([y_value] * len(m_over_q))
+        self.marker_artist.set_ydata([y_value] * len(self.marker_artist.get_xdata()))
         for label in self._label_artists.values():
             label.set_y(self._get_label_y_value(y_value, ax.get_ylim()))
         self.element_artist.set_y(
@@ -138,13 +137,16 @@ class ElementIndicator:
         self._draw_labels(figure, lines)
 
     def draw(self, figure: Figure, y_value: float, lines=False) -> None:
-        if self.marker_artist is not None:
+        ax = figure.gca()
+        max_mq = ax.get_xlim()[1]
+        old_mask = [mq < self._max_plotted_mq for mq in self._m_over_q_values]
+        mask = [mq < max_mq for mq in self._m_over_q_values]
+        redraw = sum(old_mask) != sum(mask)
+        if not redraw and self.marker_artist is not None:
             self._update_values(figure, y_value, lines)
             return
 
-        ax = figure.gca()
-        max_mq = ax.get_xlim()[1]
-        mask = [mq < max_mq for mq in self._m_over_q_values]
+        self._max_plotted_mq = max_mq
         m_over_q = list(compress(self._m_over_q_values, mask))
         q_values = list(compress(range(1, self.element.atomic_number + 1), mask))
         if self._marker is None:
@@ -160,6 +162,7 @@ class ElementIndicator:
                 markeredgecolor="black",
                 animated=True,
                 color=self.color,
+                clip_on=True,
             )
         else:
             (self.marker_artist,) = ax.plot(
@@ -170,8 +173,10 @@ class ElementIndicator:
                 ls="",
                 markeredgecolor="black",
                 animated=True,
+                clip_on=True,
             )
             self.color = self.marker_artist.get_color()
+        self.marker_artist.set_label(f"_{self.element.name}")
         for x, q in zip(m_over_q, q_values):
             txt = ax.text(
                 x,
