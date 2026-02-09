@@ -19,10 +19,10 @@ jobs:
           python-version: 3.13
       - name: Install dependencies
         run: |
-          pip install pipenv pyinstaller
-          pipenv install --system
+          pip install poetry
+          poetry install --with windows-build
       - name: Build executable
-        run: pyinstaller --noconsole --onefile csd_viewer.py
+        run: poetry run pyinstaller --noconsole --onefile csd_viewer.py
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v2

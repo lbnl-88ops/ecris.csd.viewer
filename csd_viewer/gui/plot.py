@@ -1,43 +1,56 @@
-from logging import info
+from logging import info, debug
 import tkinter as tk
 from typing import Dict, List
+from pathlib import Path
 
+from matplotlib.artist import Artist
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
-from ..plotting.plot_csd import create_figure, file_artist
+from matplotlib.widgets import Cursor
+from ..plotting.plot_csd import create_figure, plot_file, Rescale
 from csd_viewer.files import CSDFile
-from csd_viewer.plotting.element_indicators import ElementIndicator, add_element_indicators
+from csd_viewer.plotting.element_indicators import (
+    ElementIndicator,
+    add_element_indicators,
+)
 from ops.ecris.analysis.model import Element
+
 
 class Plot(tk.Frame):
     def __init__(self, owner, *args, **kwargs):
         tk.Frame.__init__(self, owner, relief=tk.RAISED, *args, **kwargs)
         self._is_empty = True
-        self._plotted_files: List[CSDFile] = []
         self._bg = None
         self.element_indicators: List[ElementIndicator] = []
-        self.create_widgets()
         self.draw_element_lines = tk.BooleanVar(value=False)
         self.use_blitting = tk.BooleanVar(value=False)
+        self._file_artists: Dict[str, List[Artist]] = {}
+        self.create_widgets()
 
     def create_widgets(self):
         self._figure = create_figure()
         self.canvas = FigureCanvasTkAgg(self._figure, master=self)
-        self.canvas.mpl_connect('draw_event', self.on_draw)
-        self.canvas.mpl_connect('resize_event', self._update)
+        self.canvas.mpl_connect("draw_event", self.on_draw)
+        self.canvas.mpl_connect("resize_event", self.update)
         self.canvas.draw()
         self.canvas.get_tk_widget().pack(fill="both", expand=True)
         self.toolbar = NavigationToolbar2Tk(self.canvas, self)
         self.toolbar.update()
-        self.canvas.get_tk_widget().pack()
+        # self.canvas.get_tk_widget().pack()
+        self.cursor = Cursor(
+            self._figure.gca(), useblit=True, color="blue", linewidth=0.5
+        )
 
     def set_element_indicators(self, elements: Dict[Element, tk.BooleanVar]):
-        self.element_indicators = add_element_indicators(elements, self._figure) 
+        self.element_indicators = add_element_indicators(elements, self._figure)
 
-    def add_element_indicator(self, 
-                              element: Element, 
-                              visibility_boolean: tk.BooleanVar):
-        self.element_indicators.extend(add_element_indicators({element: visibility_boolean},
-                                                              self._figure))
+        self._figure.gca().set_prop_cycle(None)
+
+    def add_element_indicator(
+        self, element: Element, visibility_boolean: tk.BooleanVar
+    ):
+        self.element_indicators.extend(
+            add_element_indicators({element: visibility_boolean}, self._figure)
+        )
 
     def remove_element_indicator(self, element):
         for indicator in self.element_indicators:
@@ -49,37 +62,44 @@ class Plot(tk.Frame):
                 self.element_indicators.remove(indicator)
                 break
 
-    def plotted_files(self):
-        return self._plotted_files
-
-    def remove_file(self, file: CSDFile):
+    def remove_file(self, file: Path):
         self._remove_files([file])
 
-    def _remove_files(self, files: List[CSDFile]):
+    def _remove_files(self, files: List[Path] | List[str]):
         ax = self.canvas.figure.gca()
         for to_remove in files:
-            # if to_remove not in self._plotted_files:
-                # continue
+            if isinstance(to_remove, Path):
+                to_remove = to_remove.name
             try:
-                idx = self._plotted_files.index(to_remove)
-            except ValueError:
+                artists = self._file_artists.pop(to_remove)
+            except KeyError:
+                info(f"Cannot remove file, not found: {to_remove}")
+                info(self._file_artists)
                 continue
-            self._plotted_files[idx].clear_artist()
-            self._plotted_files.remove(to_remove)
-        if not self._plotted_files:
+            for a in artists:
+                a.remove()
+        if not self._file_artists:
             if ax.get_legend() is not None:
                 ax.get_legend().remove()
             ax.set_prop_cycle(None)
         self.update()
 
     def clear_plot(self):
-        self._remove_files(list(reversed(self._plotted_files)))
+        self._remove_files(list(self._file_artists.keys()))
 
-    def plot(self, file: CSDFile, rescale: bool = True):
-        artist = file_artist(self._figure.gca(), file, rescale)
-        if artist is not None:
-            file.artist = artist
-            self._plotted_files.append(file)
+    def plot(self, file: CSDFile, rescaling_methods: List[Rescale]):
+        debug(f"Plotting file {file.path}")
+        artists = [
+            a
+            for a in [
+                plot_file(self._figure.gca(), file, method)
+                for method in rescaling_methods
+            ]
+            if a is not None
+        ]
+        if artists:
+            debug("Artist was returned")
+            self._file_artists[file.path.name] = artists
             self.update()
 
     def autoscale(self):
@@ -96,32 +116,32 @@ class Plot(tk.Frame):
     def _draw_animated(self, rescale: bool = False):
         fig = self.canvas.figure
         ax = fig.gca()
-        for artist in [file.artist for file in self._plotted_files
-                       if file.artist is not None]:
-            fig.draw_artist(artist)
-        info(f'Updated plot with {len(self._plotted_files)} files')
+        for artists in self._file_artists.values():
+            for artist in artists:
+                fig.draw_artist(artist)
 
         # Determine how many elements are visible
-        visible_elements = [element for element in 
-                            self.element_indicators 
-                            if element.is_visible(ax.get_xlim()) and element.is_plotted]
+        visible_elements = [
+            element
+            for element in self.element_indicators
+            if element.is_visible(ax.get_xlim()) and element.is_plotted
+        ]
         y_min, y_max = ax.get_ylim()
-        delta_y_height = 0.1*abs(y_max - y_min)
-        for i, element in enumerate(reversed(sorted(visible_elements, 
-                                                    key=lambda e: len(e.marker_artist.get_xdata())))):
-            element.set_y_value(fig, delta_y_height*(i+1) + y_min, ax.get_ylim())
+        delta_y_height = 0.1 * abs(y_max - y_min)
+        for i, element in enumerate(
+            reversed(
+                sorted(visible_elements, key=lambda e: len(e.marker_artist.get_xdata()))
+            )
+        ):
+            element.set_y_value(fig, delta_y_height * (i + 1) + y_min, ax.get_ylim())
             element.set_x_scale(fig)
             element.draw(fig, lines=self.draw_element_lines.get())
         handles, labels = ax.get_legend_handles_labels()
-        if handles and any(not l.startswith('_') for l in labels):
-            ax.legend(handles, labels)
+        if handles and any(not l.startswith("_") for l in labels):
+            ax.legend(handles, labels, fontsize=10)
         ax.set_ybound(lower=0)
 
-    def update(self):
-        info(f'Updating plot: plotted files: {len(self._plotted_files)}, element indicators: {len(self.element_indicators)}')
-        self._update(None)
-
-    def _update(self, event):
+    def update(self, *_):
         if self._bg is None:
             self.on_draw(None)
         else:
@@ -132,8 +152,3 @@ class Plot(tk.Frame):
             else:
                 self.canvas.draw()
         self.canvas.flush_events()
-        
-        
-        
-    # def on_resize(self, event):
-        # add_element_indicators(PERSISTANT_ELEMENTS, self.canvas.figure)
