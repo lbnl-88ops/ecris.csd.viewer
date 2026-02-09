@@ -134,7 +134,7 @@ def add_element_indicators(elements: Dict[Element, tk.BooleanVar], figure: Figur
         labels = []
         q_values = range(1, element.atomic_number + 1)
         m_over_q = [element.atomic_mass / q for q in q_values]
-        mask = [mq < 10 for mq in m_over_q]
+        mask = [mq < ax.get_xlim()[1] for mq in m_over_q]
         q_values = list(compress(q_values, mask))
         m_over_q = list(compress(m_over_q, mask))
         height = 0
