@@ -37,6 +37,7 @@ class ElementIndicator:
         # self.element_artist = element_artist
         self._marker = None
         self._label_artists: Dict[float, Artist] = {}
+        self._line_artists = []
         self.color = None
         self._max_plotted_mq = 0
 
@@ -73,6 +74,8 @@ class ElementIndicator:
         if self.element_artist is not None:
             self.element_artist.remove()
             self.element_artist = None
+        for line in self._line_artists:
+            line.remove()
 
     def _set_label(self, *args, **kwargs):
         if self.marker_artist is not None:
@@ -122,6 +125,7 @@ class ElementIndicator:
                         animated=True,
                     )
                     figure.draw_artist(line)
+                    self._line_artists.append(line)
 
     def _update_values(self, figure: Figure, y_value: float, lines: bool) -> None:
         ax = figure.gca()
