@@ -726,7 +726,7 @@ resolved_reference = "f7106359d1faaad85e5460beb5e4a2990b3b8fcb"
 
 [[package]]
 name = "ops.ecris.analysis"
-version = "1.3.0"
+version = "1.4.1"
 description = "Analysis tools for various ECRIS projects."
 optional = false
 python-versions = ">=3.9"
@@ -750,8 +750,8 @@ dev = ["pytest"]
 [package.source]
 type = "git"
 url = "https://github.com/lbnl-88ops/ecris.analysis.git"
-reference = "v1.4.0"
-resolved_reference = "515a28e7e76d6b5ce7911438da878ce3327555f0"
+reference = "v1.4.1"
+resolved_reference = "24dd67d2b5c9be9372d5c67bb66c7640395bf7cf"
 
 [[package]]
 name = "packaging"
@@ -1717,4 +1717,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13,<3.14"
-content-hash = "f1faedc6cc928c9105bb6ba009d65443600748ea5c5026cf6c8f66434b33ae8d"
+content-hash = "2925974708f9a517a74659d9c8a03039fc042793325e2ea946054c9f3f1a7cd6"
