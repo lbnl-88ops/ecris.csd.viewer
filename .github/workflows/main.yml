@@ -29,27 +29,3 @@ jobs:
         with:
           files: ./dist/csd_viewer.exe
           prerelease: ${{ github.ref_name == 'main' && 'false' || 'true'}}
-  ubuntu_build:
-    name: Ubuntu Build
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4 
-      - name: Set up python
-        uses: actions/setup-python@v5 
-        with:
-          python-version: 3.13
-      - name: Install dependencies
-        run: |
-          pip install poetry
-          poetry install --with windows-build
-      - name: Build executable
-        run: poetry run pyinstaller --noconsole --collect-all ttkbootstrap --name csd_viewer --onefile app.py
-      - name: Create Release
-        id: create_release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: ./dist/csd_viewer
-          prerelease: ${{ github.ref_name == 'main' && 'false' || 'true'}}
