@@ -26,6 +26,7 @@ class AppConfiguration:
     window_height: int = 800
     window_x: Optional[int] = None
     window_y: Optional[int] = None
+    sash_position: Optional[int] = None
 
 def load_configuration() -> AppConfiguration | None:
     if not CONFIG_FULLPATH.exists():
@@ -55,7 +56,8 @@ def load_configuration() -> AppConfiguration | None:
                     window_width=config.get('window_width', 1200),
                     window_height=config.get('window_height', 800),
                     window_x=config.get('window_x'),
-                    window_y=config.get('window_y')
+                    window_y=config.get('window_y'),
+                    sash_position=config.get('sash_position')
                 )
         except tomllib.TOMLDecodeError:
             messagebox.showerror('Error', 
@@ -74,6 +76,8 @@ def save_configuration(config: AppConfiguration):
         lines.append(f'window_x = {config.window_x}')
     if config.window_y is not None:
         lines.append(f'window_y = {config.window_y}')
+    if config.sash_position is not None:
+        lines.append(f'sash_position = {config.sash_position}')
     
     lines.append('')
     

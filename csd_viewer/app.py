@@ -83,6 +83,11 @@ class CSDViewer(ttk.Window):
         self._info_visible = False
         self.protocol("WM_DELETE_WINDOW", self.quit)
         self.update()
+        if self.configuration.sash_position is not None:
+            try:
+                self.paned_window.sashpos(0, self.configuration.sash_position)
+            except Exception as e:
+                logging.error(f"Error setting sash position: {e}")
         self.minsize(800, 600)
 
     def quit(self):
@@ -91,6 +96,12 @@ class CSDViewer(ttk.Window):
         self.configuration.window_height = self.winfo_height()
         self.configuration.window_x = self.winfo_x()
         self.configuration.window_y = self.winfo_y()
+
+        try:
+            self.configuration.sash_position = self.paned_window.sashpos(0)
+        except Exception as e:
+            logging.error(f"Error getting sash position: {e}")
+
         save_configuration(self.configuration)
 
         clear_temp_files()
