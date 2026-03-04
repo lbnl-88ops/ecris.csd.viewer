@@ -43,7 +43,7 @@ from .gui import (
 from .gui.windows.vertical_scroll_frame import VerticalScrolledFrame
 
 
-__version__ = "1.3.0-beta.3.1"
+__version__ = "1.3.0-beta.4"
 
 matplotlib.rc("font", size=14)
 applyPatch()
