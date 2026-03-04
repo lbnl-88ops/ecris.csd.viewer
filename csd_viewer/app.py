@@ -3,6 +3,7 @@
 import logging
 from pathlib import Path
 import tkinter as tk
+from tkinter import ttk as ttk_main
 from tkinter import messagebox
 from tkinter import filedialog
 import matplotlib
@@ -20,6 +21,7 @@ from csd_viewer.files.csd_file import CSDFile, export_to_file
 from csd_viewer.files.configuration import (
     AppConfiguration,
     create_configuration,
+    save_configuration,
     CONFIG_FILEPATH,
 )
 from csd_viewer.gui.style.patchMatplotlib import applyPatch
@@ -38,6 +40,7 @@ from .gui import (
     DiagnosticWindow,
     FileInfoPane,
 )
+from .gui.windows.vertical_scroll_frame import VerticalScrolledFrame
 
 
 __version__ = "1.3.0-beta.3.1"
@@ -56,13 +59,22 @@ logging.basicConfig(
 class CSDViewer(ttk.Window):
     def __init__(self, configuration: AppConfiguration | None):
         super().__init__()
-        screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
-        # self.geometry(f"{int(screen_width * 0.5)}x{int(screen_height * 0.5)}")
-        # self.geometry("800x600")
         self.configuration = configuration
         if self.configuration is None:
             self.configuration = create_configuration()
+
+        if (
+            self.configuration.window_x is not None
+            and self.configuration.window_y is not None
+        ):
+            self.geometry(
+                f"{self.configuration.window_width}x{self.configuration.window_height}+{self.configuration.window_x}+{self.configuration.window_y}"
+            )
+        else:
+            self.geometry(
+                f"{self.configuration.window_width}x{self.configuration.window_height}"
+            )
+
         self.title(f"CSD Viewer (v{__version__})")
         self.pad = 5.0
         self.variable_elements = VARIABLE_ELEMENTS + self.configuration.custom_elements
@@ -71,9 +83,16 @@ class CSDViewer(ttk.Window):
         self._info_visible = False
         self.protocol("WM_DELETE_WINDOW", self.quit)
         self.update()
-        self.minsize(self.winfo_width(), self.winfo_height())
+        self.minsize(800, 600)
 
     def quit(self):
+        # Save geometry
+        self.configuration.window_width = self.winfo_width()
+        self.configuration.window_height = self.winfo_height()
+        self.configuration.window_x = self.winfo_x()
+        self.configuration.window_y = self.winfo_y()
+        save_configuration(self.configuration)
+
         clear_temp_files()
         self.plot.destroy()
         self.destroy()
@@ -98,34 +117,41 @@ class CSDViewer(ttk.Window):
         )
 
         self.status_label.pack(side=tk.LEFT)
+        self.paned_window = ttk.Panedwindow(
+            self.main_frame,
+            orient=tk.HORIZONTAL,
+            # bootstyle="secondary",
+        )
 
-        self.plot = Plot(self.main_frame)
-        self.control_pane = ttk.Frame(self.main_frame)
-        # self.info_pane = FileInfoPane(self.main_frame)
-        # self.btToggleFileInfo = ttk.Button(
-        #     self.main_frame,
-        #     textvariable=self.strToggleInfoText,
-        #     command=self.info_pane.toggle_visibility,
-        #     width=2,
-        #     bootstyle="link-secondary",
-        # )
+        self.paned_window.pack(fill=tk.BOTH, expand=True)
+        ttk_main.Style().configure(
+            "Sash",
+            sashthickness=10,
+            gripcount=4,
+        )
 
-        self.plot.pack(side="left", fill="both", expand=True)
-        self.control_pane.pack(side="right", fill="y", expand=False)
+        self.plot = Plot(self.paned_window)
+        self.control_pane = VerticalScrolledFrame(self.paned_window)
+
+        self.paned_window.add(self.plot, weight=3)
+        self.paned_window.add(self.control_pane, weight=1)  # , minsize=400)
         # self.btToggleFileInfo.pack(fill="y", side="left")
 
-        self.status_pane = StatusPane(self.control_pane)
-        self.file_list_pane = ttk.Frame(self.control_pane)
+        self.status_pane = StatusPane(self.control_pane.interior)
+        self.file_list_pane = ttk.Frame(self.control_pane.interior)
 
         self.file_list = FileList(self.file_list_pane)
         self.plotted_file_list = FileList(self.file_list_pane)
 
         self.element_buttons = ElementButtons(
-            self.control_pane, self.plot, PERSISTANT_ELEMENTS, self.variable_elements
+            self.control_pane.interior,
+            self.plot,
+            PERSISTANT_ELEMENTS,
+            self.variable_elements,
         )
-        self.plot_controls = PlotControls(self.control_pane)
-        self.fitting_controls = FittingControls(self.control_pane)
-        self.tools = Tools(self.control_pane)
+        self.plot_controls = PlotControls(self.control_pane.interior)
+        self.fitting_controls = FittingControls(self.control_pane.interior)
+        self.tools = Tools(self.control_pane.interior)
 
         self.plot.set_element_indicators(self.element_buttons.element_visibility)
 
