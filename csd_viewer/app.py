@@ -241,10 +241,10 @@ class CSDViewer(ttk.Window):
         self.coordinator.attach(self.status_pane)
 
     def export_data(self):
-        # if len(self.plot.plotted_files()) > 1:
+        # if len(self.coordinator.plotted_files) > 1:
         # messagebox.showerror('Error', 'Can only export a single file. Please remove all but one datafile from the plot.')
         # return
-        if len(self.plot.plotted_files()) == 0:
+        if len(self.coordinator.plotted_files) == 0:
             messagebox.showerror("Error", "No plotted data to export.")
             return
         else:
@@ -258,7 +258,9 @@ class CSDViewer(ttk.Window):
                 logging.info(f"Exporting data to {export_file.name}")
                 with export_file:
                     try:
-                        export_to_file(export_file, self.plot.plotted_files())
+                        # Convert Paths to CSDFile objects for export
+                        csd_files = [CSDFile(p, os.path.getsize(p)) for p in self.coordinator.plotted_files]
+                        export_to_file(export_file, csd_files)
                         logging.info("Export successful")
                         messagebox.showinfo("Success", "Export successful.")
                     except ValueError as e:
