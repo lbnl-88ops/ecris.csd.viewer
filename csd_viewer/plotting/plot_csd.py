@@ -18,8 +18,13 @@ class Rescale(Enum):
 
 
 def create_figure() -> Figure:
-    fig = Figure(tight_layout=True)
-    # fig = Figure()
+    # "constrained" layout recomputes on every draw/resize and degrades
+    # gracefully (shrinking margins) instead of tight_layout's one-shot
+    # calculation, which emits "Tight layout not applied" warnings whenever
+    # the canvas is smaller than the axes decorations require (e.g. during
+    # the initial Tk draw, before the window has been sized, or when the
+    # user drags the pane divider small).
+    fig = Figure(layout="constrained")
     ax = fig.gca()
     ax.grid(alpha=0.5, ls="--")
     font_size = 10
@@ -46,12 +51,15 @@ def plot_file(ax, file: CSDFile, rescale_method=Rescale.NONE) -> Artist | None:
                 always_optimize=True,
                 nonlinear_bounds=(-1e-2, 1e-2),
             )
-            info("Polynomial fit complete:")
-            info(sol)
-            if sol.success:
-                update_status_bar("Polynomial fit succeeded.")
+            if sol is None:
+                update_status_bar(f"Polynomial fit failed.")
             else:
-                update_status_bar(f"Polynomial fit failed: {sol.message}.")
+                info("Polynomial fit complete:")
+                info(sol)
+                if sol.success:
+                    update_status_bar("Polynomial fit succeeded.")
+                else:
+                    update_status_bar(f"Polynomial fit failed: {sol.message}.")
             label = file.formatted_datetime
         case Rescale.LINEAR:
             scale_with_oxygen(csd)

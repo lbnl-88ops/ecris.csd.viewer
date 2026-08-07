@@ -140,10 +140,21 @@ class Coordinator:
                 text="Connect to remote"
             )
 
-    def initialize(self) -> None:
+    def initialize(self, progress_callback=None) -> None:
+        if progress_callback:
+            progress_callback("Configuring objects...", 25)
         self._configure_objects()
+        
+        if progress_callback:
+            progress_callback("Updating connection status...", 50)
         self.update_connection_status()
+        
+        if progress_callback:
+            progress_callback("Refreshing file lists...", 75)
         self.refresh_file_lists()
+        
+        if progress_callback:
+            progress_callback("Ready", 100)
         update_status_bar("Initialized")
 
     def choose_directory(self, *_):

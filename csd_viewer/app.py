@@ -56,9 +56,39 @@ logging.basicConfig(
 )
 
 
+class SplashScreen(tk.Toplevel):
+    def __init__(self, master):
+        super().__init__(master)
+        self.title("Loading CSD Viewer...")
+        self.geometry("400x150")
+        self.resizable(False, False)
+        # Center the splash screen
+        self.update_idletasks()
+        width = self.winfo_width()
+        height = self.winfo_height()
+        x = (self.winfo_screenwidth() // 2) - (width // 2)
+        y = (self.winfo_screenheight() // 2) - (height // 2)
+        self.geometry(f"+{x}+{y}")
+        
+        self.label = ttk.Label(self, text="Initializing...", font=("Helvetica", 12))
+        self.label.pack(pady=20)
+        
+        self.progress = ttk.Progressbar(self, orient=tk.HORIZONTAL, length=300, mode='determinate')
+        self.progress.pack(pady=10)
+        
+        self.transient(master)
+        self.grab_set()
+
+    def update_progress(self, text, value):
+        self.label.config(text=text)
+        self.progress['value'] = value
+        self.update()
+
+
 class CSDViewer(ttk.Window):
     def __init__(self, configuration: AppConfiguration | None):
         super().__init__()
+        self.withdraw()  # Hide immediately
         self.configuration = configuration
         if self.configuration is None:
             self.configuration = create_configuration()
@@ -83,12 +113,26 @@ class CSDViewer(ttk.Window):
         self._info_visible = False
         self.protocol("WM_DELETE_WINDOW", self.quit)
         self.update()
-        if self.configuration.sash_position is not None:
-            try:
-                self.paned_window.sashpos(0, self.configuration.sash_position)
-            except Exception as e:
-                logging.error(f"Error setting sash position: {e}")
         self.minsize(800, 600)
+
+        self.splash = SplashScreen(self)
+        self.after(500, self.deferred_initialize)
+
+    def deferred_initialize(self):
+        try:
+            self.coordinator.initialize(progress_callback=self.splash.update_progress)
+            self.update()
+            if self.configuration.sash_position is not None:
+                try:
+                    self.paned_window.sashpos(0, self.configuration.sash_position)
+                except Exception as e:
+                    logging.error(f"Error setting sash position: {e}")
+            else:
+                # Default to a reasonable split if no position is saved
+                self.paned_window.sashpos(0, int(self.winfo_width() * 0.75))
+        finally:
+            self.splash.destroy()
+            self.deiconify() # Show main window
 
     def quit(self):
         # Save geometry
@@ -195,7 +239,6 @@ class CSDViewer(ttk.Window):
         self.coordinator.attach(self.file_list, FileListType.TO_PLOT)
         self.coordinator.attach(self.plotted_file_list, FileListType.PLOTTED)
         self.coordinator.attach(self.status_pane)
-        self.coordinator.initialize()
 
     def export_data(self):
         # if len(self.plot.plotted_files()) > 1:

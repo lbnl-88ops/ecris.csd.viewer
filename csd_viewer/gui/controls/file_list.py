@@ -38,11 +38,12 @@ class FileList(tk.Frame):
     def fill_list_box(self, file_list: List[Path]):
         self.files = file_list
         self.file_listbox.delete(0, tk.END)
-        filenames = [
-            _file_formatted_timestamp(f)
-            for f in file_list
-            if _file_formatted_timestamp(f) != "UNKNOWN"
-        ]
+        filenames = []
+        for f in file_list:
+            ts = _file_formatted_timestamp(f)
+            if ts != "UNKNOWN":
+                filenames.append(ts)
+        
         if not filenames:
             self.stringvar.set(["No CSD files found"])
             self.file_listbox.configure(state=tk.DISABLED)
