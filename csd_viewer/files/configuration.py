@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field, asdict
-from logging import info
+from logging import info, error
 from pathlib import Path
 from tomllib import load
 from tkinter import messagebox
@@ -50,6 +50,7 @@ def load_configuration() -> AppConfiguration | None:
                             info(f'Error parsing custom element: {e}')
                             continue
                 
+                info(f'Configuration loaded from {CONFIG_FULLPATH}')
                 return AppConfiguration(
                     default_directory=Path(config.get(DATA_DIRECTORY, '.')).absolute(),
                     custom_elements=custom_elements,
@@ -59,7 +60,8 @@ def load_configuration() -> AppConfiguration | None:
                     window_y=config.get('window_y'),
                     sash_position=config.get('sash_position')
                 )
-        except tomllib.TOMLDecodeError:
+        except tomllib.TOMLDecodeError as e:
+            error(f'Error loading configuration: {e}')
             messagebox.showerror('Error', 
                                  'Error loading configuration, using default settings')
             return AppConfiguration()
@@ -69,7 +71,7 @@ def save_configuration(config: AppConfiguration):
     CONFIG_FILEPATH.mkdir(exist_ok=True, parents=True)
     
     lines = []
-    lines.append(f'{DATA_DIRECTORY} = "{config.default_directory}"')
+    lines.append(f'{DATA_DIRECTORY} = "{config.default_directory.as_posix()}"')
     lines.append(f'window_width = {config.window_width}')
     lines.append(f'window_height = {config.window_height}')
     if config.window_x is not None:
@@ -89,7 +91,7 @@ def save_configuration(config: AppConfiguration):
             lines.append(f'atomic_number = {el.atomic_number}')
             lines.append('')
 
-    with open(CONFIG_FULLPATH, 'w') as f:
+    with open(CONFIG_FULLPATH, 'w', encoding='utf-8') as f:
         f.write('\n'.join(lines))
 
 def create_configuration() -> AppConfiguration:

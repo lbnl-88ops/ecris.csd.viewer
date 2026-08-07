@@ -212,11 +212,15 @@ class CSDViewer(ttk.Window):
                 initialdir=self.configuration.default_directory,
             )
             if export_file is not None:
-                try:
-                    export_to_file(export_file, self.plot.plotted_files())
-                    messagebox.showinfo("Success", "Export successful.")
-                except ValueError as e:
-                    messagebox.showerror("Error", f"Error exporting: {e}")
+                logging.info(f"Exporting data to {export_file.name}")
+                with export_file:
+                    try:
+                        export_to_file(export_file, self.plot.plotted_files())
+                        logging.info("Export successful")
+                        messagebox.showinfo("Success", "Export successful.")
+                    except ValueError as e:
+                        logging.error(f"Error exporting: {e}")
+                        messagebox.showerror("Error", f"Error exporting: {e}")
 
     def diagnostic_mode(self):
         self._diagnostic_window = DiagnosticWindow(self)
@@ -241,6 +245,7 @@ class CSDViewer(ttk.Window):
                 self.plot.use_blitting.set(False)
 
     def _open_directory(self, path):
+        logging.info(f"Opening directory: {path}")
         if platform.system() == "Windows":
             os.startfile(path)
         elif platform.system() == "Darwin":
@@ -248,6 +253,7 @@ class CSDViewer(ttk.Window):
         elif platform.system() == "Linux":
             subprocess.Popen(["xdg-open", path])
         else:
+            logging.error(f"Cannot open directory {path}: unsupported operating system")
             messagebox.showerror(
                 "Error", "Cannot open directory: unsupported operating system"
             )
@@ -256,4 +262,4 @@ class CSDViewer(ttk.Window):
         self._open_directory(CONFIG_FILEPATH)
 
     def open_data_directory(self):
-        self._open_directory(self.default_path)
+        self._open_directory(self.configuration.default_directory)
